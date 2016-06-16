@@ -82,8 +82,10 @@ interface Document {
 	/**
 	 * Adds a value to a field without deleting the already existing values
 	 *
-	 * @param string $field        	
-	 * @param string $value        	
+	 * @param string $field
+	 *        	The name of the field
+	 * @param ID $value
+	 *        	The additional value of this field
 	 */
 	public function addMultiValueField($field, $value);
 
@@ -109,7 +111,7 @@ interface Document {
 	 * Set the ID of the corresponding entity.
 	 *
 	 * This method will automatically be called by the doctrine event listener
-	 * 
+	 *
 	 * @internal
 	 *
 	 * @param mixed $id
@@ -119,7 +121,7 @@ interface Document {
 
 	/**
 	 * Get the ID of the corresponding entity
-	 * 
+	 *
 	 * @return mixed The ID of the corresponding entity
 	 */
 	public function getEntityId();

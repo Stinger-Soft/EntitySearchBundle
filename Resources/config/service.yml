@@ -1,0 +1,14 @@
+parameters:
+  stinger_soft.entity_search.doctrine_update_listener.class: StingerSoft\EntitySearchBundle\Services\DoctrineListener
+  
+services:
+  pec_search.doctrine.listener:
+    class: %pec_search.entity_listener.class%
+      tags:
+        - { name: doctrine.event_listener, event: postPersist }
+        - { name: doctrine.event_listener, event: preRemove }
+        - { name: doctrine.event_listener, event: postUpdate }
+
+#        arguments: ["@pec_search.solr_client.default"]
+#        calls:
+#          - [ setContainer,[ "@service_container" ] ]

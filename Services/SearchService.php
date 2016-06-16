@@ -11,8 +11,62 @@
  */
 namespace StingerSoft\EntitySearchBundle\Services;
 
+use StingerSoft\EntitySearchBundle\Model\Document;
+use StingerSoft\EntitySearchBundle\Model\Query;
+use StingerSoft\EntitySearchBundle\Model\SearchableEntity;
+
+/**
+ * Defines a service to execute basic operations on the underlying search index
+ */
 interface SearchService {
-	
-	
-	
+
+	const SERVICE_ID = 'stinger_soft.entity_search.search_service';
+
+	/**
+	 * Completely wipes the search index
+	 */
+	public function clearIndex();
+
+	/**
+	 * Creates an empty document from the given entity
+	 *
+	 * @param SearchableEntity $entity        	
+	 * @return Document
+	 */
+	public function createEmptyDocumentFromEntity(SearchableEntity $entity);
+
+	/**
+	 * Saves a document to the index
+	 *
+	 * @param Document $document
+	 *        	The document to index
+	 */
+	public function saveDocument(Document $document);
+
+	/**
+	 * Removes a document to the index
+	 *
+	 * @param Document $document
+	 *        	The document to index
+	 */
+	public function removeDocument(Document $document);
+
+	/**
+	 * Tries to autocomplete the given search string and provides possible completions
+	 *
+	 * @param string $search
+	 *        	The search string
+	 * @param integer $maxResults
+	 *        	The maximum number of autocompletions to be returned
+	 * @return string[] Possible autocompletions
+	 */
+	public function autocomplete($search, $maxResults = 10);
+
+	/**
+	 * Executes the given query
+	 *
+	 * @param Query $query        	
+	 * @return ResultSet
+	 */
+	public function search(Query $query);
 }
