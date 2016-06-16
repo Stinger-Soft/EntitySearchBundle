@@ -1,14 +1,18 @@
 parameters:
   stinger_soft.entity_search.doctrine_update_listener.class: StingerSoft\EntitySearchBundle\Services\DoctrineListener
+  stinger_soft.entity_search.search_service.class: StingerSoft\EntitySearchBundle\Services\DummySearchService
   
 services:
+  stinger_soft.entity_search.doctrine_update_listener:
+    class: %stinger_soft.entity_search.search_service.class%
+    
+    
   pec_search.doctrine.listener:
-    class: %pec_search.entity_listener.class%
+    arguments: ["@stinger_soft.entity_search.doctrine_update_listener"]
+    class: %stinger_soft.entity_search.doctrine_update_listener.class%
       tags:
         - { name: doctrine.event_listener, event: postPersist }
         - { name: doctrine.event_listener, event: preRemove }
         - { name: doctrine.event_listener, event: postUpdate }
-
-#        arguments: ["@pec_search.solr_client.default"]
 #        calls:
 #          - [ setContainer,[ "@service_container" ] ]

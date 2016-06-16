@@ -14,6 +14,7 @@ namespace StingerSoft\EntitySearchBundle\Services;
 use StingerSoft\EntitySearchBundle\Model\Document;
 use StingerSoft\EntitySearchBundle\Model\Query;
 use StingerSoft\EntitySearchBundle\Model\SearchableEntity;
+use Doctrine\Common\Persistence\ObjectManager;
 
 /**
  * Defines a service to execute basic operations on the underlying search index
@@ -69,4 +70,20 @@ interface SearchService {
 	 * @return ResultSet
 	 */
 	public function search(Query $query);
+
+	/**
+	 * Adds the object manager to this service
+	 *
+	 * @internal
+	 *
+	 * @param ObjectManager $om        	
+	 */
+	public function setObjectManager(ObjectManager $om);
+
+	/**
+	 * Get the doctrine object manager
+	 *
+	 * @return ObjectManager
+	 */
+	public function getObjectManager();
 }

@@ -13,8 +13,24 @@ namespace StingerSoft\EntitySearchBundle\Services;
 
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use StingerSoft\EntitySearchBundle\Model\SearchableEntity;
+use Doctrine\Common\Persistence\ObjectManager;
 
 class DoctrineListener {
+
+	/**
+	 *
+	 * @var SearchService
+	 */
+	protected $searchService;
+
+	/**
+	 * Constructor
+	 *
+	 * @param SearchService $searchService        	
+	 */
+	public function __construct(SearchService $searchService) {
+		$this->searchService = $searchService;
+	}
 
 	/**
 	 * Index the entity after it is persisted for the first time
@@ -47,28 +63,34 @@ class DoctrineListener {
 	 *
 	 * @return SearchService
 	 */
-	protected function getSearchService() {
+	protected function getSearchService(ObjectManager $manager) {
+		$this->searchService->setObjectManager($manager);
+		return $this->searchService;
 	}
 
 	/**
 	 *
 	 * @param object $entity        	
 	 */
-	protected function updateEntity($entity) {
+	protected function updateEntity($entity, ObjectManager $manager) {
 		if(!($entity instanceof SearchableEntity))
 			return;
-		$document = $this->getSearchService()->createEmptyDocumentFromEntity($entity);
-		$this->getSearchService()->saveDocument($document);
+		$document = $this->getSearchService($manager)->createEmptyDocumentFromEntity($entity);
+		if($entity->indexEntity($document) !== false) {
+			$this->getSearchService($manager)->saveDocument($document);
+		} else {
+			$this->getSearchService($manager)->removeDocument($document);
+		}
 	}
 
 	/**
 	 *
 	 * @param object $entity        	
 	 */
-	protected function removeEntity($entity) {
+	protected function removeEntity($entity, ObjectManager $manager) {
 		if(!($entity instanceof SearchableEntity))
 			return;
-		$document = $this->getSearchService()->createEmptyDocumentFromEntity($entity);
-		$this->getSearchService()->removeDocument($document);
+		$document = $this->getSearchService($manager)->createEmptyDocumentFromEntity($entity);
+		$this->getSearchService($manager)->removeDocument($document);
 	}
 }
