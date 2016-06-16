@@ -1,0 +1,33 @@
+{
+	"name" : "stinger-soft/entity-search-bundle",
+	"type" : "symfony-bundle",
+	"description" : "Abstraction Layer to index and search entities",
+	"keywords" : [
+		"Search"
+	],
+	"homepage" : "http://www.stinger-soft.net",
+	"authors" : [{
+			"name" : "Florian Meyer",
+			"email" : "florian.meyer@stinger-soft.net",
+			"role" : "Developer"
+		}
+	],
+	"autoload" : {
+		"psr-4" : {
+			"StingerSoft\\EntitySearchBundle\\" : ""
+		},
+		"exclude-from-classmap" : [
+			"/Tests/"
+		]
+	},
+	"license" : "Apache-2.0",
+	"require" : {
+		"php" : ">=5.5",
+		"symfony/framework-bundle" : "^3.0"
+	},
+	"require-dev" : {
+		"phpunit/phpunit" : "~4.1|~5.0",
+		"sensio/framework-extra-bundle" : "~3.0",
+		"symfony/phpunit-bridge" : "^2.8.1|^3.0.1"
+	}
+}
