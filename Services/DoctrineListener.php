@@ -14,14 +14,23 @@ namespace StingerSoft\EntitySearchBundle\Services;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use StingerSoft\EntitySearchBundle\Model\SearchableEntity;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\EventSubscriber;
 
-class DoctrineListener {
+class DoctrineListener implements EventSubscriber {
 
 	/**
 	 *
 	 * @var SearchService
 	 */
 	protected $searchService;
+
+	public function getSubscribedEvents() {
+		return array(
+			'postPersist',
+			'postUpdate',
+			'preRemove'
+		);
+	}
 
 	/**
 	 * Constructor
@@ -38,7 +47,7 @@ class DoctrineListener {
 	 * @param LifecycleEventArgs $args        	
 	 */
 	public function postPersist(LifecycleEventArgs $args) {
-		$this->updateEntity($args->getEntity());
+		$this->updateEntity($args->getEntity(), $args->getObjectManager());
 	}
 
 	/**
@@ -47,7 +56,7 @@ class DoctrineListener {
 	 * @param LifecycleEventArgs $args        	
 	 */
 	public function preRemove(LifecycleEventArgs $args) {
-		$this->removeEntity($args->getEntity());
+		$this->removeEntity($args->getEntity(), $args->getObjectManager());
 	}
 
 	/**
@@ -56,7 +65,7 @@ class DoctrineListener {
 	 * @param LifecycleEventArgs $args        	
 	 */
 	public function postUpdate(LifecycleEventArgs $args) {
-		$this->updateEntity($args->getEntity());
+		$this->updateEntity($args->getEntity(), $args->getObjectManager());
 	}
 
 	/**

@@ -7,12 +7,8 @@ services:
     class: %stinger_soft.entity_search.search_service.class%
     
     
-  pec_search.doctrine.listener:
+  stinger_soft.entity_search.doctrine.listener:
     arguments: ["@stinger_soft.entity_search.doctrine_update_listener"]
     class: %stinger_soft.entity_search.doctrine_update_listener.class%
       tags:
-        - { name: doctrine.event_listener, event: postPersist }
-        - { name: doctrine.event_listener, event: preRemove }
-        - { name: doctrine.event_listener, event: postUpdate }
-#        calls:
-#          - [ setContainer,[ "@service_container" ] ]
+        - { name: doctrine.event_subscriber }
