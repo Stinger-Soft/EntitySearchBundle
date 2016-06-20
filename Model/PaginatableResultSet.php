@@ -11,22 +11,10 @@
  */
 namespace StingerSoft\EntitySearchBundle\Model;
 
-use StingerSoft\EntitySearchBundle\Model\Result\FacetSet;
-
-interface ResultSet {
+interface PaginatableResultSet {
 
 	/**
-	 * Returns a set of all available facets
-	 *
-	 * @return FacetSet
+	 * @return PaginationInterface
 	 */
-	public function getFacets();
-
-	/**
-	 *
-	 * @param number $offset        	
-	 * @param number $limit        	
-	 * @return Document[]
-	 */
-	public function getResults($offset = 0, $limit = null);
+	public function paginate($page = 1, $limit = 10, array $options = array());
 }

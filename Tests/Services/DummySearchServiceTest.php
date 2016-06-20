@@ -20,6 +20,8 @@ use StingerSoft\EntitySearchBundle\Model\Query;
 
 class DummySearchServiceTest extends AbstractORMTestCase {
 
+	protected $indexCount = 0;
+	
 	/**
 	 *
 	 * {@inheritDoc}
@@ -29,6 +31,7 @@ class DummySearchServiceTest extends AbstractORMTestCase {
 	public function setUp() {
 		parent::setUp();
 		$this->getMockSqliteEntityManager();
+		$this->indexCount = 0;
 	}
 
 	/**
@@ -41,18 +44,21 @@ class DummySearchServiceTest extends AbstractORMTestCase {
 		return $service;
 	}
 
-	protected function indexBeer(SearchService $service) {
+	protected function indexBeer(SearchService $service, $title = 'Hemelinger') {
 		$beer = new Beer();
-		$beer->setTitle('Hemelinger');
+		$beer->setTitle($title);
 		$this->em->persist($beer);
 		$this->em->flush();
 		
 		$document = $service->createEmptyDocumentFromEntity($beer);
-		$this->assertAttributeCount(0, 'index', $service);
+		$this->assertAttributeCount($this->indexCount, 'index', $service);
 		$beer->indexEntity($document);
 		$service->saveDocument($document);
-		$this->assertAttributeCount(1, 'index', $service);
-		return array($beer, $document);
+		$this->assertAttributeCount(++$this->indexCount, 'index', $service);
+		return array(
+			$beer,
+			$document 
+		);
 	}
 
 	public function testSaveDocument() {
@@ -98,7 +104,14 @@ class DummySearchServiceTest extends AbstractORMTestCase {
 	public function testSearch() {
 		$service = $this->getSearchService();
 		$this->indexBeer($service);
-		$service->search($this->getMockBuilder(Query::class)->getMockForAbstractClass());
+		$this->indexBeer($service, 'Haake Beck');
+		$this->indexBeer($service, 'Haake Beck Kräusen');
+		$query = $this->getMockBuilder(Query::class)->setMethods(array(
+			'getSearchTerm' 
+		))->getMock();
+		$query->expects($this->once())->method('getSearchTerm')->will($this->returnValue('Beck'));
+		$result = $service->search($query);
+		$this->assertCount(2, $result->getResults());
 	}
 
 	/**

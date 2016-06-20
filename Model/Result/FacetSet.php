@@ -13,20 +13,28 @@ namespace StingerSoft\EntitySearchBundle\Model\Result;
 
 interface FacetSet extends \IteratorAggregate, \Countable {
 
+	const FACET_AUTHOR = 'facet_author';
+
+	const FACET_ENTITY_TYPE = 'facet_entity_type';
+
+	const FACET_MIME_TYPE = 'facet_mime_type';
+
+	const FACET_EDITOR = 'facet_editor';
+
 	/**
 	 * Get a facet by key.
 	 *
 	 * @param string $key
 	 *        	The key of the facet
 	 *        	
-	 * @return integer The amount of results with facet
+	 * @return int[string] The amount of results with facet
 	 */
 	public function getFacet($key);
 
 	/**
 	 * Get all facets.
 	 *
-	 * @return array
+	 * @return int[string]
 	 */
 	public function getFacets();
 }
