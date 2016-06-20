@@ -89,11 +89,20 @@ interface Document {
 	public function getFields();
 
 	/**
+	 * Returns all values for the given field
+	 *
+	 * @param string $field
+	 *        	The name of the field
+	 * @return mixed|mixed[] The stored values of this field. <code>NULL</code> if no value exists
+	 */
+	public function getFieldValue($field);
+
+	/**
 	 * Adds a value to a field without deleting the already existing values
 	 *
 	 * @param string $field
 	 *        	The name of the field
-	 * @param ID $value
+	 * @param mixed $value
 	 *        	The additional value of this field
 	 */
 	public function addMultiValueField($field, $value);

@@ -11,10 +11,12 @@
  */
 namespace StingerSoft\EntitySearchBundle\Tests\Services;
 
-use StingerSoft\EntitySearchBundle\Tests\AbstractORMTestCase;
 use StingerSoft\EntitySearchBundle\Services\DummySearchService;
+use StingerSoft\EntitySearchBundle\Tests\AbstractORMTestCase;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Beer;
-use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Potato;
+use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Car;
+use StingerSoft\EntitySearchBundle\Services\SearchService;
+use StingerSoft\EntitySearchBundle\Model\Query;
 
 class DummySearchServiceTest extends AbstractORMTestCase {
 
@@ -39,16 +41,37 @@ class DummySearchServiceTest extends AbstractORMTestCase {
 		return $service;
 	}
 
-	public function testSaveDocument() {
+	protected function indexBeer(SearchService $service) {
 		$beer = new Beer();
 		$beer->setTitle('Hemelinger');
 		$this->em->persist($beer);
 		$this->em->flush();
 		
-		$service = $this->getSearchService();
 		$document = $service->createEmptyDocumentFromEntity($beer);
 		$this->assertAttributeCount(0, 'index', $service);
+		$beer->indexEntity($document);
 		$service->saveDocument($document);
+		$this->assertAttributeCount(1, 'index', $service);
+		return array($beer, $document);
+	}
+
+	public function testSaveDocument() {
+		$service = $this->getSearchService();
+		$this->indexBeer($service);
+		$service->clearIndex();
+		$this->assertAttributeCount(0, 'index', $service);
+	}
+
+	public function testSaveDocumentComposite() {
+		$car = new Car('S500', 2016);
+		$this->em->persist($car);
+		$this->em->flush();
+		
+		$service = $this->getSearchService();
+		$document = $service->createEmptyDocumentFromEntity($car);
+		$this->assertAttributeCount(0, 'index', $service);
+		$service->saveDocument($document);
+		
 		$this->assertAttributeCount(1, 'index', $service);
 		
 		$service->clearIndex();
@@ -56,38 +79,26 @@ class DummySearchServiceTest extends AbstractORMTestCase {
 	}
 
 	public function testRemoveDocument() {
-		$beer = new Beer();
-		$beer->setTitle('Hemelinger');
-		$this->em->persist($beer);
-		$this->em->flush();
-		
 		$service = $this->getSearchService();
-		$document = $service->createEmptyDocumentFromEntity($beer);
-		$this->assertAttributeCount(0, 'index', $service);
-		$service->saveDocument($document);
-		$this->assertAttributeCount(1, 'index', $service);
+		$result = $this->indexBeer($service);
 		
-		$service->removeDocument($document);
+		$service->removeDocument($result[1]);
 		$this->assertAttributeCount(0, 'index', $service);
 	}
 
 	public function testAutocompletion() {
-		$beer = new Beer();
-		$beer->setTitle('Hemelinger');
-		$this->em->persist($beer);
-		$this->em->flush();
-		
 		$service = $this->getSearchService();
-		$document = $service->createEmptyDocumentFromEntity($beer);
-		$this->assertAttributeCount(0, 'index', $service);
-		$beer->indexEntity($document);
-		$service->saveDocument($document);
-		$this->assertAttributeCount(1, 'index', $service);
+		$result = $this->indexBeer($service);
 		
 		$suggests = $service->autocomplete('He');
 		$this->count(1, $suggests);
-		$this->assertContains($beer->getTitle(), $suggests);
-		
+		$this->assertContains($result[0]->getTitle(), $suggests);
+	}
+
+	public function testSearch() {
+		$service = $this->getSearchService();
+		$this->indexBeer($service);
+		$service->search($this->getMockBuilder(Query::class)->getMockForAbstractClass());
 	}
 
 	/**
@@ -99,7 +110,7 @@ class DummySearchServiceTest extends AbstractORMTestCase {
 	protected function getUsedEntityFixtures() {
 		return array(
 			Beer::class,
-			Potato::class 
+			Car::class 
 		);
 	}
 }

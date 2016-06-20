@@ -56,6 +56,16 @@ class DocumentAdapter implements Document {
 	 *
 	 * {@inheritDoc}
 	 *
+	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getFieldValue()
+	 */
+	public function getFieldValue($field) {
+		return isset($this->fields[$field]) ? $this->fields[$field] : null;
+	}
+
+	/**
+	 *
+	 * {@inheritDoc}
+	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::addMultiValueField()
 	 */
 	public function addMultiValueField($field, $value) {
