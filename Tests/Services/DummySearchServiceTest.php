@@ -91,7 +91,7 @@ class DummySearchServiceTest extends AbstractORMTestCase {
 		$result = $this->indexBeer($service);
 		
 		$suggests = $service->autocomplete('He');
-		$this->count(1, $suggests);
+		$this->assertCount(1, $suggests);
 		$this->assertContains($result[0]->getTitle(), $suggests);
 	}
 

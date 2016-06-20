@@ -74,7 +74,7 @@ abstract class AbstractORMTestCase extends AbstractTestCase {
 				$mockMethods[] = $method->name;
 			}
 		}
-		$config = $this->getMock($configurationClass, $mockMethods);
+		$config = $this->getMockBuilder($configurationClass)->setMethods($mockMethods)->getMock();
 		$config->expects($this->once())->method('getProxyDir')->will($this->returnValue(__DIR__ . '/../../temp'));
 		$config->expects($this->once())->method('getProxyNamespace')->will($this->returnValue('Proxy'));
 		$config->expects($this->any())->method('getDefaultQueryHints')->will($this->returnValue(array()));
