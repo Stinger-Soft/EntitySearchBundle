@@ -16,6 +16,10 @@ use StingerSoft\EntitySearchBundle\Model\Query;
 
 class DummySearchService extends AbstractSearchService {
 
+	/**
+	 *
+	 * @var Document[]
+	 */
 	protected $index = array();
 
 	protected function createDocumentId(Document $document) {
@@ -67,7 +71,18 @@ class DummySearchService extends AbstractSearchService {
 	 * @see \StingerSoft\EntitySearchBundle\Services\SearchService::autocomplete()
 	 */
 	public function autocomplete($search, $maxResults = 10) {
-		return array();
+		$words = array();
+		foreach($this->index as $doc) {
+			foreach($doc->getFields() as $content) {
+				if(is_string($content)) {
+					$words = array_merge($words, explode(' ', $content));
+				}
+			}
+		}
+		
+		return array_filter($words, function ($word) use ($search) {
+			return stripos($word, $search) === 0;
+		});
 	}
 
 	/**

@@ -43,6 +43,10 @@ class DocumentAdapter implements Document {
 	}
 
 	/**
+	 *
+	 * {@inheritDoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getFields()
 	 */
 	public function getFields() {
 		return $this->fields;

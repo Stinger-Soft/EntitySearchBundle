@@ -53,6 +53,10 @@ abstract class AbstractORMTestCase extends AbstractTestCase {
 		return $this->em = $em;
 	}
 
+	protected function getEventManager() {
+		return new EventManager();
+	}
+
 	/**
 	 * Get annotation mapping configuration
 	 *

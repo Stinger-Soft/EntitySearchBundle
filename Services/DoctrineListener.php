@@ -47,7 +47,7 @@ class DoctrineListener implements EventSubscriber {
 	 * @param LifecycleEventArgs $args        	
 	 */
 	public function postPersist(LifecycleEventArgs $args) {
-		$this->updateEntity($args->getEntity(), $args->getObjectManager());
+		$this->updateEntity($args->getObject(), $args->getObjectManager());
 	}
 
 	/**
@@ -56,7 +56,7 @@ class DoctrineListener implements EventSubscriber {
 	 * @param LifecycleEventArgs $args        	
 	 */
 	public function preRemove(LifecycleEventArgs $args) {
-		$this->removeEntity($args->getEntity(), $args->getObjectManager());
+		$this->removeEntity($args->getObject(), $args->getObjectManager());
 	}
 
 	/**
@@ -65,7 +65,7 @@ class DoctrineListener implements EventSubscriber {
 	 * @param LifecycleEventArgs $args        	
 	 */
 	public function postUpdate(LifecycleEventArgs $args) {
-		$this->updateEntity($args->getEntity(), $args->getObjectManager());
+		$this->updateEntity($args->getObject(), $args->getObjectManager());
 	}
 
 	/**

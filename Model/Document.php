@@ -80,6 +80,15 @@ interface Document {
 	public function addField($fieldname, $value);
 
 	/**
+	 * Returns all field saved in this document
+	 *
+	 * @return mixed[]
+	 * @internal
+	 *
+	 */
+	public function getFields();
+
+	/**
 	 * Adds a value to a field without deleting the already existing values
 	 *
 	 * @param string $field

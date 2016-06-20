@@ -12,11 +12,10 @@
 namespace StingerSoft\EntitySearchBundle\Tests\Services;
 
 use Doctrine\Common\EventManager;
+use StingerSoft\EntitySearchBundle\Services\AbstractSearchService;
 use StingerSoft\EntitySearchBundle\Services\DoctrineListener;
 use StingerSoft\EntitySearchBundle\Tests\AbstractORMTestCase;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Beer;
-use StingerSoft\EntitySearchBundle\Services\SearchService;
-use StingerSoft\EntitySearchBundle\Services\AbstractSearchService;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Potato;
 
 /**
@@ -24,8 +23,11 @@ use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Potato;
 class DoctrineListenerTest extends AbstractORMTestCase {
 
 	/**
-	 * @param number $save Number of expected saves
-	 * @param number $delete Number of expected deletions
+	 *
+	 * @param number $save
+	 *        	Number of expected saves
+	 * @param number $delete
+	 *        	Number of expected deletions
 	 */
 	protected function registerDoctrineListener($save = 0, $delete = 0) {
 		$listenerMock = $this->getMockBuilder(DoctrineListener::class)->setMethods(array(
@@ -40,10 +42,13 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 		$evm->addEventSubscriber($listenerMock);
 		$this->getMockSqliteEntityManager($evm);
 	}
-	
+
 	/**
-	 * @param number $save Number of expected saves
-	 * @param number $delete Number of expected deletions
+	 *
+	 * @param number $save
+	 *        	Number of expected saves
+	 * @param number $delete
+	 *        	Number of expected deletions
 	 */
 	protected function registerSearchService($save = 0, $delete = 0) {
 		$searchMock = $this->getMockBuilder(AbstractSearchService::class)->setMethods(array(
@@ -51,12 +56,12 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 			'removeDocument',
 			'clearIndex',
 			'autocomplete',
-			'search',
+			'search' 
 		))->disableOriginalConstructor()->getMock();
-	
+		
 		$searchMock->expects($this->exactly($save))->method('saveDocument')->will($this->returnValue(null));
 		$searchMock->expects($this->exactly($delete))->method('removeDocument')->will($this->returnValue(null));
-	
+		
 		$evm = new EventManager();
 		$evm->addEventSubscriber(new DoctrineListener($searchMock));
 		$this->getMockSqliteEntityManager($evm);
@@ -92,7 +97,7 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 		$this->em->remove($beer);
 		$this->em->flush();
 	}
-	
+
 	public function testPersist() {
 		$this->registerSearchService(1, 0);
 		$beer = new Beer();
@@ -100,45 +105,44 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 		$this->em->persist($beer);
 		$this->em->flush();
 	}
-	
+
 	public function testUpdate() {
 		$this->registerSearchService(2, 0);
 		$beer = new Beer();
 		$beer->setTitle('Haake Bäck');
 		$this->em->persist($beer);
 		$this->em->flush();
-	
+		
 		$beer->setTitle('Haake Beck');
 		$this->em->persist($beer);
 		$this->em->flush();
 	}
-	
+
 	public function testReturnFalse() {
-		
 		$this->registerSearchService(1, 1);
 		$beer = new Beer();
 		$beer->setTitle('Haake Bäck');
 		$this->em->persist($beer);
 		$this->em->flush();
-	
+		
 		Beer::$index = false;
 		$beer->setTitle('Haake Beck');
 		$this->em->persist($beer);
 		$this->em->flush();
 		Beer::$index = true;
 	}
-	
+
 	public function testDelete() {
 		$this->registerSearchService(1, 1);
 		$beer = new Beer();
 		$beer->setTitle('Haake Beck');
 		$this->em->persist($beer);
 		$this->em->flush();
-	
+		
 		$this->em->remove($beer);
 		$this->em->flush();
 	}
-	
+
 	public function testMockedNonIndexablePersist() {
 		$this->registerSearchService(0, 0);
 		$potato = new Potato();
@@ -150,7 +154,7 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 		$this->em->persist($potato);
 		$this->em->flush();
 	}
-	
+
 	public function testMockedNonIndexableUpdate() {
 		$this->registerSearchService(0, 0);
 		$potato = new Potato();
@@ -158,7 +162,7 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 		$this->em->persist($potato);
 		$this->em->flush();
 	}
-	
+
 	public function testMockedNonIndexableDelete() {
 		$this->registerSearchService(0, 0);
 		$potato = new Potato();
@@ -170,10 +174,16 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 		$this->em->flush();
 	}
 
+	/**
+	 *
+	 * {@inheritDoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Tests\AbstractTestCase::getUsedEntityFixtures()
+	 */
 	protected function getUsedEntityFixtures() {
 		return array(
 			Beer::class,
-			Potato::class,
+			Potato::class 
 		);
 	}
 }

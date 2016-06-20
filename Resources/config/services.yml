@@ -4,11 +4,11 @@ parameters:
   
 services:
   stinger_soft.entity_search.doctrine_update_listener:
-    class: %stinger_soft.entity_search.search_service.class%
+    class: '%stinger_soft.entity_search.search_service.class%'
     
     
   stinger_soft.entity_search.doctrine.listener:
     arguments: ["@stinger_soft.entity_search.doctrine_update_listener"]
-    class: %stinger_soft.entity_search.doctrine_update_listener.class%
-      tags:
+    class: '%stinger_soft.entity_search.doctrine_update_listener.class%'
+    tags:
         - { name: doctrine.event_subscriber }

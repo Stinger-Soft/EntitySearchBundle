@@ -59,7 +59,7 @@ abstract class AbstractSearchService implements SearchService {
 		$id = $cmd->getIdentifierValues($entity);
 		
 		$document->setEntityClass($clazz);
-		$document->setEntityId($id);
+		$document->setEntityId(count($id) == 1 ? current($id) : $id);
 		return $document;
 	}
 
