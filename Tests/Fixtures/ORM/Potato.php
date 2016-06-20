@@ -12,16 +12,11 @@
 namespace StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM;
 
 use Doctrine\ORM\Mapping as ORM;
-use StingerSoft\EntitySearchBundle\Model\SearchableEntity;
-use StingerSoft\EntitySearchBundle\Model\Document;
 
 /**
  * @ORM\Entity
  */
-class Beer implements SearchableEntity {
-	
-	
-	public static $index = true;
+class Potato {
 
 	/**
 	 * @ORM\Id
@@ -46,16 +41,5 @@ class Beer implements SearchableEntity {
 	public function setTitle($title) {
 		$this->title = $title;
 		return $this;
-	}
-
-	/**
-	 *
-	 * {@inheritDoc}
-	 *
-	 * @see \StingerSoft\EntitySearchBundle\Model\SearchableEntity::indexEntity()
-	 */
-	public function indexEntity(Document &$document) {
-		$document->addField(Document::FIELD_TITLE, $this->getTitle());
-		return self::$index;
 	}
 }

@@ -15,6 +15,9 @@ use Doctrine\Common\EventManager;
 use StingerSoft\EntitySearchBundle\Services\DoctrineListener;
 use StingerSoft\EntitySearchBundle\Tests\AbstractORMTestCase;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Beer;
+use StingerSoft\EntitySearchBundle\Services\SearchService;
+use StingerSoft\EntitySearchBundle\Services\AbstractSearchService;
+use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Potato;
 
 /**
  */
@@ -37,8 +40,29 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 		$evm->addEventSubscriber($listenerMock);
 		$this->getMockSqliteEntityManager($evm);
 	}
+	
+	/**
+	 * @param number $save Number of expected saves
+	 * @param number $delete Number of expected deletions
+	 */
+	protected function registerSearchService($save = 0, $delete = 0) {
+		$searchMock = $this->getMockBuilder(AbstractSearchService::class)->setMethods(array(
+			'saveDocument',
+			'removeDocument',
+			'clearIndex',
+			'autocomplete',
+			'search',
+		))->disableOriginalConstructor()->getMock();
+	
+		$searchMock->expects($this->exactly($save))->method('saveDocument')->will($this->returnValue(null));
+		$searchMock->expects($this->exactly($delete))->method('removeDocument')->will($this->returnValue(null));
+	
+		$evm = new EventManager();
+		$evm->addEventSubscriber(new DoctrineListener($searchMock));
+		$this->getMockSqliteEntityManager($evm);
+	}
 
-	public function testPersist() {
+	public function testMockedPersist() {
 		$this->registerDoctrineListener(1, 0);
 		$beer = new Beer();
 		$beer->setTitle('Hemelinger');
@@ -46,20 +70,19 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 		$this->em->flush();
 	}
 
-	public function testUpdate() {
+	public function testMockedUpdate() {
 		$this->registerDoctrineListener(2, 0);
 		$beer = new Beer();
 		$beer->setTitle('Haake Bäck');
 		$this->em->persist($beer);
 		$this->em->flush();
 		
-		$beer = new Beer();
 		$beer->setTitle('Haake Beck');
 		$this->em->persist($beer);
 		$this->em->flush();
 	}
 
-	public function testDelete() {
+	public function testMockedDelete() {
 		$this->registerDoctrineListener(1, 1);
 		$beer = new Beer();
 		$beer->setTitle('Haake Beck');
@@ -69,10 +92,88 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 		$this->em->remove($beer);
 		$this->em->flush();
 	}
+	
+	public function testPersist() {
+		$this->registerSearchService(1, 0);
+		$beer = new Beer();
+		$beer->setTitle('Hemelinger');
+		$this->em->persist($beer);
+		$this->em->flush();
+	}
+	
+	public function testUpdate() {
+		$this->registerSearchService(2, 0);
+		$beer = new Beer();
+		$beer->setTitle('Haake Bäck');
+		$this->em->persist($beer);
+		$this->em->flush();
+	
+		$beer->setTitle('Haake Beck');
+		$this->em->persist($beer);
+		$this->em->flush();
+	}
+	
+	public function testReturnFalse() {
+		
+		$this->registerSearchService(1, 1);
+		$beer = new Beer();
+		$beer->setTitle('Haake Bäck');
+		$this->em->persist($beer);
+		$this->em->flush();
+	
+		Beer::$index = false;
+		$beer->setTitle('Haake Beck');
+		$this->em->persist($beer);
+		$this->em->flush();
+		Beer::$index = true;
+	}
+	
+	public function testDelete() {
+		$this->registerSearchService(1, 1);
+		$beer = new Beer();
+		$beer->setTitle('Haake Beck');
+		$this->em->persist($beer);
+		$this->em->flush();
+	
+		$this->em->remove($beer);
+		$this->em->flush();
+	}
+	
+	public function testMockedNonIndexablePersist() {
+		$this->registerSearchService(0, 0);
+		$potato = new Potato();
+		$potato->setTitle('Lisa');
+		$this->em->persist($potato);
+		$this->em->flush();
+		
+		$potato->setTitle('Erna');
+		$this->em->persist($potato);
+		$this->em->flush();
+	}
+	
+	public function testMockedNonIndexableUpdate() {
+		$this->registerSearchService(0, 0);
+		$potato = new Potato();
+		$potato->setTitle('Lisa');
+		$this->em->persist($potato);
+		$this->em->flush();
+	}
+	
+	public function testMockedNonIndexableDelete() {
+		$this->registerSearchService(0, 0);
+		$potato = new Potato();
+		$potato->setTitle('Lisa');
+		$this->em->persist($potato);
+		$this->em->flush();
+		
+		$this->em->remove($potato);
+		$this->em->flush();
+	}
 
 	protected function getUsedEntityFixtures() {
 		return array(
-			Beer::class 
+			Beer::class,
+			Potato::class,
 		);
 	}
 }
