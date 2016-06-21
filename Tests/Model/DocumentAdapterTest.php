@@ -25,6 +25,7 @@ class DocumentAdapterTest extends \PHPUnit_Framework_TestCase {
 		$doc->addField(Document::FIELD_AUTHOR, 'florian_meyer');
 		$doc->addMultiValueField(Document::FIELD_EDITORS, 'florian_meyer');
 		$doc->addMultiValueField(Document::FIELD_EDITORS, 'oliver_kotte');
+		$doc->setFile('~/test.txt');
 		
 		$this->assertEquals(Beer::class, $doc->getEntityClass());
 		$this->assertEquals(1, $doc->getEntityId());
@@ -35,7 +36,7 @@ class DocumentAdapterTest extends \PHPUnit_Framework_TestCase {
 		$this->assertArrayHasKey(Document::FIELD_EDITORS, $fields);
 		$this->assertNotNull($doc->getFieldValue(Document::FIELD_EDITORS));
 		$this->assertContains('florian_meyer', $fields[Document::FIELD_EDITORS]);
-		
 		$this->assertNull($doc->getFieldValue(Document::FIELD_ROLES));
+		$this->assertAttributeEquals('~/test.txt', 'file', $doc);
 	}
 }
