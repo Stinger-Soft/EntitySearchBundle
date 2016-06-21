@@ -9,17 +9,18 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace StingerSoft\EntitySearchBundle\Services;
+namespace StingerSoft\EntitySearchBundle\Services\Mapping;
 
 use StingerSoft\EntitySearchBundle\Model\SearchableEntity;
 use Doctrine\Common\Persistence\ObjectManager;
 use StingerSoft\EntitySearchBundle\Model\Document;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use StingerSoft\EntitySearchBundle\Services\SearchService;
 
 /**
  * Handles the creation of documents out of entities
  */
-class EntityHandler {
+class EntityToDocumentMapper implements EntityToDocumentMapperInterface {
 
 	/**
 	 *
@@ -66,10 +67,10 @@ class EntityHandler {
 	}
 
 	/**
-	 * Checks if the given object can be added to the index
 	 *
-	 * @param object $object        	
-	 * @return boolean
+	 * {@inheritDoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface::isIndexable()
 	 */
 	public function isIndexable($object) {
 		if($object instanceof SearchableEntity) {
@@ -81,12 +82,10 @@ class EntityHandler {
 		return false;
 	}
 
+
 	/**
-	 * Tries to create a document from the given object
-	 *
-	 * @param ObjectManager $manager        	
-	 * @param object $object        	
-	 * @return boolean|Document Returns false if no document could be created
+	 * {@inheritDoc}
+	 * @see \StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface::createDocument()
 	 */
 	public function createDocument(ObjectManager $manager, $object) {
 		if(!$this->isIndexable($object))
@@ -146,7 +145,7 @@ class EntityHandler {
 
 	/**
 	 * Returns the search service
-	 * 
+	 *
 	 * @return SearchService
 	 */
 	protected function getSearchService(ObjectManager $manager) {

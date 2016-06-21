@@ -14,14 +14,15 @@ namespace StingerSoft\EntitySearchBundle\Services;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\EventSubscriber;
+use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface;
 
 class DoctrineListener implements EventSubscriber {
 
 	/**
 	 *
-	 * @var EntityHandler
+	 * @var EntityToDocumentMapperInterface
 	 */
-	protected $entityHandler;
+	protected $entityToDocumentMapper;
 	
 	/**
 	 *
@@ -42,8 +43,8 @@ class DoctrineListener implements EventSubscriber {
 	 *
 	 * @param SearchService $searchService        	
 	 */
-	public function __construct(EntityHandler $entityHandler, SearchService $searchService) {
-		$this->entityHandler = $entityHandler;
+	public function __construct(EntityToDocumentMapperInterface $entityToDocumentMapper, SearchService $searchService) {
+		$this->entityToDocumentMapper = $entityToDocumentMapper;
 		$this->searchService = $searchService;
 	}
 
@@ -76,10 +77,10 @@ class DoctrineListener implements EventSubscriber {
 
 	/**
 	 *
-	 * @return EntityHandler
+	 * @return EntityToDocumentMapperInterface
 	 */
-	protected function getEntityHandler() {
-		return $this->entityHandler;
+	protected function getEntityToDocumentMapper() {
+		return $this->entityToDocumentMapper;
 	}
 	
 	/**
@@ -96,7 +97,7 @@ class DoctrineListener implements EventSubscriber {
 	 * @param object $entity        	
 	 */
 	protected function updateEntity($entity, ObjectManager $manager) {
-		$document = $this->getEntityHandler()->createDocument($manager, $entity);
+		$document = $this->getEntityToDocumentMapper()->createDocument($manager, $entity);
 		if($document !== false) {
 			$this->getSearchService($manager)->saveDocument($document);
 		}
@@ -107,7 +108,7 @@ class DoctrineListener implements EventSubscriber {
 	 * @param object $entity        	
 	 */
 	protected function removeEntity($entity, ObjectManager $manager) {
-		$document = $this->getEntityHandler()->createDocument($manager, $entity);
+		$document = $this->getEntityToDocumentMapper()->createDocument($manager, $entity);
 		if($document !== false) {
 			$this->getSearchService($manager)->removeDocument($document);
 		}

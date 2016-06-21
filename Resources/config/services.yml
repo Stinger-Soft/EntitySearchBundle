@@ -1,6 +1,6 @@
 parameters:
   stinger_soft.entity_search.doctrine.listener.class: StingerSoft\EntitySearchBundle\Services\DoctrineListener
-  stinger_soft.entity_search.entity_handler.class: StingerSoft\EntitySearchBundle\Services\EntityHandler
+  stinger_soft.entity_search.entity_to_document_mapper.class: StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapper
   stinger_soft.entity_search.search_service.class: StingerSoft\EntitySearchBundle\Services\DummySearchService
   
 services:
@@ -14,6 +14,6 @@ services:
     tags:
         - { name: doctrine.event_subscriber }
         
-  stinger_soft.entity_search.entity_handler:
+  stinger_soft.entity_search.entity_to_document_mapper:
     arguments: ["@stinger_soft.entity_search.search_service"]
-    class: '%stinger_soft.entity_search.entity_handler.class%'
+    class: '%stinger_soft.entity_search.entity_to_document_mapper.class%'

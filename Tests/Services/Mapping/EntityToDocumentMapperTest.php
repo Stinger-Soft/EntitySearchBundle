@@ -12,16 +12,16 @@
 namespace StingerSoft\EntitySearchBundle\Tests\Services;
 
 use StingerSoft\EntitySearchBundle\Model\Document;
+use StingerSoft\EntitySearchBundle\Services\AbstractSearchService;
 use StingerSoft\EntitySearchBundle\Services\DummySearchService;
-use StingerSoft\EntitySearchBundle\Services\EntityHandler;
+use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapper;
 use StingerSoft\EntitySearchBundle\Tests\AbstractORMTestCase;
 use StingerSoft\EntitySearchBundle\Tests\DependencyInjection\StingerSoftEntitySearchExtensionTest;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Beer;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Potato;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Whiskey;
-use StingerSoft\EntitySearchBundle\Services\AbstractSearchService;
 
-class EntityHandlerTest extends AbstractORMTestCase {
+class EntityToDocumentMapperTest extends AbstractORMTestCase {
 
 	/**
 	 *
@@ -36,10 +36,10 @@ class EntityHandlerTest extends AbstractORMTestCase {
 
 	/**
 	 *
-	 * @return \StingerSoft\EntitySearchBundle\Services\EntityHandler
+	 * @return \StingerSoft\EntitySearchBundle\Services\EntityToDocumentMapper
 	 */
-	protected function getEntityHandler() {
-		$eh = new EntityHandler(new DummySearchService(), StingerSoftEntitySearchExtensionTest::$mockConfiguration['stinger_soft.entity_search']['types']);
+	protected function getEntityToDocumentMapper() {
+		$eh = new EntityToDocumentMapper(new DummySearchService(), StingerSoftEntitySearchExtensionTest::$mockConfiguration['stinger_soft.entity_search']['types']);
 		return $eh;
 	}
 
@@ -48,57 +48,62 @@ class EntityHandlerTest extends AbstractORMTestCase {
 	 */
 	public function testFuckedUpConfiguration() {
 		$searchService = $this->getMockBuilder(AbstractSearchService::class)->getMockForAbstractClass();
-		new EntityHandler($searchService, array(
-			'beer' => array()
+		new EntityToDocumentMapper($searchService, array(
+			'beer' => array() 
 		));
 	}
-	
+
 	/**
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function testFuckedUpConfigurationWithoutMapping() {
 		$searchService = $this->getMockBuilder(AbstractSearchService::class)->getMockForAbstractClass();
-		new EntityHandler($searchService, array(
-			'beer' => array('persistance' => array(
-				'model' => Beer::class
-			))
+		new EntityToDocumentMapper($searchService, array(
+			'beer' => array(
+				'persistance' => array(
+					'model' => Beer::class 
+				) 
+			) 
 		));
 	}
-	
+
 	/**
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function testFuckedUpConfigurationWithoutModel() {
 		$searchService = $this->getMockBuilder(AbstractSearchService::class)->getMockForAbstractClass();
-		new EntityHandler($searchService, array(
-			'beer' => array('persistance' => array(
-			))
+		new EntityToDocumentMapper($searchService, array(
+			'beer' => array(
+				'persistance' => array() 
+			) 
 		));
 	}
-	
+
 	/**
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function testFuckedUpConfigurationWithoutPersistance() {
 		$searchService = $this->getMockBuilder(AbstractSearchService::class)->getMockForAbstractClass();
-		new EntityHandler($searchService, array(
-			'beer' => array('mapping' => array(
-				'title' => array(
-					'propertyPath' => false
-				)
-			))
+		new EntityToDocumentMapper($searchService, array(
+			'beer' => array(
+				'mapping' => array(
+					'title' => array(
+						'propertyPath' => false 
+					) 
+				) 
+			) 
 		));
 	}
 
 	public function testIsIndexable() {
-		$eh = $this->getEntityHandler();
+		$eh = $this->getEntityToDocumentMapper();
 		$this->assertTrue($eh->isIndexable(new Beer()));
 		$this->assertFalse($eh->isIndexable(new Potato()));
 		$this->assertTrue($eh->isIndexable(new Whiskey()));
 	}
 
 	public function testCreateDocument() {
-		$eh = $this->getEntityHandler();
+		$eh = $this->getEntityToDocumentMapper();
 		
 		$beer = new Beer();
 		$beer->setTitle('Hemelinger');

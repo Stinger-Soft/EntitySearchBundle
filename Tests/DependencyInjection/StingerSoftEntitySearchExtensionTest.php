@@ -40,6 +40,6 @@ class StingerSoftEntitySearchExtensionTest extends \PHPUnit_Framework_TestCase {
 		
 		$this->assertArrayHasKey('stinger_soft.entity_search.search_service', $container->getDefinitions());
 		$this->assertArrayHasKey('stinger_soft.entity_search.doctrine.listener', $container->getDefinitions());
-		$this->assertArrayHasKey('stinger_soft.entity_search.entity_handler', $container->getDefinitions());
+		$this->assertArrayHasKey('stinger_soft.entity_search.entity_to_document_mapper', $container->getDefinitions());
 	}
 }

@@ -17,7 +17,8 @@ use StingerSoft\EntitySearchBundle\Services\DoctrineListener;
 use StingerSoft\EntitySearchBundle\Tests\AbstractORMTestCase;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Beer;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Potato;
-use StingerSoft\EntitySearchBundle\Services\EntityHandler;
+use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface;
+use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapper;
 
 /**
  */
@@ -64,7 +65,7 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 		$searchMock->expects($this->exactly($delete))->method('removeDocument')->will($this->returnValue(null));
 		
 		$evm = new EventManager();
-		$evm->addEventSubscriber(new DoctrineListener(new EntityHandler($searchMock, array()), $searchMock));
+		$evm->addEventSubscriber(new DoctrineListener(new EntityToDocumentMapper($searchMock, array()), $searchMock));
 		$this->getMockSqliteEntityManager($evm);
 	}
 
