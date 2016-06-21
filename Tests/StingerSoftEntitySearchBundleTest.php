@@ -17,7 +17,7 @@ class StingerSoftEntitySearchBundleTest extends \PHPUnit_Framework_TestCase {
 
 	public function testRequiredBundles() {
 		$bundles = StingerSoftEntitySearchBundle::getRequiredBundles('dev');
-		$this->assertCount(1, $bundles);
+		$this->assertCount(2, $bundles);
 		$this->assertArrayHasKey('StingerSoftEntitySearchBundle', $bundles);
 	}
 }
