@@ -17,6 +17,7 @@ use StingerSoft\EntitySearchBundle\Services\DoctrineListener;
 use StingerSoft\EntitySearchBundle\Tests\AbstractORMTestCase;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Beer;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Potato;
+use StingerSoft\EntitySearchBundle\Services\EntityHandler;
 
 /**
  */
@@ -63,7 +64,7 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 		$searchMock->expects($this->exactly($delete))->method('removeDocument')->will($this->returnValue(null));
 		
 		$evm = new EventManager();
-		$evm->addEventSubscriber(new DoctrineListener($searchMock));
+		$evm->addEventSubscriber(new DoctrineListener(new EntityHandler($searchMock, array()), $searchMock));
 		$this->getMockSqliteEntityManager($evm);
 	}
 
@@ -119,7 +120,7 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 	}
 
 	public function testReturnFalse() {
-		$this->registerSearchService(1, 1);
+		$this->registerSearchService(1, 0);
 		$beer = new Beer();
 		$beer->setTitle('Haake Bäck');
 		$this->em->persist($beer);

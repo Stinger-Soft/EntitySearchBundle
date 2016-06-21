@@ -34,7 +34,7 @@ interface SearchService {
 	 * @param SearchableEntity $entity        	
 	 * @return Document
 	 */
-	public function createEmptyDocumentFromEntity(SearchableEntity $entity);
+	public function createEmptyDocumentFromEntity($entity);
 
 	/**
 	 * Saves a document to the index

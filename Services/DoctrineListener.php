@@ -12,12 +12,17 @@
 namespace StingerSoft\EntitySearchBundle\Services;
 
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
-use StingerSoft\EntitySearchBundle\Model\SearchableEntity;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\EventSubscriber;
 
 class DoctrineListener implements EventSubscriber {
 
+	/**
+	 *
+	 * @var EntityHandler
+	 */
+	protected $entityHandler;
+	
 	/**
 	 *
 	 * @var SearchService
@@ -28,7 +33,7 @@ class DoctrineListener implements EventSubscriber {
 		return array(
 			'postPersist',
 			'postUpdate',
-			'preRemove'
+			'preRemove' 
 		);
 	}
 
@@ -37,7 +42,8 @@ class DoctrineListener implements EventSubscriber {
 	 *
 	 * @param SearchService $searchService        	
 	 */
-	public function __construct(SearchService $searchService) {
+	public function __construct(EntityHandler $entityHandler, SearchService $searchService) {
+		$this->entityHandler = $entityHandler;
 		$this->searchService = $searchService;
 	}
 
@@ -70,6 +76,14 @@ class DoctrineListener implements EventSubscriber {
 
 	/**
 	 *
+	 * @return EntityHandler
+	 */
+	protected function getEntityHandler() {
+		return $this->entityHandler;
+	}
+	
+	/**
+	 *
 	 * @return SearchService
 	 */
 	protected function getSearchService(ObjectManager $manager) {
@@ -82,13 +96,9 @@ class DoctrineListener implements EventSubscriber {
 	 * @param object $entity        	
 	 */
 	protected function updateEntity($entity, ObjectManager $manager) {
-		if(!($entity instanceof SearchableEntity))
-			return;
-		$document = $this->getSearchService($manager)->createEmptyDocumentFromEntity($entity);
-		if($entity->indexEntity($document) !== false) {
+		$document = $this->getEntityHandler()->createDocument($manager, $entity);
+		if($document !== false) {
 			$this->getSearchService($manager)->saveDocument($document);
-		} else {
-			$this->getSearchService($manager)->removeDocument($document);
 		}
 	}
 
@@ -97,9 +107,9 @@ class DoctrineListener implements EventSubscriber {
 	 * @param object $entity        	
 	 */
 	protected function removeEntity($entity, ObjectManager $manager) {
-		if(!($entity instanceof SearchableEntity))
-			return;
-		$document = $this->getSearchService($manager)->createEmptyDocumentFromEntity($entity);
-		$this->getSearchService($manager)->removeDocument($document);
+		$document = $this->getEntityHandler()->createDocument($manager, $entity);
+		if($document !== false) {
+			$this->getSearchService($manager)->removeDocument($document);
+		}
 	}
 }

@@ -52,7 +52,7 @@ abstract class AbstractSearchService implements SearchService {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Services\SearchService::createEmptyDocumentFromEntity()
 	 */
-	public function createEmptyDocumentFromEntity(SearchableEntity $entity) {
+	public function createEmptyDocumentFromEntity($entity) {
 		$document = $this->newDocumentInstance();
 		$clazz = ClassUtils::getClass($entity);
 		$cmd = $this->getObjectManager()->getClassMetadata($clazz);

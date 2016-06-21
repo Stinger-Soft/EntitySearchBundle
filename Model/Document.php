@@ -143,4 +143,13 @@ interface Document {
 	 * @return mixed The ID of the corresponding entity
 	 */
 	public function getEntityId();
+
+	/**
+	 * Adds a file to be indexed
+	 *
+	 * <strong>note:</strong> This may not supported by the underlying implementation
+	 *
+	 * @param string $path        	
+	 */
+	public function setFile($path);
 }

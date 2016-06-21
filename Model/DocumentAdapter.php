@@ -34,6 +34,12 @@ class DocumentAdapter implements Document {
 
 	/**
 	 *
+	 * @var string
+	 */
+	protected $file = null;
+
+	/**
+	 *
 	 * {@inheritDoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::addField()
@@ -116,5 +122,15 @@ class DocumentAdapter implements Document {
 	 */
 	public function getEntityId() {
 		return $this->entityId;
+	}
+
+	/**
+	 *
+	 * {@inheritDoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Model\Document::setFile()
+	 */
+	public function setFile($path) {
+		$this->file = $path;
 	}
 }

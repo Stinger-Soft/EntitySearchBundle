@@ -28,7 +28,31 @@ class Configuration implements ConfigurationInterface {
 	 */
 	public function getConfigTreeBuilder() {
 		$treeBuilder = new TreeBuilder();
-		$treeBuilder->root('stinger_soft_search');
+		$root = $treeBuilder->root('stinger_soft_search');
+		// @formatter:off
+		$root->children()
+			->arrayNode('types')
+			->useAttributeAsKey('name')
+			->prototype('array')
+				->children()
+					->arrayNode('mappings')
+						->useAttributeAsKey('name')
+						->cannotBeEmpty()
+						->prototype('array')
+							->children()
+								->scalarNode('propertyPath')->defaultValue(false)->end()
+							->end()
+						->end()
+					->end()
+					->arrayNode('persistence')
+						->children()
+							->scalarNode('model')->end()
+						->end()
+					->end()
+				->end()
+			->end()
+		->end();
+		// @formatter:on
 		
 		return $treeBuilder;
 	}
