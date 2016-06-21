@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Stinger Enity Search package.
+ * This file is part of the Stinger Entity Search package.
  *
  * (c) Oliver Kotte <oliver.kotte@stinger-soft.net>
  * (c) Florian Meyer <florian.meyer@stinger-soft.net>

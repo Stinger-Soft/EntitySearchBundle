@@ -1,7 +1,7 @@
 <?php
 
 /*
- * This file is part of the Stinger Enity Search package.
+ * This file is part of the Stinger Entity Search package.
  *
  * (c) Oliver Kotte <oliver.kotte@stinger-soft.net>
  * (c) Florian Meyer <florian.meyer@stinger-soft.net>
@@ -20,6 +20,7 @@ class StingerSoftEntitySearchBundle extends Bundle {
 	public static function getRequiredBundles($env) {
 		$bundles = array();
 		$bundles['StingerSoftEntitySearchBundle'] = '\StingerSoft\EntitySearchBundle\StingerSoftEntitySearchBundle';
+		$bundles['KnpPaginatorBundle'] = 'Knp\Bundle\PaginatorBundle\KnpPaginatorBundle';
 		return $bundles;
 	}
 }
