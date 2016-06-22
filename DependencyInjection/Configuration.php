@@ -28,7 +28,7 @@ class Configuration implements ConfigurationInterface {
 	 */
 	public function getConfigTreeBuilder() {
 		$treeBuilder = new TreeBuilder();
-		$root = $treeBuilder->root('stinger_soft_search');
+		$root = $treeBuilder->root('stinger_soft_entity_search');
 		// @formatter:off
 		$root->children()
 			->arrayNode('types')

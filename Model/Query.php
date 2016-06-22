@@ -11,12 +11,20 @@
  */
 namespace StingerSoft\EntitySearchBundle\Model;
 
-interface Query {
+class Query {
+	
+	private $term;
+	
+	public function __construct($term){
+		$this->term = $term;
+	}
 
 	/**
 	 * Get the search term
 	 *
 	 * @return string Returns the search term
 	 */
-	public function getSearchTerm();
+	public function getSearchTerm(){
+		return $this->term;
+	}
 }

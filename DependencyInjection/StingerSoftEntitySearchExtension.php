@@ -11,6 +11,7 @@
  */
 namespace StingerSoft\EntitySearchBundle\DependencyInjection;
 
+use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
@@ -29,9 +30,12 @@ class StingerSoftEntitySearchExtension extends Extension {
 	 */
 	public function load(array $configs, ContainerBuilder $container) {
 		$configuration = new Configuration();
-		$this->processConfiguration($configuration, $configs);
+		$config = $this->processConfiguration($configuration, $configs);
 		
 		$loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
 		$loader->load('services.yml');
+		
+		$entityToDocumentMapperDefinition = $container->getDefinition(EntityToDocumentMapperInterface::SERVICE_ID);
+		$entityToDocumentMapperDefinition->addArgument($config['types']);
 	}
 }
