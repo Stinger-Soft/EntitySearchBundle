@@ -21,3 +21,4 @@ services:
   
   stinger_soft.entity_search.document_to_entity_mapper:
     class: '%stinger_soft.entity_search.document_to_entity_mapper.class%'
+    arguments: ["@doctrine"]

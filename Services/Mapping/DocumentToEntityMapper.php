@@ -11,10 +11,19 @@
  */
 namespace StingerSoft\EntitySearchBundle\Services\Mapping;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use StingerSoft\EntitySearchBundle\Model\Document;
+use Doctrine\Common\Persistence\AbstractManagerRegistry;
 
 class DocumentToEntityMapper implements DocumentToEntityMapperInterface {
+
+	/**
+	 * @var AbstractManagerRegistry
+	 */
+	protected $managerRegistry;
+
+	public function __construct(AbstractManagerRegistry $managerRegistry) {
+		$this->managerRegistry = $managerRegistry;
+	}
 
 	/**
 	 *
@@ -22,7 +31,7 @@ class DocumentToEntityMapper implements DocumentToEntityMapperInterface {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Services\Mapping\DocumentToEntityMapperInterface::getEntity()
 	 */
-	public function getEntity(ObjectManager $manager, Document $document) {
-		return $manager->getRepository($document->getEntityClass())->find($document->getEntityId());
+	public function getEntity(Document $document) {
+		return $this->managerRegistry->getManagerForClass($document->getEntityClass())->getRepository($document->getEntityClass())->find($document->getEntityId());
 	}
 }

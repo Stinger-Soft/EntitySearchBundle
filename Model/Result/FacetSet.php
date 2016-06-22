@@ -27,14 +27,14 @@ interface FacetSet extends \IteratorAggregate, \Countable {
 	 * @param string $key
 	 *        	The key of the facet
 	 *        	
-	 * @return int[string] The amount of results with facet
+	 * @return string[string][int] The amount of results with facet
 	 */
 	public function getFacet($key);
 
 	/**
 	 * Get all facets.
 	 *
-	 * @return int[string]
+	 * @return string[string][int]
 	 */
 	public function getFacets();
 }

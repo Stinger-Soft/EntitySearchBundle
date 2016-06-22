@@ -11,11 +11,24 @@
  */
 namespace StingerSoft\EntitySearchBundle\Model;
 
+
+
 class Query {
-	
+
+	/**
+	 * @var unknown
+	 */
 	private $term;
-	
-	public function __construct($term){
+
+	/**
+	 * @var string[string]
+	 */
+	private $facets;
+
+	/**
+	 * @param unknown $term
+	 */
+	public function __construct($term) {
 		$this->term = $term;
 	}
 
@@ -24,7 +37,16 @@ class Query {
 	 *
 	 * @return string Returns the search term
 	 */
-	public function getSearchTerm(){
+	public function getSearchTerm() {
 		return $this->term;
 	}
+
+	
+	/**
+	 * @return string[string]
+	 */
+	public function getFacets() {
+		return $this->facets;
+	}
+	
 }

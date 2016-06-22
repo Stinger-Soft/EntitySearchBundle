@@ -11,7 +11,6 @@
  */
 namespace StingerSoft\EntitySearchBundle\Services\Mapping;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use StingerSoft\EntitySearchBundle\Model\Document;
 
 /**
@@ -24,9 +23,9 @@ interface DocumentToEntityMapperInterface {
 	/**
 	 * Tries to create a document from the given object
 	 *
-	 * @param ObjectManager $manager        	
 	 * @param object $object        	
 	 * @return boolean|Document Returns false if no document could be created
 	 */
-	public function getEntity(ObjectManager $manager, Document $document);
+	public function getEntity(Document $document);
+	
 }

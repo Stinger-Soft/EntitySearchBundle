@@ -16,7 +16,7 @@ class FacetSetAdapter implements FacetSet {
 	/**
 	 * Facet array.
 	 *
-	 * @var int[string]
+	 * @var string[string][int]
 	 */
 	protected $facets;
 
