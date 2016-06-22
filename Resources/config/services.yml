@@ -2,7 +2,7 @@ parameters:
   stinger_soft.entity_search.doctrine.listener.class: StingerSoft\EntitySearchBundle\Services\DoctrineListener
   stinger_soft.entity_search.entity_to_document_mapper.class: StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapper
   stinger_soft.entity_search.search_service.class: StingerSoft\EntitySearchBundle\Services\DummySearchService
-  stinger_soft.entity_search.document_to_entity_mapper.class:StingerSoft\EntitySearchBundle\Services\Mapping\DocumentToEntityMapper
+  stinger_soft.entity_search.document_to_entity_mapper.class: StingerSoft\EntitySearchBundle\Services\Mapping\DocumentToEntityMapper
   
 services:
   stinger_soft.entity_search.search_service:
