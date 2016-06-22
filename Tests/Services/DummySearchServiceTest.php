@@ -108,7 +108,7 @@ class DummySearchServiceTest extends AbstractORMTestCase {
 		$this->indexBeer($service, 'Haake Beck Kräusen');
 		$query = $this->getMockBuilder(Query::class)->setMethods(array(
 			'getSearchTerm' 
-		))->getMock();
+		))->disableOriginalConstructor()->getMock();
 		$query->expects($this->once())->method('getSearchTerm')->will($this->returnValue('Beck'));
 		$result = $service->search($query);
 		$this->assertCount(2, $result->getResults());

@@ -1,0 +1,7 @@
+stinger_soft_entity_search:
+  forms:
+    query:
+      filter:
+        label: Filter
+      clear: 
+        label: Clear

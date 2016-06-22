@@ -1,0 +1,91 @@
+<?php
+
+/*
+ * This file is part of the Stinger Entity Search package.
+ *
+ * (c) Oliver Kotte <oliver.kotte@stinger-soft.net>
+ * (c) Florian Meyer <florian.meyer@stinger-soft.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+namespace StingerSoft\EntitySearchBundle\Model;
+
+use Symfony\Component\Form\AbstractType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\Extension\Core\Type\SearchType;
+use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use StingerSoft\EntitySearchBundle\Model\Result\FacetSet;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+
+class QueryType extends AbstractType {
+
+	public function buildForm(FormBuilderInterface $builder, array $options) {
+		$builder->add('term', SearchType::class, array(
+			'label' => 'stinger_soft_entity_search.forms.query.term.label' 
+		));
+		/**
+		 *
+		 * @var ResultSet $result
+		 */
+		$result = $options['results'];
+		$this->createFacets($builder, $result->getFacets());
+		$builder->add('filter', SubmitType::class, array(
+			'label' => 'stinger_soft_entity_search.forms.query.filter.label' 
+		));
+		$builder->add('clear', SubmitType::class, array(
+			'label' => 'stinger_soft_entity_search.forms.query.clear.label' 
+		));
+	}
+
+	/**
+	 *
+	 * @param FormBuilderInterface $builder        	
+	 * @param FacetSet $facets        	
+	 */
+	protected function createFacets(FormBuilderInterface $builder, FacetSet $facets) {
+		foreach($facets->getFacets() as $facetType => $facetValues) {
+			$builder->add('facet_' . $facetType, ChoiceType::class, array(
+				'label' => 'stinger_soft_entity_search.forms.query.' . $facetType . '.label',
+				'multiple' => true,
+				'expanded' => true,
+				'choices_as_values' => true,
+				'choice' => $this->generateFacetChoices($facetType, $facetValues) 
+			));
+		}
+	}
+
+	/**
+	 *
+	 * @param string $facetType        	
+	 * @param array $facets        	
+	 */
+	protected function generateFacetChoices($facetType, array $facets) {
+		$choices = array();
+		
+		foreach($facets as $facet => $count) {
+			if($count == 0)
+				break;
+			$choices[$facet] = $facet . ' (' . $count . ')';
+		}
+		return $choices;
+	}
+
+	/**
+	 *
+	 * {@inheritdoc}
+	 *
+	 */
+	public function configureOptions(OptionsResolver $resolver) {
+		$resolver->setDefault('data_class', Query::class);
+		$resolver->setDefault('translation_domain', 'StingerSoftEntitySearchBundle');
+		
+		$resolver->setRequired('result', null);
+		$resolver->setAllowedTypes('result', ResultSet::class);
+		
+		$resolver->setRequired('translator');
+		$resolver->setAllowedTypes('translator', TranslatorInterface::class);
+	}
+}
