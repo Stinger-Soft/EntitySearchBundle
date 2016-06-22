@@ -68,6 +68,15 @@ interface Document {
 	 * @var string
 	 */
 	const FIELD_DELETED_AT = 'deleted_at';
+	
+	/**
+	 * Key of the index field <em>type</em>
+	 * 
+	 * You should avoid using it!!
+	 *
+	 * @var string
+	 */
+	const FIELD_TYPE = 'type';
 
 	/**
 	 * Adds a field and its value to the index

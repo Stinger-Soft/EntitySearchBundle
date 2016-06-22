@@ -9,7 +9,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace StingerSoft\EntitySearchBundle\Model;
+namespace StingerSoft\EntitySearchBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -19,6 +19,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use StingerSoft\EntitySearchBundle\Model\Result\FacetSet;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use StingerSoft\EntitySearchBundle\Model\Query;
+use StingerSoft\EntitySearchBundle\Model\ResultSet;
 
 class QueryType extends AbstractType {
 
@@ -30,7 +32,7 @@ class QueryType extends AbstractType {
 		 *
 		 * @var ResultSet $result
 		 */
-		$result = $options['results'];
+		$result = $options['result'];
 		$this->createFacets($builder, $result->getFacets());
 		$builder->add('filter', SubmitType::class, array(
 			'label' => 'stinger_soft_entity_search.forms.query.filter.label' 
@@ -52,7 +54,7 @@ class QueryType extends AbstractType {
 				'multiple' => true,
 				'expanded' => true,
 				'choices_as_values' => true,
-				'choice' => $this->generateFacetChoices($facetType, $facetValues) 
+				'choices' => $this->generateFacetChoices($facetType, $facetValues) 
 			));
 		}
 	}
@@ -68,7 +70,7 @@ class QueryType extends AbstractType {
 		foreach($facets as $facet => $count) {
 			if($count == 0)
 				break;
-			$choices[$facet] = $facet . ' (' . $count . ')';
+			$choices[$facet . ' (' . $count . ')'] = $facet;
 		}
 		return $choices;
 	}
