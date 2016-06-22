@@ -16,14 +16,14 @@ namespace StingerSoft\EntitySearchBundle\Model;
 class Query {
 
 	/**
-	 * @var unknown
+	 * @var string
 	 */
 	private $term;
 
 	/**
 	 * @var string[string]
 	 */
-	private $facets;
+	private $facets = array();
 
 	/**
 	 * @param unknown $term

@@ -21,11 +21,13 @@ use StingerSoft\EntitySearchBundle\Model\Result\FacetSet;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use StingerSoft\EntitySearchBundle\Model\Query;
 use StingerSoft\EntitySearchBundle\Model\ResultSet;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 
 class QueryType extends AbstractType {
 
 	public function buildForm(FormBuilderInterface $builder, array $options) {
-		$builder->add('term', SearchType::class, array(
+		$builder->add('searchTerm', SearchType::class, array(
 			'label' => 'stinger_soft_entity_search.forms.query.term.label' 
 		));
 		/**
@@ -42,6 +44,15 @@ class QueryType extends AbstractType {
 		));
 	}
 
+	public function buildView(FormView $view, FormInterface $form, array $options) {
+		/**
+		 *
+		 * @var ResultSet $result
+		 */
+		$result = $options['result'];
+		$view->vars['facetTypes'] = array_keys($result->getFacets()->getFacets());
+	}
+
 	/**
 	 *
 	 * @param FormBuilderInterface $builder        	
@@ -54,6 +65,7 @@ class QueryType extends AbstractType {
 				'multiple' => true,
 				'expanded' => true,
 				'choices_as_values' => true,
+				'property_path' => 'facets[' . $facetType . ']',
 				'choices' => $this->generateFacetChoices($facetType, $facetValues) 
 			));
 		}
