@@ -9,7 +9,7 @@ services:
     
     
   stinger_soft.entity_search.doctrine.listener:
-    arguments: ["@stinger_soft.entity_search.entity_handler"]
+    arguments: ["@stinger_soft.entity_search.entity_to_document_mapper"]
     class: '%stinger_soft.entity_search.doctrine.listener.class%'
     tags:
         - { name: doctrine.event_subscriber }
