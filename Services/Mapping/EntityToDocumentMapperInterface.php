@@ -17,6 +17,8 @@ use Doctrine\Common\Persistence\ObjectManager;
  * Service to create a document object from an entity
  */
 interface EntityToDocumentMapperInterface {
+	
+	const SERVICE_ID = 'stinger_soft.entity_search.entity_to_document_mapper';
 
 	/**
 	 * Checks if the given object can be added to the index
