@@ -87,4 +87,11 @@ interface SearchService {
 	 * @return ObjectManager
 	 */
 	public function getObjectManager();
+
+	/**
+	 * Returns the size (ie stored documents) of the given index
+	 *
+	 * @return int
+	 */
+	public function getIndexSize();
 }

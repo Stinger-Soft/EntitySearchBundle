@@ -15,7 +15,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Util\ClassUtils;
 use StingerSoft\EntitySearchBundle\Model\Document;
 use StingerSoft\EntitySearchBundle\Model\DocumentAdapter;
-use StingerSoft\EntitySearchBundle\Model\SearchableEntity;
 
 abstract class AbstractSearchService implements SearchService {
 

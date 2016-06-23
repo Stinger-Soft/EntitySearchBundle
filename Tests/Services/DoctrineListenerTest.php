@@ -59,7 +59,7 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 			'clearIndex',
 			'autocomplete',
 			'search' 
-		))->disableOriginalConstructor()->getMock();
+		))->disableOriginalConstructor()->getMockForAbstractClass();
 		
 		$searchMock->expects($this->exactly($save))->method('saveDocument')->will($this->returnValue(null));
 		$searchMock->expects($this->exactly($delete))->method('removeDocument')->will($this->returnValue(null));

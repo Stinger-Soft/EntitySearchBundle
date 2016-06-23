@@ -25,7 +25,12 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 class QueryType extends AbstractType {
-
+	
+	
+	/**
+	 * {@inheritDoc}
+	 * @see \Symfony\Component\Form\AbstractType::buildForm()
+	 */
 	public function buildForm(FormBuilderInterface $builder, array $options) {
 		$builder->add('searchTerm', SearchType::class, array(
 			'label' => 'stinger_soft_entity_search.forms.query.term.label' 
@@ -44,6 +49,12 @@ class QueryType extends AbstractType {
 		));
 	}
 
+	/**
+	 *
+	 * {@inheritDoc}
+	 *
+	 * @see \Symfony\Component\Form\AbstractType::buildView()
+	 */
 	public function buildView(FormView $view, FormInterface $form, array $options) {
 		/**
 		 *
@@ -89,8 +100,9 @@ class QueryType extends AbstractType {
 
 	/**
 	 *
-	 * {@inheritdoc}
+	 * {@inheritDoc}
 	 *
+	 * @see \Symfony\Component\Form\AbstractType::configureOptions()
 	 */
 	public function configureOptions(OptionsResolver $resolver) {
 		$resolver->setDefault('data_class', Query::class);

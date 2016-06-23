@@ -13,10 +13,9 @@ namespace StingerSoft\EntitySearchBundle\Services;
 
 use StingerSoft\EntitySearchBundle\Model\Document;
 use StingerSoft\EntitySearchBundle\Model\Query;
-use StingerSoft\EntitySearchBundle\Model\ResultSetAdapter;
-use StingerSoft\EntitySearchBundle\Model\Result\FacetSetAdapter;
 use StingerSoft\EntitySearchBundle\Model\Result\FacetSet;
-use StingerSoft\EntitySearchBundle\Model\Result\FacetAdapter;
+use StingerSoft\EntitySearchBundle\Model\Result\FacetSetAdapter;
+use StingerSoft\EntitySearchBundle\Model\ResultSetAdapter;
 
 class DummySearchService extends AbstractSearchService {
 
@@ -97,10 +96,9 @@ class DummySearchService extends AbstractSearchService {
 	 */
 	public function search(Query $query) {
 		$term = $query->getSearchTerm();
-
+		
 		$result = new ResultSetAdapter();
 		$facets = new FacetSetAdapter();
-		
 		
 		$hits = array();
 		foreach($this->index as $key => $doc) {
@@ -115,7 +113,7 @@ class DummySearchService extends AbstractSearchService {
 		}
 		arsort($hits);
 		$results = array();
-		foreach(array_keys($hits) as $docId){
+		foreach(array_keys($hits) as $docId) {
 			$doc = $this->index[$docId];
 			$facets->addFacetValue(FacetSet::FACET_ENTITY_TYPE, $doc->getEntityClass());
 			$facets->addFacetValue(FacetSet::FACET_AUTHOR, $doc->getFieldValue(Document::FIELD_AUTHOR));
@@ -126,5 +124,15 @@ class DummySearchService extends AbstractSearchService {
 		$result->setFacets($facets);
 		
 		return $result;
+	}
+
+	/**
+	 *
+	 * {@inheritDoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Services\SearchService::getIndexSize()
+	 */
+	public function getIndexSize() {
+		return count($this->index);
 	}
 }
