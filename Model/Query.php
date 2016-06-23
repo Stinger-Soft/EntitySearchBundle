@@ -11,24 +11,33 @@
  */
 namespace StingerSoft\EntitySearchBundle\Model;
 
-
-
 class Query {
 
 	/**
+	 *
 	 * @var string
 	 */
 	private $term;
 
 	/**
+	 *
 	 * @var string[string]
 	 */
 	private $facets = array();
 
 	/**
-	 * @param unknown $term
+	 *
+	 * @var string[]
 	 */
-	public function __construct($term) {
+	private $usedFacets = null;
+
+	/**
+	 *
+	 * @param string $term        	
+	 * @param string[string] $facets        	
+	 * @param string[] $usedFacets        	
+	 */
+	public function __construct($term, array $facets = array(), $usedFacets) {
 		$this->term = $term;
 	}
 
@@ -41,12 +50,19 @@ class Query {
 		return $this->term;
 	}
 
-	
 	/**
+	 *
 	 * @return string[string]
 	 */
 	public function getFacets() {
 		return $this->facets;
 	}
-	
+
+	/**
+	 *
+	 * @return string[]
+	 */
+	public function getUsedFacets() {
+		return $this->usedFacets;
+	}
 }
