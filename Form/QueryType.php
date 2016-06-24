@@ -15,7 +15,6 @@ use StingerSoft\EntitySearchBundle\Model\Query;
 use StingerSoft\EntitySearchBundle\Model\Result\FacetSet;
 use StingerSoft\EntitySearchBundle\Model\ResultSet;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -81,7 +80,7 @@ class QueryType extends AbstractType {
 	 */
 	protected function createFacets(FormBuilderInterface $builder, FacetSet $facets) {
 		foreach($facets->getFacets() as $facetType => $facetValues) {
-			$builder->add('facet_' . $facetType, ChoiceType::class, array(
+			$builder->add('facet_' . $facetType, FacetType::class, array(
 				'label' => 'stinger_soft_entity_search.forms.query.' . $facetType . '.label',
 				'multiple' => true,
 				'expanded' => true,

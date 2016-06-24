@@ -111,6 +111,7 @@ class QueryTypeTest extends TypeTestCase {
 		
 		$this->assertTrue($form->isSynchronized());
 		$this->assertTrue($form->isValid());
+		$this->assertCount(0, $form->getErrors(true, true));
 		$this->assertEquals($expectedQuery, $form->getData());
 		
 		$view = $form->createView();
