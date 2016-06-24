@@ -15,43 +15,36 @@ use StingerSoft\EntitySearchBundle\Model\Query;
 use StingerSoft\EntitySearchBundle\Model\Result\FacetSet;
 use StingerSoft\EntitySearchBundle\Model\ResultSet;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\LazyChoiceList;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\SearchType;
-use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class QueryType extends AbstractType {
-	
-	
+class FacetType extends AbstractType {
+
 	/**
+	 *
 	 * {@inheritDoc}
+	 *
 	 * @see \Symfony\Component\Form\AbstractType::buildForm()
 	 */
 	public function buildForm(FormBuilderInterface $builder, array $options) {
-		$builder->add('searchTerm', SearchType::class, array(
-			'label' => 'stinger_soft_entity_search.forms.query.term.label' 
-		));
-
-		$usedFacets = $options['used_facets'];
-		if($usedFacets){
-			foreach($usedFacets as $facetType) {
-				$builder->add('facet_' . $facetType, FacetType::class, array(
-					'label' => 'stinger_soft_entity_search.forms.query.' . $facetType . '.label',
-					'multiple' => true,
-					'expanded' => true,
-				));
-			}
-		}
+		$builder->resetModelTransformers();
+		$builder->resetViewTransformers();
 		
-		$builder->add('filter', SubmitType::class, array(
-			'label' => 'stinger_soft_entity_search.forms.query.filter.label' 
-		));
-		$builder->add('clear', SubmitType::class, array(
-			'label' => 'stinger_soft_entity_search.forms.query.clear.label' 
-		));
+		if($options['multiple']) {
+			$builder->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+				$event->stopPropagation();
+			}, 1);
+		}
+		$builder->addEventListener(FormEvents::SUBMIT, function(FormEvent $event){
+			$data = $event->getForm()->getExtraData();
+			$event->setData(array_unique(array_merge($data, $event->getData())));
+		});
 	}
 
 	/**
@@ -61,12 +54,13 @@ class QueryType extends AbstractType {
 	 * @see \Symfony\Component\Form\AbstractType::buildView()
 	 */
 	public function buildView(FormView $view, FormInterface $form, array $options) {
-		/**
-		 *
-		 * @var ResultSet $result
-		 */
-		$result = $options['result'];
-		$view->vars['facetTypes'] = array_keys($result->getFacets()->getFacets());
+	
+	/**
+	 *
+	 * @var ResultSet $result
+	 */
+		// $result = $options['result'];
+		// $view->vars['facetTypes'] = array_keys($result->getFacets()->getFacets());
 	}
 
 	/**
@@ -107,11 +101,21 @@ class QueryType extends AbstractType {
 	 *
 	 * {@inheritDoc}
 	 *
+	 * @see \Symfony\Component\Form\AbstractType::getParent()
+	 */
+	public function getParent() {
+		return ChoiceType::class;
+	}
+
+	/**
+	 *
+	 * {@inheritDoc}
+	 *
 	 * @see \Symfony\Component\Form\AbstractType::configureOptions()
 	 */
 	public function configureOptions(OptionsResolver $resolver) {
-		$resolver->setDefault('data_class', Query::class);
+// 		$resolver->setDefault('data_class', 'array');
 		$resolver->setDefault('translation_domain', 'StingerSoftEntitySearchBundle');
-		$resolver->setDefault('used_facets', array());
+		$resolver->setDefault('by_reference', true);
 	}
 }

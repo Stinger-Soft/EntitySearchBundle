@@ -37,8 +37,10 @@ class Query {
 	 * @param string[string] $facets        	
 	 * @param string[] $usedFacets        	
 	 */
-	public function __construct($term, array $facets = array(), $usedFacets) {
+	public function __construct($term = null, array $facets = array(), $usedFacets = null) {
 		$this->term = $term;
+		$this->facets = $facets;
+		$this->usedFacets = $usedFacets;
 	}
 
 	/**
@@ -64,5 +66,69 @@ class Query {
 	 */
 	public function getUsedFacets() {
 		return $this->usedFacets;
+	}
+
+	public function setSearchTerm($term) {
+		$this->term = $term;
+		return $this;
+	}
+
+	public function setFacets($facets) {
+		$this->facets = $facets;
+		return $this;
+	}
+
+	public function setUsedFacets($usedFacets) {
+		$this->usedFacets = $usedFacets;
+		return $this;
+	}
+
+	/**
+	 *
+	 * @param string $name
+	 *        	Name of the property to fetch
+	 * @return \Pec\Bundle\MtuDvpBundle\Entity\TestRiskValue
+	 */
+	public function __get($name) {
+		if(strrpos($name, 'facet_', -strlen($name)) !== false) {
+			$facetname = substr($name, 6);
+			
+			if(isset($this->facets[$facetname])) {
+				return $this->facets[$facetname];
+			}
+			return array();
+		}
+	}
+
+	/**
+	 *
+	 * @param string $name
+	 *        	Name of the property to set
+	 * @param mixed $value
+	 *        	The value of the property
+	 */
+	public function __set($name, $value) {
+		if(strrpos($name, 'facet_', -strlen($name)) !== false) {
+			$facetname = substr($name, 6);
+			
+			if(isset($this->facets[$facetname])) {
+				$this->facets[$facetname] = array();
+			}
+			$this->facets[$facetname] = $value;
+		}
+	}
+
+	/**
+	 * Checks whether the given property is set or not
+	 *
+	 * @param string $name        	
+	 * @return boolean
+	 */
+	public function __isset($name) {
+		if(strrpos($name, 'facet_', -strlen($name)) !== false) {
+			return true;
+		}
+		
+		return false;
 	}
 }
