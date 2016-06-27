@@ -20,8 +20,9 @@ class ResultSetAdapter implements ResultSet {
 	 * @var FacetSet
 	 */
 	protected $facets = null;
-	
+
 	/**
+	 *
 	 * @var Document[]
 	 */
 	protected $results = array();
@@ -49,11 +50,22 @@ class ResultSetAdapter implements ResultSet {
 	public function getResults($offset = 0, $limit = null) {
 		return array_slice($this->results, $offset, $limit);
 	}
-	
+
 	/**
-	 * @param Document[] $results
+	 *
+	 * @param Document[] $results        	
 	 */
-	public function setResults(array $results){
+	public function setResults(array $results) {
 		$this->results = $results;
+	}
+
+	/**
+	 *
+	 * {@inheritDoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Model\ResultSet::getExcerpt()
+	 */
+	public function getExcerpt(Document $document) {
+		return null;
 	}
 }

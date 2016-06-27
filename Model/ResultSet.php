@@ -29,4 +29,11 @@ interface ResultSet {
 	 * @return Document[]
 	 */
 	public function getResults($offset = 0, $limit = null);
+
+	/**
+	 * Returns an excerpt for the given document
+	 *
+	 * @param Document $document        	
+	 */
+	public function getExcerpt(Document $document);
 }
