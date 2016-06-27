@@ -68,10 +68,10 @@ interface Document {
 	 * @var string
 	 */
 	const FIELD_DELETED_AT = 'deleted_at';
-	
+
 	/**
 	 * Key of the index field <em>type</em>
-	 * 
+	 *
 	 * You should avoid using it!!
 	 *
 	 * @var string
@@ -161,4 +161,20 @@ interface Document {
 	 * @param string $path        	
 	 */
 	public function setFile($path);
+
+	/**
+	 * Gets the given field by its name
+	 *
+	 * @param string $name        	
+	 * @return mixed|mixed[]
+	 */
+	public function __get($name);
+
+	/**
+	 * Checks whether the given field is set or not
+	 *
+	 * @param string $name        	
+	 * @return boolean
+	 */
+	public function __isset($name);
 }

@@ -133,4 +133,24 @@ class DocumentAdapter implements Document {
 	public function setFile($path) {
 		$this->file = $path;
 	}
+
+	/**
+	 *
+	 * {@inheritDoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Model\Document::__get()
+	 */
+	public function __get($name) {
+		return $this->getFieldValue($name);
+	}
+
+	/**
+	 *
+	 * {@inheritDoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Model\Document::__isset()
+	 */
+	public function __isset($name) {
+		return $this->getFieldValue($name) !== null;
+	}
 }
