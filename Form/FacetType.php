@@ -60,5 +60,6 @@ class FacetType extends AbstractType {
 	public function configureOptions(OptionsResolver $resolver) {
 		$resolver->setDefault('translation_domain', 'StingerSoftEntitySearchBundle');
 		$resolver->setDefault('by_reference', true);
+		$resolver->setDefault('choices_as_values', true);
 	}
 }
