@@ -16,9 +16,9 @@ use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\DefaultNamingStrategy;
 use Doctrine\ORM\Mapping\DefaultQuoteStrategy;
+use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Repository\DefaultRepositoryFactory;
 use Doctrine\ORM\Tools\SchemaTool;
-use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 
 abstract class AbstractORMTestCase extends AbstractTestCase {
 
@@ -95,6 +95,10 @@ abstract class AbstractORMTestCase extends AbstractTestCase {
 	 * @return \Doctrine\ORM\Mapping\Driver\Driver
 	 */
 	protected function getMetadataDriverImplementation() {
-		return new AnnotationDriver($_ENV['annotation_reader']);
+		return new AnnotationDriver($_ENV['annotation_reader'], $this->getPaths());
+	}
+
+	protected function getPaths() {
+		return array();
 	}
 }
