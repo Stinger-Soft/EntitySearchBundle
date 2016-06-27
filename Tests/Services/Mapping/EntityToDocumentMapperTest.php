@@ -60,7 +60,7 @@ class EntityToDocumentMapperTest extends AbstractORMTestCase {
 		$searchService = $this->getMockBuilder(AbstractSearchService::class)->getMockForAbstractClass();
 		new EntityToDocumentMapper($searchService, array(
 			'beer' => array(
-				'persistance' => array(
+				'persistence' => array(
 					'model' => Beer::class 
 				) 
 			) 
@@ -74,7 +74,12 @@ class EntityToDocumentMapperTest extends AbstractORMTestCase {
 		$searchService = $this->getMockBuilder(AbstractSearchService::class)->getMockForAbstractClass();
 		new EntityToDocumentMapper($searchService, array(
 			'beer' => array(
-				'persistance' => array() 
+				'mappings' => array(
+					'title' => array(
+						'propertyPath' => false
+					)
+				),
+				'persistence' => array() 
 			) 
 		));
 	}
@@ -86,7 +91,7 @@ class EntityToDocumentMapperTest extends AbstractORMTestCase {
 		$searchService = $this->getMockBuilder(AbstractSearchService::class)->getMockForAbstractClass();
 		new EntityToDocumentMapper($searchService, array(
 			'beer' => array(
-				'mapping' => array(
+				'mappings' => array(
 					'title' => array(
 						'propertyPath' => false 
 					) 

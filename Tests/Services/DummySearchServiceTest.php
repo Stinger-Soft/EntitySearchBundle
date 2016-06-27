@@ -51,10 +51,10 @@ class DummySearchServiceTest extends AbstractORMTestCase {
 		$this->em->flush();
 		
 		$document = $service->createEmptyDocumentFromEntity($beer);
-		$this->assertAttributeCount($this->indexCount, 'index', $service);
+		$this->assertEquals($this->indexCount, $service->getIndexSize());
 		$beer->indexEntity($document);
 		$service->saveDocument($document);
-		$this->assertAttributeCount(++$this->indexCount, 'index', $service);
+		$this->assertEquals(++$this->indexCount, $service->getIndexSize());
 		return array(
 			$beer,
 			$document 
@@ -75,13 +75,13 @@ class DummySearchServiceTest extends AbstractORMTestCase {
 		
 		$service = $this->getSearchService();
 		$document = $service->createEmptyDocumentFromEntity($car);
-		$this->assertAttributeCount(0, 'index', $service);
+		$this->assertEquals(0, $service->getIndexSize());
 		$service->saveDocument($document);
 		
-		$this->assertAttributeCount(1, 'index', $service);
+		$this->assertEquals(1, $service->getIndexSize());
 		
 		$service->clearIndex();
-		$this->assertAttributeCount(0, 'index', $service);
+		$this->assertEquals(0, $service->getIndexSize());
 	}
 
 	public function testRemoveDocument() {

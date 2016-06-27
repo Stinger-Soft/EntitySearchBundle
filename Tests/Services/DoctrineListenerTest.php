@@ -14,11 +14,10 @@ namespace StingerSoft\EntitySearchBundle\Tests\Services;
 use Doctrine\Common\EventManager;
 use StingerSoft\EntitySearchBundle\Services\AbstractSearchService;
 use StingerSoft\EntitySearchBundle\Services\DoctrineListener;
+use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapper;
 use StingerSoft\EntitySearchBundle\Tests\AbstractORMTestCase;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Beer;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Potato;
-use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface;
-use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapper;
 
 /**
  */

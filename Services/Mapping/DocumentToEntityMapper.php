@@ -32,6 +32,7 @@ class DocumentToEntityMapper implements DocumentToEntityMapperInterface {
 	 * @see \StingerSoft\EntitySearchBundle\Services\Mapping\DocumentToEntityMapperInterface::getEntity()
 	 */
 	public function getEntity(Document $document) {
-		return $this->managerRegistry->getManagerForClass($document->getEntityClass())->getRepository($document->getEntityClass())->find($document->getEntityId());
+		$clazz = $document->getEntityClass();
+		return $this->managerRegistry->getManagerForClass($clazz)->getRepository($clazz)->find($document->getEntityId());
 	}
 }
