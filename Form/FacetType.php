@@ -17,6 +17,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\HttpKernel\Kernel;
 
 class FacetType extends AbstractType {
 
@@ -60,6 +61,8 @@ class FacetType extends AbstractType {
 	public function configureOptions(OptionsResolver $resolver) {
 		$resolver->setDefault('translation_domain', 'StingerSoftEntitySearchBundle');
 		$resolver->setDefault('by_reference', true);
-		$resolver->setDefault('choices_as_values', true);
+		if(Kernel::VERSION_ID < 30000) {
+			$resolver->setDefault('choices_as_values', true);
+		}
 	}
 }
