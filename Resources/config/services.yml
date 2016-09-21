@@ -3,6 +3,7 @@ parameters:
   stinger_soft.entity_search.entity_to_document_mapper.class: StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapper
   stinger_soft.entity_search.search_service.class: StingerSoft\EntitySearchBundle\Services\DummySearchService
   stinger_soft.entity_search.document_to_entity_mapper.class: StingerSoft\EntitySearchBundle\Services\Mapping\DocumentToEntityMapper
+  stinger_soft.entity_search.forms.query_type.class: StingerSoft\EntitySearchBundle\Form\QueryType
   
 services:
   stinger_soft.entity_search.dummy_search_service:
@@ -24,3 +25,8 @@ services:
   stinger_soft.entity_search.document_to_entity_mapper:
     class: '%stinger_soft.entity_search.document_to_entity_mapper.class%'
     arguments: ["@doctrine"]
+    
+  stinger_soft.entity_search.forms.query_type:
+    class: "%stinger_soft.entity_search.forms.query_type.class%"
+    tags:
+      - { name: form.type }
