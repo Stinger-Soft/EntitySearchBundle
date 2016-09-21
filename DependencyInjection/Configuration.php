@@ -31,6 +31,8 @@ class Configuration implements ConfigurationInterface {
 		$root = $treeBuilder->root('stinger_soft_entity_search');
 		// @formatter:off
 		$root->children()
+			->booleanNode('enable_indexing')->defaultFalse()->end()
+			->booleanNode('enable_search')->defaultFalse()->end()
 			->arrayNode('types')
 			->useAttributeAsKey('name')
 			->prototype('array')

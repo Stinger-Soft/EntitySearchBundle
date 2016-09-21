@@ -37,5 +37,7 @@ class StingerSoftEntitySearchExtension extends Extension {
 		
 		$entityToDocumentMapperDefinition = $container->getDefinition(EntityToDocumentMapperInterface::SERVICE_ID);
 		$entityToDocumentMapperDefinition->addArgument($config['types']);
+		
+		$container->getDefinition('stinger_soft.entity_search.doctrine.listener')->addArgument($config['enable_indexing']);
 	}
 }

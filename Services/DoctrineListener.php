@@ -32,6 +32,8 @@ class DoctrineListener implements EventSubscriber {
 	protected $searchService;
 
 	protected $needsFlush = false;
+	
+	protected $enableIndexing;
 
 	public function getSubscribedEvents() {
 		return array(
@@ -47,9 +49,22 @@ class DoctrineListener implements EventSubscriber {
 	 *
 	 * @param SearchService $searchService        	
 	 */
-	public function __construct(EntityToDocumentMapperInterface $entityToDocumentMapper, SearchService $searchService) {
+	public function __construct(EntityToDocumentMapperInterface $entityToDocumentMapper, SearchService $searchService, $enableIndexing = true) {
 		$this->entityToDocumentMapper = $entityToDocumentMapper;
 		$this->searchService = $searchService;
+		$this->enableIndexing = $enableIndexing;
+	}
+	
+	public function enableIndexing() {
+		$this->enableIndexing = true;
+	}
+	
+	public function disableIndexing() {
+		$this->enableIndexing = false;
+	}
+	
+	public function isIndexingEnabled() {
+		return $this->enableIndexing;
 	}
 
 	/**
@@ -58,6 +73,7 @@ class DoctrineListener implements EventSubscriber {
 	 * @param LifecycleEventArgs $args        	
 	 */
 	public function postPersist(LifecycleEventArgs $args) {
+		if(!$this->enableIndexing) return;
 		$this->updateEntity($args->getObject(), $args->getObjectManager());
 	}
 
@@ -74,6 +90,7 @@ class DoctrineListener implements EventSubscriber {
 	 * @param LifecycleEventArgs $args        	
 	 */
 	public function preRemove(LifecycleEventArgs $args) {
+		if(!$this->enableIndexing) return;
 		$this->removeEntity($args->getObject(), $args->getObjectManager());
 	}
 
@@ -83,6 +100,7 @@ class DoctrineListener implements EventSubscriber {
 	 * @param LifecycleEventArgs $args        	
 	 */
 	public function postUpdate(LifecycleEventArgs $args) {
+		if(!$this->enableIndexing) return;
 		$this->updateEntity($args->getObject(), $args->getObjectManager());
 	}
 
@@ -111,7 +129,6 @@ class DoctrineListener implements EventSubscriber {
 		$document = $this->getEntityToDocumentMapper()->createDocument($manager, $entity);
 		if($document !== false) {
 			$this->getSearchService($manager)->saveDocument($document);
-			$this->needsFlush = true;
 		}
 	}
 
@@ -123,7 +140,6 @@ class DoctrineListener implements EventSubscriber {
 		$document = $this->getEntityToDocumentMapper()->createDocument($manager, $entity);
 		if($document !== false) {
 			$this->getSearchService($manager)->removeDocument($document);
-			$this->needsFlush = true;
 		}
 	}
 }
