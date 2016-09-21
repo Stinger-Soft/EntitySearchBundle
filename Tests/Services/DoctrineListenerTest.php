@@ -31,10 +31,14 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 	 *        	Number of expected deletions
 	 */
 	protected function registerDoctrineListener($save = 0, $delete = 0) {
+		/**
+		 * @var PHPUnit_Framework_MockObject_MockObject|DoctrineListener $listenerMock
+		 */
 		$listenerMock = $this->getMockBuilder(DoctrineListener::class)->setMethods(array(
 			'updateEntity',
 			'removeEntity' 
 		))->disableOriginalConstructor()->getMock();
+		$listenerMock->enableIndexing();
 		
 		$listenerMock->expects($this->exactly($save))->method('updateEntity')->will($this->returnValue(null));
 		$listenerMock->expects($this->exactly($delete))->method('removeEntity')->will($this->returnValue(null));
