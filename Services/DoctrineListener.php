@@ -15,6 +15,7 @@ use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\EventSubscriber;
 use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 
 class DoctrineListener implements EventSubscriber {
 
@@ -23,18 +24,21 @@ class DoctrineListener implements EventSubscriber {
 	 * @var EntityToDocumentMapperInterface
 	 */
 	protected $entityToDocumentMapper;
-	
+
 	/**
 	 *
 	 * @var SearchService
 	 */
 	protected $searchService;
 
+	protected $needsFlush = false;
+
 	public function getSubscribedEvents() {
 		return array(
 			'postPersist',
 			'postUpdate',
-			'preRemove' 
+			'preRemove',
+			'postFlush' 
 		);
 	}
 
@@ -55,6 +59,13 @@ class DoctrineListener implements EventSubscriber {
 	 */
 	public function postPersist(LifecycleEventArgs $args) {
 		$this->updateEntity($args->getObject(), $args->getObjectManager());
+	}
+
+	public function postFlush(PostFlushEventArgs $eventArgs) {
+		if($this->needsFlush) {
+			$this->needsFlush = false;
+			$eventArgs->getEntityManager()->flush();
+		}
 	}
 
 	/**
@@ -82,7 +93,7 @@ class DoctrineListener implements EventSubscriber {
 	protected function getEntityToDocumentMapper() {
 		return $this->entityToDocumentMapper;
 	}
-	
+
 	/**
 	 *
 	 * @return SearchService
@@ -100,6 +111,7 @@ class DoctrineListener implements EventSubscriber {
 		$document = $this->getEntityToDocumentMapper()->createDocument($manager, $entity);
 		if($document !== false) {
 			$this->getSearchService($manager)->saveDocument($document);
+			$this->needsFlush = true;
 		}
 	}
 
@@ -111,6 +123,7 @@ class DoctrineListener implements EventSubscriber {
 		$document = $this->getEntityToDocumentMapper()->createDocument($manager, $entity);
 		if($document !== false) {
 			$this->getSearchService($manager)->removeDocument($document);
+			$this->needsFlush = true;
 		}
 	}
 }
