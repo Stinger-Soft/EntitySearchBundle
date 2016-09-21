@@ -62,6 +62,7 @@ class QueryType extends AbstractType {
 					'label' => 'stinger_soft_entity_search.forms.query.' . $facetType . '.label',
 					'multiple' => true,
 					'expanded' => true,
+					'allow_extra_fields' => true,
 					'preferred_choices' => function ($val) use ($preferredChoices, $data, $facetType, $maxChoiceGroupCount, &$i) {
 						return $i++ < $maxChoiceGroupCount || $maxChoiceGroupCount == 0 || in_array($val, $preferredChoices) || (isset($data['facet_' . $facetType]) && in_array($val, $data['facet_' . $facetType]));
 					} 
@@ -115,6 +116,7 @@ class QueryType extends AbstractType {
 				'label' => 'stinger_soft_entity_search.forms.query.' . $facetType . '.label',
 				'multiple' => true,
 				'expanded' => true,
+				'allow_extra_fields' => true,
 				'choices' => $this->generateFacetChoices($facetType, $facetValues, isset($selectedFacets[$facetType]) ? $selectedFacets[$facetType] : array(), $options['facet_formatter']),
 				'preferred_choices' => function ($val) use ($preferredChoices, $selectedFacets, $facetType, $maxChoiceGroupCount, &$i) {
 					return $i++ < $maxChoiceGroupCount || $maxChoiceGroupCount == 0 || in_array($val, $preferredChoices) || (isset($selectedFacets[$facetType]) && in_array($val, $selectedFacets[$facetType]));
@@ -137,6 +139,7 @@ class QueryType extends AbstractType {
 			$choices[$this->formatFacet($formatter, $facetType, $facet, $count)] = $facet;
 		}
 		foreach($selectedFacets as $facet) {
+			if(isset($facets[$facet])) continue;
 			$count = 0;
 			$choices[$this->formatFacet($formatter, $facetType, $facet, $count)] = $facet;
 		}

@@ -94,4 +94,12 @@ interface SearchService {
 	 * @return int
 	 */
 	public function getIndexSize();
+	
+	
+	/**
+	 * Returns the path to a template including the online help for this search service
+	 * 
+	 * @return string template path
+	 */
+	public function getOnlineHelp($locale, $defaultLocale = 'en');
 }

@@ -26,18 +26,19 @@ abstract class AbstractSearchService implements SearchService {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Services\SearchService::setObjectManager()
 	 */
 	public function setObjectManager(ObjectManager $om) {
-		if($this->objectManager) return;
+		if($this->objectManager)
+			return;
 		$this->objectManager = $om;
 	}
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Services\SearchService::getObjectManager()
 	 */
@@ -47,7 +48,7 @@ abstract class AbstractSearchService implements SearchService {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Services\SearchService::createEmptyDocumentFromEntity()
 	 */
@@ -60,6 +61,16 @@ abstract class AbstractSearchService implements SearchService {
 		$document->setEntityClass($clazz);
 		$document->setEntityId(count($id) == 1 ? current($id) : $id);
 		return $document;
+	}
+
+	/**
+	 *
+	 * {@inheritdoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Services\SearchService::getOnlineHelp()
+	 */
+	public function getOnlineHelp($locale, $defaultLocale = 'en') {
+		return null;
 	}
 
 	/**
