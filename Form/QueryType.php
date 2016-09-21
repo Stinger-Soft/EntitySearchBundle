@@ -66,7 +66,7 @@ class QueryType extends AbstractType {
 			}
 		}
 		if($result) {
-			$this->createFacets($builder, $result->getFacets());
+			$this->createFacets($builder, $result->getFacets(), $options);
 		}
 		
 		$builder->add('filter', SubmitType::class, array(
