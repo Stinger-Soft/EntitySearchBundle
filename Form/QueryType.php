@@ -26,7 +26,17 @@ class QueryType extends AbstractType {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * @var array
+	 */
+	protected $defaultOptions = array();
+
+	public function __construct(array $defaultOptions = array()) {
+		$this->defaultOptions = $defaultOptions;
+	}
+
+	/**
+	 *
+	 * {@inheritdoc}
 	 *
 	 * @see \Symfony\Component\Form\AbstractType::buildForm()
 	 */
@@ -37,16 +47,25 @@ class QueryType extends AbstractType {
 		
 		$usedFacets = $options['used_facets'];
 		$result = $options['result'];
+		$preferredFilterChoices = $options['preferred_filter_choices'];
+		$maxChoiceGroupCount = $options['max_choice_group_count'];
+		$data = array();
+		
 		if($usedFacets && !$result) {
 			foreach($usedFacets as $facetType) {
+				$preferredChoices = isset($preferredFilterChoices[$facetType]) ? $preferredFilterChoices[$facetType] : array(); 
+				
 				$builder->add('facet_' . $facetType, FacetType::class, array(
 					'label' => 'stinger_soft_entity_search.forms.query.' . $facetType . '.label',
 					'multiple' => true,
-					'expanded' => true 
+					'expanded' => true,
+					'preferred_choices' => function ($val) use ($preferredChoices, $data) {
+						return count($preferredChoices) == 0 || in_array($val, $preferredChoices) || in_array($val, $data['facet_' . $facetType]);
+					},
 				));
 			}
 		}
-		if($result){
+		if($result) {
 			$this->createFacets($builder, $result->getFacets());
 		}
 		
@@ -60,7 +79,7 @@ class QueryType extends AbstractType {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \Symfony\Component\Form\AbstractType::buildView()
 	 */
@@ -78,13 +97,21 @@ class QueryType extends AbstractType {
 	 * @param FormBuilderInterface $builder        	
 	 * @param FacetSet $facets        	
 	 */
-	protected function createFacets(FormBuilderInterface $builder, FacetSet $facets) {
+	protected function createFacets(FormBuilderInterface $builder, FacetSet $facets, array $options) {
+		$preferredFilterChoices = $options['preferred_filter_choices'];
+		$maxChoiceGroupCount = $options['max_choice_group_count'];
+		$data = array();
 		foreach($facets->getFacets() as $facetType => $facetValues) {
+			$preferredChoices = isset($preferredFilterChoices[$facetType]) ? $preferredFilterChoices[$facetType] : array();
+			
 			$builder->add('facet_' . $facetType, FacetType::class, array(
 				'label' => 'stinger_soft_entity_search.forms.query.' . $facetType . '.label',
 				'multiple' => true,
 				'expanded' => true,
-				'choices' => $this->generateFacetChoices($facetType, $facetValues) 
+				'choices' => $this->generateFacetChoices($facetType, $facetValues) ,
+				'preferred_choices' => function ($val) use ($preferredChoices, $data) {
+					return count($preferredChoices) == 0 || in_array($val, $preferredChoices) || in_array($val, $data['facet_' . $facetType]);
+				},
 			));
 		}
 	}
@@ -107,7 +134,7 @@ class QueryType extends AbstractType {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \Symfony\Component\Form\AbstractType::configureOptions()
 	 */
@@ -116,5 +143,11 @@ class QueryType extends AbstractType {
 		$resolver->setDefault('translation_domain', 'StingerSoftEntitySearchBundle');
 		$resolver->setDefault('used_facets', array());
 		$resolver->setDefault('result', null);
+		
+		$resolver->setRequired('preferred_filter_choices');
+		$resolver->setDefault('preferred_filter_choices', isset($this->defaultOptions['preferred_filter_choices']) ? $this->defaultOptions['preferred_filter_choices'] : array());
+		
+		$resolver->setRequired('max_choice_group_count');
+		$resolver->setDefault('max_choice_group_count', isset($this->defaultOptions['max_choice_group_count']) ? $this->defaultOptions['max_choice_group_count'] : 5);
 	}
 }
