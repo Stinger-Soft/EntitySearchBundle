@@ -38,6 +38,7 @@ class FacetType extends AbstractType {
 		}
 		$builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
 			$data = $event->getForm()->getExtraData();
+			//$event->setData(array_unique(array_merge($data, $event->getData())));
 			$event->setData($data);
 		});
 	}

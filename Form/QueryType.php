@@ -108,6 +108,7 @@ class QueryType extends AbstractType {
 		$preferredFilterChoices = $options['preferred_filter_choices'];
 		$maxChoiceGroupCount = $options['max_choice_group_count'];
 		$selectedFacets = $data->getFacets();
+		
 		foreach($facets->getFacets() as $facetType => $facetValues) {
 			$preferredChoices = isset($preferredFilterChoices[$facetType]) ? $preferredFilterChoices[$facetType] : array();
 			
