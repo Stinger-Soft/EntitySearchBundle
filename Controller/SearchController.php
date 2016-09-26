@@ -141,7 +141,14 @@ class SearchController extends Controller {
 		return $facets ? json_decode($facets, true) : $this->getDefaultFacets();
 	}
 
+	/**
+	 * Sets the given search facets in the user's session
+	 * 
+	 * @param SessionInterface $session
+	 * @param string[string][] $facets
+	 */
 	protected function setSearchFacets(SessionInterface $session, $facets) {
+		$session->set(self::SESSION_PREFIX . '_facets', json_encode($facets));
 	}
 
 	/**

@@ -49,7 +49,7 @@ class DoctrineListener implements EventSubscriber {
 	 *
 	 * @param SearchService $searchService        	
 	 */
-	public function __construct(EntityToDocumentMapperInterface $entityToDocumentMapper, SearchService $searchService, $enableIndexing = true) {
+	public function __construct(EntityToDocumentMapperInterface $entityToDocumentMapper, SearchService $searchService, $enableIndexing = false) {
 		$this->entityToDocumentMapper = $entityToDocumentMapper;
 		$this->searchService = $searchService;
 		$this->enableIndexing = $enableIndexing;
