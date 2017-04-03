@@ -106,6 +106,13 @@ class EntityToDocumentMapperTest extends AbstractORMTestCase {
 		$this->assertFalse($eh->isIndexable(new Potato()));
 		$this->assertTrue($eh->isIndexable(new Whiskey()));
 	}
+	
+	public function testIsClassIndexable() {
+		$eh = $this->getEntityToDocumentMapper();
+		$this->assertTrue($eh->isClassIndexable(Beer::class));
+		$this->assertFalse($eh->isClassIndexable(Potato::class));
+		$this->assertTrue($eh->isClassIndexable(Whiskey::class));
+	}
 
 	public function testCreateDocument() {
 		$eh = $this->getEntityToDocumentMapper();

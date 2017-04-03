@@ -69,9 +69,8 @@ class SearchController extends Controller {
 			'used_facets' => $query->getUsedFacets() 
 		));
 		
-		if($request->isMethod('POST')) {
-			$facetForm->handleRequest($request);
-			
+		$facetForm->handleRequest($request);
+		if($facetForm->isSubmitted()) {
 			if($facetForm->get('clear')->isClicked()) {
 				$query->setFacets($this->getDefaultFacets());
 			}

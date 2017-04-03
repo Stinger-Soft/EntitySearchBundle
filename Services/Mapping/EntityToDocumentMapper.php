@@ -76,7 +76,24 @@ class EntityToDocumentMapper implements EntityToDocumentMapperInterface {
 		if($object instanceof SearchableEntity) {
 			return true;
 		}
-		if(count($this->getMapping($object)) > 0) {
+		if(count($this->getMapping(get_class($object))) > 0) {
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 *
+	 * {@inheritDoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface::isClassIndexable()
+	 */
+	public function isClassIndexable($clazz) {
+		$reflectionClass = new \ReflectionClass($clazz);
+		if(array_key_exists(SearchableEntity::class, $reflectionClass->getInterfaces())) {
+			return true;
+		}
+		if(count($this->getMapping($clazz)) > 0) {
 			return true;
 		}
 		return false;
@@ -109,7 +126,7 @@ class EntityToDocumentMapper implements EntityToDocumentMapperInterface {
 		if($object instanceof SearchableEntity) {
 			return $object->indexEntity($document);
 		}
-		$mapping = $this->getMapping($object);
+		$mapping = $this->getMapping(get_class($object));
 		$accessor = PropertyAccess::createPropertyAccessor();
 		foreach($mapping as $fieldName => $propertyPath) {
 			$document->addField($fieldName, $accessor->getValue($object, $propertyPath));
@@ -123,8 +140,7 @@ class EntityToDocumentMapper implements EntityToDocumentMapperInterface {
 	 * @param object $object        	
 	 * @return \StingerSoft\EntitySearchBundle\Services\string[string]
 	 */
-	protected function getMapping($object) {
-		$clazz = get_class($object);
+	protected function getMapping($clazz) {
 		if(isset($this->cachedMapping[$clazz])) {
 			return $this->cachedMapping[$clazz];
 		}

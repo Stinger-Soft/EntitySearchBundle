@@ -18,6 +18,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface;
 use StingerSoft\EntitySearchBundle\Services\SearchService;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
 
 class SyncCommand extends ContainerAwareCommand {
 
@@ -43,7 +45,7 @@ class SyncCommand extends ContainerAwareCommand {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \Symfony\Component\Console\Command\Command::configure()
 	 */
@@ -59,7 +61,7 @@ class SyncCommand extends ContainerAwareCommand {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \Symfony\Component\Console\Command\Command::execute()
 	 */
@@ -74,15 +76,30 @@ class SyncCommand extends ContainerAwareCommand {
 		$entity = $input->getArgument('entity');
 		
 		if($entity == 'all') {
-			// $indexHandler = $this->getIndexHandler();
-			// $entities = $indexHandler->getSearchableEntities();
-			// foreach($entities as $bundle => $searchableEntities) {
-			// $output->writeln(sprintf('<comment>Indexing entities for bundle <%s></comment>', $bundle));
-			// foreach($searchableEntities as $entity => $entityLabel) {
-			// $output->writeln(sprintf('<comment>Indexing entity <%s></comment>', $entityLabel));
-			// $this->indexEntity($input, $output, $entity);
-			// }
-			// }
+			/**
+			 * @var EntityManager $entityManager
+			 */
+			$entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
+			
+			$meta = $entityManager->getMetadataFactory()->getAllMetadata();
+			
+			/**
+			 * @var EntityToDocumentMapperInterface $mapper
+			 */
+			$mapper = $this->getContainer()->get(EntityToDocumentMapperInterface::class);
+			
+			/**
+			 * @var ClassMetadata $m
+			 */
+			foreach($meta as $m) {
+				if($m->getReflectionClass()->isAbstract() || $m->getReflectionClass()->isInterface()) {
+					continue;
+				}
+				if(!$mapper->isClassIndexable($m->getReflectionClass()->getName())) {
+					continue;
+				}
+				$this->indexEntity($input, $output, $m->getReflectionClass()->getName());
+			}
 		} else {
 			$this->indexEntity($input, $output, $entity);
 		}
@@ -114,7 +131,7 @@ class SyncCommand extends ContainerAwareCommand {
 		
 		// Index each entity seperate
 		foreach($entities as $entity) {
-			if($this->getEntityToDocumentMapper()->isIndexable($entity)){
+			if($this->getEntityToDocumentMapper()->isIndexable($entity)) {
 				$document = $this->getEntityToDocumentMapper()->createDocument($entityManager, $entity);
 				$this->getSearchService($entityManager)->saveDocument($document);
 				$entitiesIndexed++;

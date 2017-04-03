@@ -68,7 +68,7 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 		$searchMock->expects($this->exactly($delete))->method('removeDocument')->will($this->returnValue(null));
 		
 		$evm = new EventManager();
-		$evm->addEventSubscriber(new DoctrineListener(new EntityToDocumentMapper($searchMock, array()), $searchMock));
+		$evm->addEventSubscriber(new DoctrineListener(new EntityToDocumentMapper($searchMock, array()), $searchMock, true));
 		$this->getMockSqliteEntityManager($evm);
 	}
 
