@@ -86,7 +86,7 @@ class SyncCommand extends ContainerAwareCommand {
 			/**
 			 * @var EntityToDocumentMapperInterface $mapper
 			 */
-			$mapper = $this->getContainer()->get(EntityToDocumentMapperInterface::class);
+			$mapper = $this->getContainer()->get(EntityToDocumentMapperInterface::SERVICE_ID);
 			
 			/**
 			 * @var ClassMetadata $m
@@ -106,6 +106,7 @@ class SyncCommand extends ContainerAwareCommand {
 	}
 
 	protected function indexEntity(InputInterface $input, OutputInterface $output, $entity) {
+		$output->writeln(sprintf('<comment>Indexing entities of type "%s"</comment>', $entity));
 		/**
 		 *
 		 * @var EntityManager $entityManager
@@ -133,6 +134,7 @@ class SyncCommand extends ContainerAwareCommand {
 		foreach($entities as $entity) {
 			if($this->getEntityToDocumentMapper()->isIndexable($entity)) {
 				$document = $this->getEntityToDocumentMapper()->createDocument($entityManager, $entity);
+				if($document === false) continue;
 				$this->getSearchService($entityManager)->saveDocument($document);
 				$entitiesIndexed++;
 			}
