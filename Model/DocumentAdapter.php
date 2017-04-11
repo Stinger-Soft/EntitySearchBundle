@@ -36,11 +36,17 @@ class DocumentAdapter implements Document {
 	 *
 	 * @var string
 	 */
+	protected $entityType = null;
+
+	/**
+	 *
+	 * @var string
+	 */
 	protected $file = null;
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::addField()
 	 */
@@ -50,7 +56,7 @@ class DocumentAdapter implements Document {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getFields()
 	 */
@@ -60,7 +66,7 @@ class DocumentAdapter implements Document {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getFieldValue()
 	 */
@@ -70,7 +76,7 @@ class DocumentAdapter implements Document {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::addMultiValueField()
 	 */
@@ -86,7 +92,7 @@ class DocumentAdapter implements Document {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::setEntityClass()
 	 */
@@ -96,7 +102,7 @@ class DocumentAdapter implements Document {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getEntityClass()
 	 */
@@ -106,7 +112,7 @@ class DocumentAdapter implements Document {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::setEntityId()
 	 */
@@ -116,7 +122,7 @@ class DocumentAdapter implements Document {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getEntityId()
 	 */
@@ -126,7 +132,27 @@ class DocumentAdapter implements Document {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Model\Document::setEntityType()
+	 */
+	public function setEntityType($type) {
+		$this->entityType = $type;
+	}
+
+	/**
+	 *
+	 * {@inheritdoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getEntityType()
+	 */
+	public function getEntityType() {
+		return $this->entityType ? $this->entityType : $this->getEntityClass();
+	}
+
+	/**
+	 *
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::setFile()
 	 */
@@ -136,7 +162,7 @@ class DocumentAdapter implements Document {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::__get()
 	 */
@@ -146,7 +172,7 @@ class DocumentAdapter implements Document {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::__isset()
 	 */

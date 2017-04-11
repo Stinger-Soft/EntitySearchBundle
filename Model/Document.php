@@ -154,6 +154,26 @@ interface Document {
 	public function getEntityId();
 
 	/**
+	 * Sets the <em>type</em> of this entity.
+	 * This property is used to group multiple subclasses into one virtual entity type, 
+	 * hiding some programatically needed complexity from the user
+	 *
+	 * @param string $type        	
+	 */
+	public function setEntityType($type);
+	
+	/**
+	 * Gets the <em>type</em> of this entity.
+	 * This property is used to group multiple subclasses into one virtual entity type,
+	 * hiding some programatically needed complexity from the user.
+	 * 
+	 * If no entity type is set, the class will be used instead
+	 *
+	 * @param return $type
+	 */
+	public function getEntityType();
+
+	/**
 	 * Adds a file to be indexed
 	 *
 	 * <strong>note:</strong> This may not supported by the underlying implementation

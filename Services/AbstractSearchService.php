@@ -54,13 +54,18 @@ abstract class AbstractSearchService implements SearchService {
 	 */
 	public function createEmptyDocumentFromEntity($entity) {
 		$document = $this->newDocumentInstance();
-		$clazz = ClassUtils::getClass($entity);
+		$clazz = $this->getClass($entity);
 		$cmd = $this->getObjectManager()->getClassMetadata($clazz);
 		$id = $cmd->getIdentifierValues($entity);
 		
 		$document->setEntityClass($clazz);
 		$document->setEntityId(count($id) == 1 ? current($id) : $id);
 		return $document;
+	}
+	
+	protected function getClass($entity) {
+		$clazz = ClassUtils::getClass($entity);
+		return $clazz;
 	}
 
 	/**
