@@ -40,6 +40,7 @@ class ClearIndexCommand extends ContainerAwareCommand {
 		 * @var SearchService $searchService
 		 */
 		$searchService = $this->getContainer()->get(SearchService::SERVICE_ID);
+		$searchService->setObjectManager($this->getContainer()->get('doctrine.orm.entity_manager'));
 		$searchService->clearIndex();
 	}
 }

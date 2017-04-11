@@ -92,6 +92,7 @@ class SyncCommand extends ContainerAwareCommand {
 			 * @var ClassMetadata $m
 			 */
 			foreach($meta as $m) {
+				
 				if($m->getReflectionClass()->isAbstract() || $m->getReflectionClass()->isInterface()) {
 					continue;
 				}
@@ -137,8 +138,13 @@ class SyncCommand extends ContainerAwareCommand {
 				if($document === false) continue;
 				$this->getSearchService($entityManager)->saveDocument($document);
 				$entitiesIndexed++;
+				if($entitiesIndexed % 50 == 0) {
+					$entityManager->flush();
+				}
 			}
+			
 		}
+		$entityManager->flush();
 		$output->writeln('<comment>Indexed ' . $entitiesIndexed . ' entities</comment>');
 	}
 
