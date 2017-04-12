@@ -99,7 +99,7 @@ class DocumentAdapter implements Document {
 	public function setEntityClass($clazz) {
 		$this->entityClass = $clazz;
 		if(!$this->entityType) {
-			$this->entityType = $entityClass;
+			$this->entityType = $clazz;
 		}
 	}
 
