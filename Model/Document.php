@@ -79,6 +79,13 @@ interface Document {
 	const FIELD_TYPE = 'type';
 
 	/**
+	 * Key of the index field <em>file type</em> containing the mimetype of the file if available
+	 *
+	 * @var string
+	 */
+	const FIELD_CONTENT_TYPE = 'content_type';
+
+	/**
 	 * Adds a field and its value to the index
 	 *
 	 * @param string $fieldname
@@ -155,21 +162,21 @@ interface Document {
 
 	/**
 	 * Sets the <em>type</em> of this entity.
-	 * This property is used to group multiple subclasses into one virtual entity type, 
+	 * This property is used to group multiple subclasses into one virtual entity type,
 	 * hiding some programatically needed complexity from the user
 	 *
 	 * @param string $type        	
 	 */
 	public function setEntityType($type);
-	
+
 	/**
 	 * Gets the <em>type</em> of this entity.
 	 * This property is used to group multiple subclasses into one virtual entity type,
 	 * hiding some programatically needed complexity from the user.
-	 * 
+	 *
 	 * If no entity type is set, the class will be used instead
 	 *
-	 * @param return $type
+	 * @param return $type        	
 	 */
 	public function getEntityType();
 
@@ -181,16 +188,15 @@ interface Document {
 	 * @param string $path        	
 	 */
 	public function setFile($path);
-	
+
 	/**
 	 * Gets the file to be indexed
 	 *
 	 * <strong>note:</strong> This may not supported by the underlying implementation
 	 *
-	 * @return string 
+	 * @return string
 	 */
 	public function getFile();
-	
 
 	/**
 	 * Gets the given field by its name
