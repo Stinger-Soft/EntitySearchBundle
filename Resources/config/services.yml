@@ -9,9 +9,6 @@ services:
   stinger_soft.entity_search.dummy_search_service:
     class: '%stinger_soft.entity_search.search_service.class%'
     
-  stinger_soft.entity_search.search_service: '@stinger_soft.entity_search.dummy_search_service'
-    
-    
   stinger_soft.entity_search.doctrine.listener:
     arguments: ["@stinger_soft.entity_search.entity_to_document_mapper", "@stinger_soft.entity_search.search_service"]
     class: '%stinger_soft.entity_search.doctrine.listener.class%'

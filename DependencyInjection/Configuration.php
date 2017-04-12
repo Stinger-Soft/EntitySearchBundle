@@ -33,6 +33,7 @@ class Configuration implements ConfigurationInterface {
 		$root->children()
 			->booleanNode('enable_indexing')->defaultFalse()->end()
 			->booleanNode('enable_search')->defaultFalse()->end()
+			->scalarNode('search_service')->defaultValue('stinger_soft.entity_search.dummy_search_service')->end()
 			->arrayNode('results')->addDefaultsIfNotSet()
 				->children()
 					->integerNode('max_choice_group_count')->defaultValue(10)->end()
