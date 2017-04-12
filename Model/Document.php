@@ -174,13 +174,23 @@ interface Document {
 	public function getEntityType();
 
 	/**
-	 * Adds a file to be indexed
+	 * Sets a file to be indexed
 	 *
 	 * <strong>note:</strong> This may not supported by the underlying implementation
 	 *
 	 * @param string $path        	
 	 */
 	public function setFile($path);
+	
+	/**
+	 * Gets the file to be indexed
+	 *
+	 * <strong>note:</strong> This may not supported by the underlying implementation
+	 *
+	 * @return string 
+	 */
+	public function getFile();
+	
 
 	/**
 	 * Gets the given field by its name

@@ -25,7 +25,7 @@ class ClearIndexCommand extends ContainerAwareCommand {
 	 * @see \Symfony\Component\Console\Command\Command::configure()
 	 */
 	protected function configure() {
-		$this->setName('stinger:search::clear')->setDescription('Clears the configured search index');
+		$this->setName('stinger:search:clear')->setDescription('Clears the configured search index');
 	}
 
 	/**

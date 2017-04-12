@@ -162,6 +162,16 @@ class DocumentAdapter implements Document {
 	public function setFile($path) {
 		$this->file = $path;
 	}
+	
+	/**
+	 *
+	 * {@inheritdoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getFile()
+	 */
+	public function getFile() {
+		return $this->file;
+	}
 
 	/**
 	 *
