@@ -33,7 +33,7 @@ class ResultSetAdapter implements ResultSet {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\ResultSet::getFacets()
 	 */
@@ -43,7 +43,7 @@ class ResultSetAdapter implements ResultSet {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\ResultSet::getResults()
 	 */
@@ -61,11 +61,21 @@ class ResultSetAdapter implements ResultSet {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\ResultSet::getExcerpt()
 	 */
 	public function getExcerpt(Document $document) {
+		return null;
+	}
+
+	/**
+	 *
+	 * {@inheritdoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Model\ResultSet::getCorrections()
+	 */
+	public function getCorrections() {
 		return null;
 	}
 }

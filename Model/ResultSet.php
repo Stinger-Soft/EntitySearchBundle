@@ -12,6 +12,7 @@
 namespace StingerSoft\EntitySearchBundle\Model;
 
 use StingerSoft\EntitySearchBundle\Model\Result\FacetSet;
+use StingerSoft\EntitySearchBundle\Model\Result\Correction;
 
 interface ResultSet {
 
@@ -36,4 +37,10 @@ interface ResultSet {
 	 * @param Document $document        	
 	 */
 	public function getExcerpt(Document $document);
+	
+	
+	/**
+	 * @return Correction[]
+	 */
+	public function getCorrections();
 }
