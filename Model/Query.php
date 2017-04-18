@@ -108,7 +108,6 @@ class Query {
 	 *        	The value of the property
 	 */
 	public function __set($name, $value) {
-		debug_print_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 10);
 		if(strrpos($name, 'facet_', -strlen($name)) !== false) {
 			$facetname = substr($name, 6);
 			
