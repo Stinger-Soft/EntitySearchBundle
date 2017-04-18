@@ -123,8 +123,12 @@ class SyncCommand extends ContainerAwareCommand {
 		}
 		
 		// Get all entities
-		$entities = $repository->findAll();
-		if(count($entities) == 0) {
+		$queryBuilder = $repository->createQueryBuilder('e');
+		$countQueryBuilder = $repository->createQueryBuilder('e')->select('COUNT(e)');
+		$entityCount = $countQueryBuilder->getQuery()->getSingleScalarResult();
+		
+		$iterableResult = $queryBuilder->getQuery()->iterate();
+		if($entityCount == 0) {
 			$output->writeln('<comment>No entities found for indexing</comment>');
 			return;
 		}
@@ -132,7 +136,8 @@ class SyncCommand extends ContainerAwareCommand {
 		$entitiesIndexed = 0;
 		
 		// Index each entity seperate
-		foreach($entities as $entity) {
+		foreach ($iterableResult as $row) {
+			$entity = $row[0];
 			if($this->getEntityToDocumentMapper()->isIndexable($entity)) {
 				$document = $this->getEntityToDocumentMapper()->createDocument($entityManager, $entity);
 				if($document === false) continue;
@@ -145,6 +150,7 @@ class SyncCommand extends ContainerAwareCommand {
 			
 		}
 		$entityManager->flush();
+		$entityManager->clear();
 		$output->writeln('<comment>Indexed ' . $entitiesIndexed . ' entities</comment>');
 	}
 

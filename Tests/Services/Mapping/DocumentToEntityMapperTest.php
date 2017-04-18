@@ -12,18 +12,16 @@
 namespace StingerSoft\EntitySearchBundle\Tests\Services;
 
 use Doctrine\Common\Persistence\AbstractManagerRegistry;
+use StingerSoft\EntitySearchBundle\Model\Document;
 use StingerSoft\EntitySearchBundle\Services\Mapping\DocumentToEntityMapper;
 use StingerSoft\EntitySearchBundle\Tests\AbstractORMTestCase;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Beer;
-use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Potato;
-use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Whiskey;
-use StingerSoft\EntitySearchBundle\Model\Document;
 
 class DocumentToEntityMapperTest extends AbstractORMTestCase {
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see PHPUnit_Framework_TestCase::setUp()
 	 */
@@ -53,27 +51,26 @@ class DocumentToEntityMapperTest extends AbstractORMTestCase {
 		
 		$document = $this->getMockBuilder(Document::class)->setMethods(array(
 			'getEntityClass',
-			'getEntityId',
+			'getEntityId' 
 		))->getMockForAbstractClass();
 		$document->expects($this->once())->method('getEntityClass')->will($this->returnValue(Beer::class));
-		$document->expects($this->once())->method('getEntityId')->will($this->returnValue($beer->getId()));
+		$document->method('getEntityId')->will($this->returnValue($beer->getId()));
 		
 		$eh = $this->getDocumentToEntityMapper();
 		
 		$entity = $eh->getEntity($document);
 		$this->assertEquals($beer, $entity);
-		
 	}
 
 	/**
 	 *
-	 * {@inheritDoc}
+	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Tests\AbstractTestCase::getUsedEntityFixtures()
 	 */
 	protected function getUsedEntityFixtures() {
 		return array(
-			Beer::class
+			Beer::class 
 		);
 	}
 }
