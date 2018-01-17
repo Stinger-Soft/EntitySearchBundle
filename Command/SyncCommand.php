@@ -127,7 +127,9 @@ class SyncCommand extends ContainerAwareCommand {
 		$countQueryBuilder = $repository->createQueryBuilder('e')->select('COUNT(e)');
 		$entityCount = $countQueryBuilder->getQuery()->getSingleScalarResult();
 		
-		$iterableResult = $queryBuilder->getQuery()->iterate();
+		$useBatch = !($entityManager->getConnection()->getDatabasePlatform() instanceof SQLServerPlatform);
+		
+		$iterableResult = $useBatch ? $queryBuilder->getQuery()->iterate() : $queryBuilder->getQuery()->getResult();
 		if($entityCount == 0) {
 			$output->writeln('<comment>No entities found for indexing</comment>');
 			return;
@@ -135,9 +137,9 @@ class SyncCommand extends ContainerAwareCommand {
 		
 		$entitiesIndexed = 0;
 		
-		// Index each entity seperate
+		// Index each entity separate
 		foreach ($iterableResult as $row) {
-			$entity = $row[0];
+			$entity = $useBatch ? $row[0] : $row;
 			if($this->getEntityToDocumentMapper()->isIndexable($entity)) {
 				$document = $this->getEntityToDocumentMapper()->createDocument($entityManager, $entity);
 				if($document === false) continue;
