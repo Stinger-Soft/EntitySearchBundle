@@ -9,17 +9,19 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace StingerSoft\EntitySearchBundle\Command;
 
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\DBAL\Platforms\SQLServerPlatform;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface;
+use StingerSoft\EntitySearchBundle\Services\SearchService;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Doctrine\Common\Persistence\ObjectManager;
-use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface;
-use StingerSoft\EntitySearchBundle\Services\SearchService;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping\ClassMetadata;
 
 class SyncCommand extends ContainerAwareCommand {
 
@@ -71,28 +73,28 @@ class SyncCommand extends ContainerAwareCommand {
 			$root = $this->getContainer()->get('kernel')->getRootDir();
 			self::$defaultUploadPath = $root . '/../web/uploads';
 		}
-		
+
 		// Get the entity argument
 		$entity = $input->getArgument('entity');
-		
+
 		if($entity == 'all') {
 			/**
 			 * @var EntityManager $entityManager
 			 */
 			$entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
-			
+
 			$meta = $entityManager->getMetadataFactory()->getAllMetadata();
-			
+
 			/**
 			 * @var EntityToDocumentMapperInterface $mapper
 			 */
 			$mapper = $this->getContainer()->get(EntityToDocumentMapperInterface::SERVICE_ID);
-			
+
 			/**
 			 * @var ClassMetadata $m
 			 */
 			foreach($meta as $m) {
-				
+
 				if($m->getReflectionClass()->isAbstract() || $m->getReflectionClass()->isInterface()) {
 					continue;
 				}
@@ -121,24 +123,24 @@ class SyncCommand extends ContainerAwareCommand {
 			$output->writeln(sprintf('<error>No repository found for "%s", check your input</error>', $entity));
 			return;
 		}
-		
+
 		// Get all entities
 		$queryBuilder = $repository->createQueryBuilder('e');
 		$countQueryBuilder = $repository->createQueryBuilder('e')->select('COUNT(e)');
 		$entityCount = $countQueryBuilder->getQuery()->getSingleScalarResult();
-		
+
 		$useBatch = !($entityManager->getConnection()->getDatabasePlatform() instanceof SQLServerPlatform);
-		
+
 		$iterableResult = $useBatch ? $queryBuilder->getQuery()->iterate() : $queryBuilder->getQuery()->getResult();
 		if($entityCount == 0) {
 			$output->writeln('<comment>No entities found for indexing</comment>');
 			return;
 		}
-		
+
 		$entitiesIndexed = 0;
-		
+
 		// Index each entity separate
-		foreach ($iterableResult as $row) {
+		foreach($iterableResult as $row) {
 			$entity = $useBatch ? $row[0] : $row;
 			if($this->getEntityToDocumentMapper()->isIndexable($entity)) {
 				$document = $this->getEntityToDocumentMapper()->createDocument($entityManager, $entity);
@@ -149,7 +151,7 @@ class SyncCommand extends ContainerAwareCommand {
 					$entityManager->flush();
 				}
 			}
-			
+
 		}
 		$entityManager->flush();
 		$entityManager->clear();

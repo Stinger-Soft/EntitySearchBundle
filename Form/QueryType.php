@@ -55,10 +55,10 @@ class QueryType extends AbstractType {
 		
 		if($usedFacets && !$result) {
 			$data = array();
-			foreach($usedFacets as $facetType) {
+			foreach($usedFacets as $facetType => $facetTypeOptions) {
 				$preferredChoices = isset($preferredFilterChoices[$facetType]) ? $preferredFilterChoices[$facetType] : array();
 				$i = 0;
-				$builder->add('facet_' . $facetType, FacetType::class, array(
+				$builder->add('facet_' . $facetType, FacetType::class, array_merge(array(
 					'label' => 'stinger_soft_entity_search.forms.query.' . $facetType . '.label',
 					'multiple' => true,
 					'expanded' => true,
@@ -66,7 +66,7 @@ class QueryType extends AbstractType {
 					'preferred_choices' => function ($val) use ($preferredChoices, $data, $facetType, $maxChoiceGroupCount, &$i) {
 						return $i++ < $maxChoiceGroupCount || $maxChoiceGroupCount == 0 || in_array($val, $preferredChoices) || (isset($data['facet_' . $facetType]) && in_array($val, $data['facet_' . $facetType]));
 					} 
-				));
+				), $facetTypeOptions));
 				unset($i);
 			}
 		}
@@ -108,12 +108,14 @@ class QueryType extends AbstractType {
 		$preferredFilterChoices = $options['preferred_filter_choices'];
 		$maxChoiceGroupCount = $options['max_choice_group_count'];
 		$selectedFacets = $data->getFacets();
+		$usedFacets = $options['used_facets'];
 		
 		foreach($facets->getFacets() as $facetType => $facetValues) {
 			$preferredChoices = isset($preferredFilterChoices[$facetType]) ? $preferredFilterChoices[$facetType] : array();
 			
 			$i = 0;
-			$builder->add('facet_' . $facetType, FacetType::class, array(
+			$facetTypeOptions = $usedFacets[$facetType];
+			$builder->add('facet_' . $facetType, FacetType::class, array_merge(array(
 				'label' => 'stinger_soft_entity_search.forms.query.' . $facetType . '.label',
 				'multiple' => true,
 				'expanded' => true,
@@ -122,7 +124,7 @@ class QueryType extends AbstractType {
 				'preferred_choices' => function ($val) use ($preferredChoices, $selectedFacets, $facetType, $maxChoiceGroupCount, &$i) {
 					return $i++ < $maxChoiceGroupCount || $maxChoiceGroupCount == 0 || in_array($val, $preferredChoices) || (isset($selectedFacets[$facetType]) && in_array($val, $selectedFacets[$facetType]));
 				} 
-			));
+			), $facetTypeOptions));
 			unset($i);
 		}
 	}
@@ -165,7 +167,7 @@ class QueryType extends AbstractType {
 	public function configureOptions(OptionsResolver $resolver) {
 		$resolver->setDefault('data_class', Query::class);
 		$resolver->setDefault('translation_domain', 'StingerSoftEntitySearchBundle');
-		$resolver->setDefault('used_facets', array());
+		$resolver->setRequired('used_facets');
 		$resolver->setDefault('result', null);
 		
 		$resolver->setRequired('preferred_filter_choices');

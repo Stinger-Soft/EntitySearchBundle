@@ -5,3 +5,13 @@ stinger_soft_entity_search:
         label: Filtern
       clear: 
         label: Zurücksetzen
+      type:
+        label: Entität
+      author.label: Ersteller
+      editor.label: Bearbeiter
+  results:
+    title: Stinger Soft Suche
+    result_list:
+      title: Ergebnisse
+    result_filter:
+      title: Filter
