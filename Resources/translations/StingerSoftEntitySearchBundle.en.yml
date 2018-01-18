@@ -8,7 +8,7 @@ stinger_soft_entity_search:
       type:
         label: Entity type
       author.label: Author
-      editor.label: Editor
+      editors.label: Editors
   results:
     title: Stinger Soft Search
     result_list:

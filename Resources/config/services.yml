@@ -4,7 +4,11 @@ parameters:
   stinger_soft.entity_search.search_service.class: StingerSoft\EntitySearchBundle\Services\DummySearchService
   stinger_soft.entity_search.document_to_entity_mapper.class: StingerSoft\EntitySearchBundle\Services\Mapping\DocumentToEntityMapper
   stinger_soft.entity_search.forms.query_type.class: StingerSoft\EntitySearchBundle\Form\QueryType
-  
+
+  stinger_soft_entity_search.facets.author.class: 'StingerSoft\EntitySearchBundle\Services\Facet\AuthorFacet'
+  stinger_soft_entity_search.facets.editors.class: 'StingerSoft\EntitySearchBundle\Services\Facet\EditorsFacet'
+  stinger_soft_entity_search.facets.type.class: 'StingerSoft\EntitySearchBundle\Services\Facet\TypeFacet'
+
 services:
   stinger_soft.entity_search.dummy_search_service:
     class: '%stinger_soft.entity_search.search_service.class%'
@@ -27,3 +31,12 @@ services:
     class: "%stinger_soft.entity_search.forms.query_type.class%"
     tags:
       - { name: form.type }
+
+  stinger_soft_entity_search.facets.author:
+    class: "%stinger_soft_entity_search.facets.author.class%"
+
+  stinger_soft_entity_search.facets.editors:
+      class: "%stinger_soft_entity_search.facets.editors.class%"
+
+  stinger_soft_entity_search.facets.type:
+      class: "%stinger_soft_entity_search.facets.type.class%"
