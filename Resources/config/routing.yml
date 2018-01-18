@@ -1,0 +1,13 @@
+stinger_soft_entity_search_search:
+    path:  /search.html
+    defaults: { _controller: "StingerSoftEntitySearchBundle:Search:search" }
+
+stinger_soft_entity_search_autocomplete:
+    path:  /autocomplete.json
+    defaults: { _controller: "StingerSoftEntitySearchBundle:Search:autocomplete" }
+    options:
+      expose: true
+
+stinger_soft_entity_search_help_basic:
+    path: /search/help.html
+                                                                                    defaults: { _controller: "StingerSoftEntitySearchBundle:Search:onlineHelp" }

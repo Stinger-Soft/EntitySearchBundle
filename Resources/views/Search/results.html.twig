@@ -1,0 +1,98 @@
+{% extends 'StingerSoftEntitySearchBundle:Search:bootstrap_skeleton.html.twig' %}
+{% trans_default_domain 'StingerSoftEntitySearchBundle' %}
+
+{% block title %}{{ 'stinger_soft_entity_search.results.title'|trans }}{% endblock %}
+
+{% block body %}
+	<h1>{{ 'stinger_soft_entity_search.results.title'|trans }}</h1>
+	{% block before_results %}
+		{{ form_start(facetForm, {'attr': {'action': path('stinger_soft_entity_search_search') }}) }}
+	{% endblock before_results %}
+	<div class="row">
+		<div class="col-md-9">
+		{% block results_column %}
+			<div class="panel panel-default">
+				<div class="panel-heading">{{ 'stinger_soft_entity_search.results.result_list.title'|trans }}</div>
+				<div class="panel-body">
+					<div class="pull-right">
+					{{ form_widget(facetForm.searchTerm) }}
+					</div>
+					<div class="clearfix "></div>
+					<div class="results clearfix ">
+					{% for result in results %}
+						{% set fields = result.fields|keys %}
+						{% set title = result.title %}
+						{% if title is not iterable %}
+							{{ result.addMultiValueField('title', title) }}
+						{% endif %}
+						{% if 'author' in fields and result.author is defined and result.author is iterable %}
+							{{ result.addField('author', result.author[0]) }}
+						{% endif %}
+						{% set entity = mapper.getEntity(result) %}
+						{% set attachedentity = entity %}
+						{% set highlightedDoc = {'content': resultSet.getExcerpt(result)} %}
+						<div class="result" style="border: 1px solid grey; margin-top: 1rem;">
+							<div class="data">
+								<h5>
+									{%- block result_url -%}
+										{%- if 'url' in fields and result.url -%}
+											{%- if result.url starts with 'http' -%}
+											<a href="{{ result.url }}">
+											{%- else -%}
+											<a href="{{ asset(result.url) }}">
+											{%- endif -%}
+										{%- endif -%}
+									{%- endblock -%}
+									{%- block search_title -%}{{ result.title[0]|default('no_title') }}{%- endblock -%}
+										{%- block result_url_end -%}
+											{%- if ('url' in fields and result.url) -%}
+												</a>
+											{%- endif -%}
+										{%- endblock -%}
+										{% block search_title_alternatives %}
+											{% if 'title' in fields %}
+												<small>{{ result.title[1:]|join(', ') }}</small>
+											{% endif %}
+									{% endblock %}
+								</h5>
+								{% block excerpt %}
+									<div class="excerpt">
+										{% for field, highlight in highlightedDoc if field=='content' %}
+											<cite>{{ highlight|join('...')|raw }}</cite>
+										{% else %}
+											{% block excerpt_alternative %}
+											{% endblock %}
+										{% endfor %}
+									</div>
+								{% endblock %}
+							</div>
+						</div>
+					{% endfor %}
+						{{ knp_pagination_render(results)|raw }}
+					</div>
+				</div>
+			</div>
+		{% endblock %}
+		</div>
+		<div class="col-md-3">
+		{% block filter_column %}
+			<div class="panel panel-default">
+				<div class="panel-heading">{{ 'stinger_soft_entity_search.results.result_filter.title'|trans }}</div>
+				<div class="panel-body">
+					{% for child in facetForm %}
+						{% if 'facet' in child.vars.block_prefixes %}
+							{% form_theme child 'StingerSoftEntitySearchBundle:Search:filter_widget.html.twig' %}
+							{{ form_widget(child) }}
+						{% endif %}
+					{% endfor %}
+					{{ form_widget(facetForm.filter) }}
+					{{ form_widget(facetForm.clear) }}
+				</div>
+			</div>
+		{% endblock %}
+		</div>
+		{% block after_results %}
+			{{ form_end(facetForm) }}
+		{% endblock after_results %}
+	</div>
+{% endblock %}
