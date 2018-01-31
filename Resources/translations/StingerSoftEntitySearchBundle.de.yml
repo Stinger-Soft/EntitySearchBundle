@@ -9,6 +9,7 @@ stinger_soft_entity_search:
         label: Entität
       author.label: Ersteller
       editors.label: Bearbeiter
+      filetype.label: Dateityp
   results:
     title: Stinger Soft Suche
     result_list:

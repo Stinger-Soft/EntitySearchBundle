@@ -8,6 +8,7 @@ parameters:
   stinger_soft_entity_search.facets.author.class: 'StingerSoft\EntitySearchBundle\Services\Facet\AuthorFacet'
   stinger_soft_entity_search.facets.editors.class: 'StingerSoft\EntitySearchBundle\Services\Facet\EditorsFacet'
   stinger_soft_entity_search.facets.type.class: 'StingerSoft\EntitySearchBundle\Services\Facet\TypeFacet'
+  stinger_soft_entity_search.facets.filetype.class: 'StingerSoft\EntitySearchBundle\Services\Facet\FileTypeFacet'
 
 services:
   stinger_soft.entity_search.dummy_search_service:
@@ -40,3 +41,6 @@ services:
 
   stinger_soft_entity_search.facets.type:
       class: "%stinger_soft_entity_search.facets.type.class%"
+
+  stinger_soft_entity_search.facets.filetype:
+      class: "%stinger_soft_entity_search.facets.filetype.class%"

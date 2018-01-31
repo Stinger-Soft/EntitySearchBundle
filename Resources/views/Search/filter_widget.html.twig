@@ -1,9 +1,24 @@
 {% trans_default_domain "PecSearchBundle" %}
 {% block facet_widget %}
-	<h4 class="bold uppercase">{{ (form.vars.translation_domain is same as(false)) ?  label : (label|trans({}, form.vars.translation_domain)) }}</h4>
-	<div {% for attrname, attrvalue in form.vars.attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %} class="checkbox-list" style="margin-bottom: 4rem;">
-	{% if form.vars.preferred_choices and form.vars.preferred_choices|length > 0 %}
-		{% for itemId, child in form.vars.preferred_choices %}
+	{% if (form.vars.preferred_choices and form.vars.preferred_choices|length > 0) or form.vars.choices|length > 0%}
+		<h4 class="bold uppercase">{{ (form.vars.translation_domain is same as(false)) ?  label : (label|trans({}, form.vars.translation_domain)) }}</h4>
+		<div {% for attrname, attrvalue in form.vars.attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %} class="checkbox-list" style="margin-bottom: 4rem;">
+		{% if form.vars.preferred_choices and form.vars.preferred_choices|length > 0 %}
+			{% for itemId, child in form.vars.preferred_choices %}
+				{% set item = form.children[itemId] %}
+				<div class="checkbox">
+					<label>
+						{{ form_widget(item) }} {{ item.vars.label|raw }}
+					</label>
+				</div>
+			{% endfor %}
+		{% endif %}
+		{% if form.vars.choices|length > 0 %}
+			<div class="more_options">
+				<a href="javascript:void(0);">{{ 'pec_search.search.filter.more'|trans }}</a>
+				<div class="more_options_container">
+		{% endif %}
+		{% for itemId, child in form.vars.choices %}
 			{% set item = form.children[itemId] %}
 			<div class="checkbox">
 				<label>
@@ -11,23 +26,12 @@
 				</label>
 			</div>
 		{% endfor %}
-	{% endif %}
-	{% if form.vars.choices|length > 0 %}
-		<div class="more_options">
-			<a href="javascript:void(0);">{{ 'pec_search.search.filter.more'|trans }}</a>
-			<div class="more_options_container mt-checkbox-list">
-	{% endif %}
-	{% for itemId, child in form.vars.choices %}
-		{% set item = form.children[itemId] %}
-		<div class="checkbox">
-			<label>
-				{{ form_widget(item) }} {{ item.vars.label|raw }}
-			</label>
-		</div>
-	{% endfor %}
-	{% if form.vars.choices|length > 0 %}
+		{% if form.vars.choices|length > 0 %}
+				</div>
 			</div>
+		{% endif %}
 		</div>
+	{% else %}
+		{% do form.setRendered()  %}
 	{% endif %}
-	</div>
 {% endblock %}
