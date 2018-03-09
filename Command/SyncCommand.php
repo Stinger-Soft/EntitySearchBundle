@@ -145,8 +145,12 @@ class SyncCommand extends ContainerAwareCommand {
 			if($this->getEntityToDocumentMapper()->isIndexable($entity)) {
 				$document = $this->getEntityToDocumentMapper()->createDocument($entityManager, $entity);
 				if($document === false) continue;
-				$this->getSearchService($entityManager)->saveDocument($document);
-				$entitiesIndexed++;
+				try {
+					$this->getSearchService($entityManager)->saveDocument($document);
+					$entitiesIndexed++;
+				} catch(\Exception $e) {
+					$output->writeln('<error>Failed to index entity with ID ' . $document->getEntityId() . '</error>');
+				}
 				if($entitiesIndexed % 50 == 0) {
 					$entityManager->flush();
 				}
