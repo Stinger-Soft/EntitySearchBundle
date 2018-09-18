@@ -16,3 +16,5 @@ stinger_soft_entity_search:
       title: Results
     result_filter:
       title: Filter
+  error:
+    title: An error occured!

@@ -1,0 +1,9 @@
+{% extends 'StingerSoftEntitySearchBundle:Search:bootstrap_skeleton.html.twig' %}
+{% trans_default_domain 'StingerSoftEntitySearchBundle' %}
+
+{% block title %}{{ 'stinger_soft_entity_search.results.title'|trans }}{% endblock %}
+
+{% block body %}
+	<h1>{{ 'stinger_soft_entity_search.error.title'|trans }}</h1>
+	<p>{{ error }}</p>
+{% endblock %}

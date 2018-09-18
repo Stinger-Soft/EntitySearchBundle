@@ -56,13 +56,13 @@ class QueryType extends AbstractType {
 		if($usedFacets && !$result) {
 			$data = array();
 			foreach($usedFacets as $facetType => $facetTypeOptions) {
+				$facetTypeOptions = is_array($facetTypeOptions) ? $facetTypeOptions : array();
 				$preferredChoices = isset($preferredFilterChoices[$facetType]) ? $preferredFilterChoices[$facetType] : array();
 				$i = 0;
 				$builder->add('facet_' . $facetType, FacetType::class, array_merge(array(
 					'label' => 'stinger_soft_entity_search.forms.query.' . $facetType . '.label',
 					'multiple' => true,
 					'expanded' => true,
-					'allow_extra_fields' => true,
 					'preferred_choices' => function ($val) use ($preferredChoices, $data, $facetType, $maxChoiceGroupCount, &$i) {
 						return $i++ < $maxChoiceGroupCount || $maxChoiceGroupCount == 0 || in_array($val, $preferredChoices) || (isset($data['facet_' . $facetType]) && in_array($val, $data['facet_' . $facetType]));
 					} 
@@ -114,13 +114,12 @@ class QueryType extends AbstractType {
 			$preferredChoices = isset($preferredFilterChoices[$facetType]) ? $preferredFilterChoices[$facetType] : array();
 			
 			$i = 0;
-			$facetTypeOptions = $usedFacets[$facetType];
+			$facetTypeOptions = isset($usedFacets[$facetType]) ? $usedFacets[$facetType] : array();
 			$formatter = isset($options['facet_formatter'][$facetType]) ? $options['facet_formatter'][$facetType] : null;
 			$builder->add('facet_' . $facetType, FacetType::class, array_merge(array(
 				'label' => 'stinger_soft_entity_search.forms.query.' . $facetType . '.label',
 				'multiple' => true,
 				'expanded' => true,
-				'allow_extra_fields' => true,
 				'choices' => $this->generateFacetChoices($facetType, $facetValues, isset($selectedFacets[$facetType]) ? $selectedFacets[$facetType] : array(), $formatter),
 				'preferred_choices' => function ($val) use ($preferredChoices, $selectedFacets, $facetType, $maxChoiceGroupCount, &$i) {
 					return $i++ < $maxChoiceGroupCount || $maxChoiceGroupCount == 0 || in_array($val, $preferredChoices) || (isset($selectedFacets[$facetType]) && in_array($val, $selectedFacets[$facetType]));
@@ -178,5 +177,6 @@ class QueryType extends AbstractType {
 		$resolver->setDefault('max_choice_group_count', isset($this->defaultOptions['max_choice_group_count']) ? $this->defaultOptions['max_choice_group_count'] : 10);
 		
 		$resolver->setDefault('facet_formatter', null);
+		$resolver->setDefault('allow_extra_fields', true);
 	}
 }

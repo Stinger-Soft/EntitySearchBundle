@@ -11,7 +11,7 @@
  */
 namespace StingerSoft\EntitySearchBundle\Tests;
 
-abstract class AbstractTestCase extends \PHPUnit_Framework_TestCase {
+abstract class AbstractTestCase extends \PHPUnit\Framework\TestCase {
 
 	/**
 	 * Get a list of used fixture classes

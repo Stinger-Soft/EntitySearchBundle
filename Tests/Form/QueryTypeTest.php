@@ -27,9 +27,11 @@ use Symfony\Component\Form\FormBuilder;
 class QueryTypeTest extends TypeTestCase {
 
 	public function testInitialCall() {
-		$form = $this->factory->create(QueryType::class);
-		
 		$query = new Query('Hemelinger');
+		
+		$form = $this->factory->create(QueryType::class, $query, array(
+			'used_facets' => array() 
+		));
 		
 		$formData = array(
 			'searchTerm' => 'Hemelinger' 
@@ -155,6 +157,7 @@ class QueryTypeTest extends TypeTestCase {
 		
 		$this->dispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')->getMock();
 		$this->builder = new FormBuilder(null, null, $this->dispatcher, $this->factory);
+		parent::setUp();
 	}
 
 	/**

@@ -15,7 +15,7 @@ use StingerSoft\EntitySearchBundle\DependencyInjection\StingerSoftEntitySearchEx
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Whiskey;
 
-class StingerSoftEntitySearchExtensionTest extends \PHPUnit_Framework_TestCase {
+class StingerSoftEntitySearchExtensionTest extends \PHPUnit\Framework\TestCase {
 
 	public static $mockConfiguration = array('stinger_soft.entity_search' => array(
 			'types' => array(

@@ -1,15 +1,18 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: FlorianMeyer
- * Date: 18.01.2018
- * Time: 13:04
+
+/*
+ * This file is part of the Stinger Entity Search package.
+ *
+ * (c) Oliver Kotte <oliver.kotte@stinger-soft.net>
+ * (c) Florian Meyer <florian.meyer@stinger-soft.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace StingerSoft\EntitySearchBundle\Controller;
 
 use StingerSoft\EntitySearchBundle\Form\QueryType;
-use StingerSoft\EntitySearchBundle\Model\Document;
 use StingerSoft\EntitySearchBundle\Model\PaginatableResultSet;
 use StingerSoft\EntitySearchBundle\Model\Query;
 use StingerSoft\EntitySearchBundle\Services\Facet\FacetServiceInterface;
@@ -29,12 +32,9 @@ trait SearchControllerTrait {
 	 */
 	private $searchService;
 
-
 	private $availableFacets;
 
 	private $facetFormatter;
-
-
 
 	public function searchAction(Request $request) {
 		if($request->query->get('term', false) !== false) {
@@ -49,7 +49,7 @@ trait SearchControllerTrait {
 		$query = new Query($term, $facets, array_keys($availableFacets));
 
 		$facetForm = $this->createForm(QueryType::class, $query, array(
-			'used_facets' =>  $this->getConfiguredUsedFacets($query->getUsedFacets())
+			'used_facets' => $this->getConfiguredUsedFacets($query->getUsedFacets())
 		));
 
 		$facetForm->handleRequest($request);
@@ -60,29 +60,38 @@ trait SearchControllerTrait {
 			$this->setSearchTerm($request->getSession(), $query->getSearchTerm());
 			$this->setSearchFacets($request->getSession(), $query->getFacets());
 		}
-		$result = $this->getSearchService()->search($query);
 
-		$facetForm = $this->createForm(QueryType::class, $query, array(
-			'result'          => $result,
-			'used_facets'     => $this->getConfiguredUsedFacets($query->getUsedFacets()),
-			'facet_formatter' => $this->getFacetFormatter()
-		));
+		try {
+			$result = $this->getSearchService()->search($query);
 
-		$page = $request->query->get('page', 1);
-		$results = array();
-		if($result instanceof PaginatableResultSet) {
-			$results = $result->paginate($page, $this->getResultsPerPage());
-		} else {
-			$results = $result->getResults(($page - 1) * $this->getResultsPerPage(), $this->getResultsPerPage());
+			$facetForm = $this->createForm(QueryType::class, $query, array(
+				'result'          => $result,
+				'used_facets'     => $this->getConfiguredUsedFacets($query->getUsedFacets()),
+				'facet_formatter' => $this->getFacetFormatter()
+			));
+
+			$page = $request->query->get('page', 1);
+			$results = array();
+			if($result instanceof PaginatableResultSet) {
+				$results = $result->paginate($page, $this->getResultsPerPage());
+			} else {
+				$results = $result->getResults(($page - 1) * $this->getResultsPerPage(), $this->getResultsPerPage());
+			}
+
+			return $this->render($this->getTemplate(), array(
+				'results'   => $results,
+				'resultSet' => $result,
+				'term'      => $query->getSearchTerm(),
+				'mapper'    => $this->get(DocumentToEntityMapperInterface::SERVICE_ID),
+				'facetForm' => $facetForm->createView()
+			));
+		} catch(\Exception $exception) {
+
+			return $this->render($this->getErrorTemplate(), array(
+				'error' => $exception->getMessage(),
+				'term'  => $query->getSearchTerm()
+			));
 		}
-
-		return $this->render($this->getTemplate(), array(
-			'results'   => $results,
-			'resultSet' => $result,
-			'term'      => $query->getSearchTerm(),
-			'mapper'    => $this->get(DocumentToEntityMapperInterface::SERVICE_ID),
-			'facetForm' => $facetForm->createView()
-		));
 	}
 
 	protected function getConfiguredUsedFacets(array $queryUsedFacets) {
@@ -125,6 +134,10 @@ trait SearchControllerTrait {
 		return 'StingerSoftEntitySearchBundle:Search:results.html.twig';
 	}
 
+	protected function getErrorTemplate() {
+		return 'StingerSoftEntitySearchBundle:Search:error.html.twig';
+	}
+
 	protected function getFacetFormatter() {
 		$this->initFacets();
 		return $this->facetFormatter;
@@ -149,7 +162,6 @@ trait SearchControllerTrait {
 		$this->initFacets();
 		return $this->availableFacets;
 	}
-
 
 	protected function initFacets() {
 		if(!$this->availableFacets) {
