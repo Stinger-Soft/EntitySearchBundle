@@ -12,6 +12,7 @@
 
 namespace StingerSoft\EntitySearchBundle\Controller;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 trait AbstractControllerTrait {
