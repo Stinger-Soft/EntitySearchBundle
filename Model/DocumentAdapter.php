@@ -87,7 +87,7 @@ class DocumentAdapter implements Document {
 			$this->fields[$fieldName] = array(
 				$value
 			);
-		} else if(!in_array($value, $this->fields[$fieldName])) {
+		} else if(!\in_array($value, $this->fields[$fieldName])) {
 			$this->fields[$fieldName][] = $value;
 		}
 	}
