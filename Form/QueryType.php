@@ -19,6 +19,7 @@ use StingerSoft\EntitySearchBundle\Model\ResultSet;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SearchType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -135,16 +136,16 @@ class QueryType extends AbstractType {
 		$usedFacets = $options['used_facets'];
 
 		foreach($facets->getFacets() as $facetType => $facetValues) {
-			$preferredChoices = isset($preferredFilterChoices[$facetType]) ? $preferredFilterChoices[$facetType] : array();
+			$preferredChoices = $preferredFilterChoices[$facetType] ?? array();
 
 			$i = 0;
-			$facetTypeOptions = isset($usedFacets[$facetType]) ? $usedFacets[$facetType] : array();
-			$formatter = isset($options['facet_formatter'][$facetType]) ? $options['facet_formatter'][$facetType] : null;
+			$facetTypeOptions = $usedFacets[$facetType] ?? array();
+			$formatter = $options['facet_formatter'][$facetType] ?? null;
 			$builder->add('facet_' . $facetType, FacetType::class, array_merge(array(
 				'label'             => 'stinger_soft_entity_search.forms.query.' . $facetType . '.label',
 				'multiple'          => true,
 				'expanded'          => true,
-				'choices'           => $this->generateFacetChoices($facetType, $facetValues, isset($selectedFacets[$facetType]) ? $selectedFacets[$facetType] : array(), $formatter),
+				'choices'           => $this->generateFacetChoices($facetType, $facetValues, $selectedFacets[$facetType] ?? array(), $formatter),
 				'preferred_choices' => function($val) use ($preferredChoices, $selectedFacets, $facetType, $maxChoiceGroupCount, &$i) {
 					return $i++ < $maxChoiceGroupCount || $maxChoiceGroupCount == 0 || in_array($val, $preferredChoices) || (isset($selectedFacets[$facetType]) && in_array($val, $selectedFacets[$facetType]));
 				}
@@ -169,7 +170,7 @@ class QueryType extends AbstractType {
 			$choices[$this->formatFacet($formatter, $facetType, $facet, $value, $count)] = $facet;
 		}
 		foreach($selectedFacets as $facet) {
-			if(isset($facets[$facet])) {
+			if(!isset($facets[$facet])) {
 				continue;
 			}
 			$value = $facets[$facet]['value'];

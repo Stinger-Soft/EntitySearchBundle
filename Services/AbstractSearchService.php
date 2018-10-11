@@ -18,7 +18,6 @@ use Doctrine\Common\Util\ClassUtils;
 use Psr\Container\ContainerInterface;
 use StingerSoft\EntitySearchBundle\Model\Document;
 use StingerSoft\EntitySearchBundle\Model\DocumentAdapter;
-use StingerSoft\EntitySearchBundle\Model\SearchableEntity;
 use StingerSoft\EntitySearchBundle\Services\Facet\FacetServiceInterface;
 
 abstract class AbstractSearchService implements SearchService {

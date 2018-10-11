@@ -71,7 +71,7 @@ class Query {
 	 *
 	 * @return string[]
 	 */
-	public function getUsedFacets(): array {
+	public function getUsedFacets(): ?array {
 		return $this->usedFacets;
 	}
 

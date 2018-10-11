@@ -158,6 +158,7 @@ class DoctrineListener implements EventSubscriber {
 		$document = $this->getEntityToDocumentMapper()->createDocument($manager, $entity);
 		if($document !== null) {
 			$this->getSearchService()->saveDocument($document);
+			$this->needsFlush = true;
 		}
 	}
 
@@ -169,6 +170,7 @@ class DoctrineListener implements EventSubscriber {
 		$document = $this->getEntityToDocumentMapper()->createDocument($manager, $entity);
 		if($document !== null) {
 			$this->getSearchService()->removeDocument($document);
+			$this->needsFlush = true;
 		}
 	}
 }
