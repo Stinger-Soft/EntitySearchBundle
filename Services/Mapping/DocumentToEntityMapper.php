@@ -41,6 +41,10 @@ class DocumentToEntityMapper implements DocumentToEntityMapperInterface {
 		if(!$document->getEntityId()) {
 			return null;
 		}
-		return $this->managerRegistry->getManagerForClass($clazz)->getRepository($clazz)->find($document->getEntityId());
+		$manager = $this->managerRegistry->getManagerForClass($clazz);
+		if($manager === null) {
+			return null;
+		}
+		return $manager->getRepository($clazz)->find($document->getEntityId());
 	}
 }
