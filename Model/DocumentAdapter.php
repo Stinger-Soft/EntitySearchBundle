@@ -53,7 +53,7 @@ class DocumentAdapter implements Document {
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::addField()
 	 */
 	public function addField(string $fieldName, $value): void {
-		$this->fields[$fieldname] = $value;
+		$this->fields[$fieldName] = $value;
 	}
 
 	/**
@@ -73,7 +73,7 @@ class DocumentAdapter implements Document {
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getFieldValue()
 	 */
 	public function getFieldValue($fieldName) {
-		return $this->fields[$field] ?? null;
+		return $this->fields[$fieldName] ?? null;
 	}
 
 	/**
@@ -83,12 +83,12 @@ class DocumentAdapter implements Document {
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::addMultiValueField()
 	 */
 	public function addMultiValueField(string $fieldName, $value)  : void{
-		if(!array_key_exists($field, $this->fields)) {
-			$this->fields[$field] = array(
+		if(!array_key_exists($fieldName, $this->fields)) {
+			$this->fields[$fieldName] = array(
 				$value
 			);
-		} else if(!in_array($value, $this->fields[$field])) {
-			$this->fields[$field][] = $value;
+		} else if(!in_array($value, $this->fields[$fieldName])) {
+			$this->fields[$fieldName][] = $value;
 		}
 	}
 

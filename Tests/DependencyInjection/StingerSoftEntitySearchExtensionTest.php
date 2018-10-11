@@ -12,6 +12,9 @@
 namespace StingerSoft\EntitySearchBundle\Tests\DependencyInjection;
 
 use StingerSoft\EntitySearchBundle\DependencyInjection\StingerSoftEntitySearchExtension;
+use StingerSoft\EntitySearchBundle\Services\DoctrineListener;
+use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface;
+use StingerSoft\EntitySearchBundle\Services\SearchService;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Whiskey;
 
@@ -37,10 +40,10 @@ class StingerSoftEntitySearchExtensionTest extends \PHPUnit\Framework\TestCase {
 		$container = new ContainerBuilder();
 		$loader = new StingerSoftEntitySearchExtension();
 		$loader->load(self::$mockConfiguration, $container);
-		
-		$this->assertArrayHasKey('stinger_soft.entity_search.search_service', $container->getAliases());
+
+		$this->assertArrayHasKey(SearchService::class, $container->getAliases());
 		$this->assertArrayHasKey('stinger_soft.entity_search.dummy_search_service', $container->getDefinitions());
-		$this->assertArrayHasKey('stinger_soft.entity_search.doctrine.listener', $container->getDefinitions());
-		$this->assertArrayHasKey('stinger_soft.entity_search.entity_to_document_mapper', $container->getDefinitions());
+		$this->assertArrayHasKey(DoctrineListener::class, $container->getDefinitions());
+		$this->assertArrayHasKey(EntityToDocumentMapperInterface::class, $container->getDefinitions());
 	}
 }

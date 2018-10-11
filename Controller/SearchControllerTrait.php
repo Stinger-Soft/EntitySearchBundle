@@ -69,7 +69,7 @@ trait SearchControllerTrait {
 			));
 
 			$page = $request->query->get('page', 1);
-			$results = array();
+			$results = null;
 			if($result instanceof PaginatableResultSet) {
 				$results = $result->paginate($page, $this->getResultsPerPage());
 			} else {

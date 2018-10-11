@@ -107,7 +107,7 @@ class DummySearchService extends AbstractSearchService {
 		foreach(array_keys($hits) as $docId) {
 			$doc = $this->index[$docId];
 			$facets->addFacetValue(FacetSet::FACET_ENTITY_TYPE, $doc->getEntityClass());
-			$facets->addFacetValue(FacetSet::FACET_AUTHOR, $doc->getFieldValue(Document::FIELD_AUTHOR));
+			$facets->addFacetValue(FacetSet::FACET_AUTHOR, (string)$doc->getFieldValue(Document::FIELD_AUTHOR));
 			$results[] = $doc;
 		}
 

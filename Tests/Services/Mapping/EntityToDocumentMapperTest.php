@@ -36,11 +36,10 @@ class EntityToDocumentMapperTest extends AbstractORMTestCase {
 
 	/**
 	 *
-	 * @return \StingerSoft\EntitySearchBundle\Services\EntityToDocumentMapper
+	 * @return \StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapper
 	 */
 	protected function getEntityToDocumentMapper() {
-		$eh = new EntityToDocumentMapper(new DummySearchService(), StingerSoftEntitySearchExtensionTest::$mockConfiguration['stinger_soft.entity_search']['types']);
-		return $eh;
+		return new EntityToDocumentMapper($this->getDummySearchService(), StingerSoftEntitySearchExtensionTest::$mockConfiguration['stinger_soft.entity_search']['types']);
 	}
 
 	/**
@@ -57,7 +56,7 @@ class EntityToDocumentMapperTest extends AbstractORMTestCase {
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function testFuckedUpConfigurationWithoutMapping() {
-		$searchService = $this->getMockBuilder(AbstractSearchService::class)->getMockForAbstractClass();
+		$searchService = $this->getDummySearchService();
 		new EntityToDocumentMapper($searchService, array(
 			'beer' => array(
 				'persistence' => array(
@@ -71,7 +70,7 @@ class EntityToDocumentMapperTest extends AbstractORMTestCase {
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function testFuckedUpConfigurationWithoutModel() {
-		$searchService = $this->getMockBuilder(AbstractSearchService::class)->getMockForAbstractClass();
+		$searchService = $this->getDummySearchService();
 		new EntityToDocumentMapper($searchService, array(
 			'beer' => array(
 				'mappings' => array(
@@ -88,7 +87,7 @@ class EntityToDocumentMapperTest extends AbstractORMTestCase {
 	 * @expectedException \InvalidArgumentException
 	 */
 	public function testFuckedUpConfigurationWithoutPersistance() {
-		$searchService = $this->getMockBuilder(AbstractSearchService::class)->getMockForAbstractClass();
+		$searchService = $this->getDummySearchService();
 		new EntityToDocumentMapper($searchService, array(
 			'beer' => array(
 				'mappings' => array(
@@ -138,7 +137,7 @@ class EntityToDocumentMapperTest extends AbstractORMTestCase {
 		$this->em->persist($potato);
 		$this->em->flush();
 		$document = $eh->createDocument($this->em, $potato);
-		$this->assertFalse($document);
+		$this->assertNull($document);
 	}
 
 	/**

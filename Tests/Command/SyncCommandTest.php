@@ -21,6 +21,7 @@ use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterf
 use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapper;
 use StingerSoft\EntitySearchBundle\Services\DummySearchService;
 use StingerSoft\EntitySearchBundle\Services\SearchService;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class SyncCommandTest extends AbstractORMTestCase {
@@ -39,18 +40,16 @@ class SyncCommandTest extends AbstractORMTestCase {
 	 * @return CommandTester
 	 */
 	protected function createCommander() {
-		$that = $this;
-		$kernel = $this->getMockBuilder(KernelInterface::class)->setMethods(array(
+		$kernel = $this->getMockBuilder(Kernel::class)->setMethods(array(
 			'getRootDir'
-		))->disableOriginalConstructor()->getMock();
+		))->disableOriginalConstructor()->getMockForAbstractClass();
 		$kernel->method('getRootDir')->willReturn($this->getRootDir());
 
 
-		$searchService = new DummySearchService();
-		$searchService->setObjectManager($this->em);
+		$searchService = $this->getDummySearchService($this->em);
 
 
-		$syncCommand = new SyncCommand(new DummySearchService(), new EntityToDocumentMapper(new DummySearchService()), $kernel);
+		$syncCommand = new SyncCommand($searchService, new EntityToDocumentMapper($searchService), $kernel);
 
 		$application = new Application();
 		$application->add($syncCommand);

@@ -151,10 +151,9 @@ class SyncCommand extends Command {
 		// Get all entities
 		$queryBuilder = $repository->createQueryBuilder('e');
 		$countQueryBuilder = $repository->createQueryBuilder('e')->select('COUNT(e)');
-		$entityCount = $countQueryBuilder->getQuery()->getSingleScalarResult();
+		$entityCount = (int)$countQueryBuilder->getQuery()->getSingleScalarResult();
 
 		$useBatch = !($entityManager->getConnection()->getDatabasePlatform() instanceof SQLServerPlatform);
-
 		$iterableResult = $useBatch ? $queryBuilder->getQuery()->iterate() : $queryBuilder->getQuery()->getResult();
 		if($entityCount === 0) {
 			$output->writeln('<comment>No entities found for indexing</comment>');

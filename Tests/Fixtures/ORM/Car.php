@@ -49,7 +49,7 @@ class Car implements SearchableEntity {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\SearchableEntity::indexEntity()
 	 */
-	public function indexEntity(Document &$document) {
+	public function indexEntity(Document $document) : bool{
 		$document->addField(Document::FIELD_TITLE, $this->getTitle());
 		return self::$index;
 	}
