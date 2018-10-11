@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -11,10 +12,15 @@
  */
 namespace StingerSoft\EntitySearchBundle\Model;
 
+use Knp\Component\Pager\Pagination\PaginationInterface;
+
 interface PaginatableResultSet {
 
 	/**
+	 * @param int $page
+	 * @param int $limit
+	 * @param array $options
 	 * @return PaginationInterface
 	 */
-	public function paginate($page = 1, $limit = 10, array $options = array());
+	public function paginate(int $page = 1, int $limit = 10, array $options = array()) : PaginationInterface;
 }

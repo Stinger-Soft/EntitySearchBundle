@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -72,7 +73,7 @@ class EntityToDocumentMapper implements EntityToDocumentMapperInterface {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface::isIndexable()
 	 */
-	public function isIndexable($object) {
+	public function isIndexable(object $object) : bool {
 		if($object instanceof SearchableEntity) {
 			return true;
 		}
@@ -81,14 +82,15 @@ class EntityToDocumentMapper implements EntityToDocumentMapperInterface {
 		}
 		return false;
 	}
-	
+
 	/**
 	 *
 	 * {@inheritDoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface::isClassIndexable()
+	 * @throws \ReflectionException
 	 */
-	public function isClassIndexable($clazz) {
+	public function isClassIndexable(string $clazz) : bool {
 		$reflectionClass = new \ReflectionClass($clazz);
 		if(array_key_exists(SearchableEntity::class, $reflectionClass->getInterfaces())) {
 			return true;
@@ -104,13 +106,13 @@ class EntityToDocumentMapper implements EntityToDocumentMapperInterface {
 	 * {@inheritDoc}
 	 * @see \StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface::createDocument()
 	 */
-	public function createDocument(ObjectManager $manager, $object) {
+	public function createDocument(ObjectManager $manager, object $object) : ?Document {
 		if(!$this->isIndexable($object))
-			return false;
-		$document = $this->getSearchService($manager)->createEmptyDocumentFromEntity($object);
+			return null;
+		$document = $this->searchService->createEmptyDocumentFromEntity($object);
 		$index = $this->fillDocument($document, $object);
-		if($index == false)
-			return false;
+		if($index === false)
+			return null;
 		
 		return $document;
 	}
@@ -122,11 +124,11 @@ class EntityToDocumentMapper implements EntityToDocumentMapperInterface {
 	 * @param object $object        	
 	 * @return boolean
 	 */
-	protected function fillDocument(Document &$document, $object) {
+	protected function fillDocument(Document $document, object $object) : bool {
 		if($object instanceof SearchableEntity) {
 			return $object->indexEntity($document);
 		}
-		$mapping = $this->getMapping(get_class($object));
+		$mapping = $this->getMapping(\get_class($object));
 		$accessor = PropertyAccess::createPropertyAccessor();
 		foreach($mapping as $fieldName => $propertyPath) {
 			$document->addField($fieldName, $accessor->getValue($object, $propertyPath));
@@ -137,10 +139,10 @@ class EntityToDocumentMapper implements EntityToDocumentMapperInterface {
 	/**
 	 * Fetches the mapping for the given object including the mapping of superclasses
 	 *
-	 * @param object $object        	
-	 * @return \StingerSoft\EntitySearchBundle\Services\string[string]
+	 * @return string[string]
+	 * @throws \ReflectionException
 	 */
-	protected function getMapping($clazz) {
+	protected function getMapping(string $clazz) : array {
 		if(isset($this->cachedMapping[$clazz])) {
 			return $this->cachedMapping[$clazz];
 		}
@@ -157,15 +159,5 @@ class EntityToDocumentMapper implements EntityToDocumentMapperInterface {
 		$this->cachedMapping[$clazz] = $mapping;
 		
 		return $mapping;
-	}
-
-	/**
-	 * Returns the search service
-	 *
-	 * @return SearchService
-	 */
-	protected function getSearchService(ObjectManager $manager) {
-		$this->searchService->setObjectManager($manager);
-		return $this->searchService;
 	}
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -18,18 +19,18 @@ class AuthorFacet implements FacetServiceInterface {
 
 	const SERVICE_ID = 'stinger_soft_entity_search.facets.author';
 
-	public function getField() {
+	public function getField(): string {
 		return Document::FIELD_AUTHOR;
 	}
 
-	public function getFormOptions() {
+	public function getFormOptions(): array {
 		return array(
 			'label'              => 'stinger_soft_entity_search.forms.query.author.label',
 			'translation_domain' => 'StingerSoftEntitySearchBundle'
 		);
 	}
 
-	public function getFacetFormatter() {
+	public function getFacetFormatter(): ?callable {
 		return null;
 	}
 

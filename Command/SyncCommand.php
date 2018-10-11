@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -19,11 +20,18 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface;
 use StingerSoft\EntitySearchBundle\Services\SearchService;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\HttpKernel\KernelInterface;
 
-class SyncCommand extends ContainerAwareCommand {
+class SyncCommand extends Command {
+
+	/**
+	 * @var string|null The default command name
+	 */
+	protected static $defaultName = 'stinger:search:sync';
 
 	/**
 	 *
@@ -45,6 +53,17 @@ class SyncCommand extends ContainerAwareCommand {
 	 */
 	protected static $defaultUploadPath = null;
 
+	public function __construct(SearchService $searchService, EntityToDocumentMapperInterface $mapper, KernelInterface $kernel) {
+		parent::__construct();
+		$this->searchService = $searchService;
+		$this->entityToDocumentMapper = $mapper;
+		// Detect upload path
+		if(!self::$defaultUploadPath) {
+			$root = $kernel->getRootDir();
+			self::$defaultUploadPath = $root . '/../web/uploads';
+		}
+	}
+
 	/**
 	 *
 	 * {@inheritdoc}
@@ -54,7 +73,6 @@ class SyncCommand extends ContainerAwareCommand {
 	protected function configure() {
 		/* @formatter:off */
 		$this
-			->setName('stinger:search:sync')
 			->addArgument('entity', InputArgument::REQUIRED, 'The entity you want to index')
 			->addOption('source', null, InputArgument::OPTIONAL, 'specify a source from where to load entities [relational, mongodb] (unsupported!)', 'relational')
 			->setDescription('Index all entities');
@@ -66,29 +84,25 @@ class SyncCommand extends ContainerAwareCommand {
 	 * {@inheritdoc}
 	 *
 	 * @see \Symfony\Component\Console\Command\Command::execute()
+	 * @throws \Doctrine\Common\Persistence\Mapping\MappingException
+	 * @throws \Doctrine\DBAL\DBALException
+	 * @throws \Doctrine\ORM\NonUniqueResultException
+	 * @throws \Doctrine\ORM\ORMException
+	 * @throws \Doctrine\ORM\OptimisticLockException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		// Detect upload path
-		if(!self::$defaultUploadPath) {
-			$root = $this->getContainer()->get('kernel')->getRootDir();
-			self::$defaultUploadPath = $root . '/../web/uploads';
-		}
+
 
 		// Get the entity argument
 		$entity = $input->getArgument('entity');
 
-		if($entity == 'all') {
+		if($entity === 'all') {
 			/**
 			 * @var EntityManager $entityManager
 			 */
-			$entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
+			$entityManager = $this->searchService->getObjectManager();
 
 			$meta = $entityManager->getMetadataFactory()->getAllMetadata();
-
-			/**
-			 * @var EntityToDocumentMapperInterface $mapper
-			 */
-			$mapper = $this->getContainer()->get(EntityToDocumentMapperInterface::SERVICE_ID);
 
 			/**
 			 * @var ClassMetadata $m
@@ -98,7 +112,7 @@ class SyncCommand extends ContainerAwareCommand {
 				if($m->getReflectionClass()->isAbstract() || $m->getReflectionClass()->isInterface()) {
 					continue;
 				}
-				if(!$mapper->isClassIndexable($m->getReflectionClass()->getName())) {
+				if(!$this->entityToDocumentMapper->isClassIndexable($m->getReflectionClass()->getName())) {
 					continue;
 				}
 				$this->indexEntity($input, $output, $m->getReflectionClass()->getName());
@@ -108,13 +122,23 @@ class SyncCommand extends ContainerAwareCommand {
 		}
 	}
 
+	/**
+	 * @param InputInterface $input
+	 * @param OutputInterface $output
+	 * @param $entity
+	 * @throws \Doctrine\Common\Persistence\Mapping\MappingException
+	 * @throws \Doctrine\DBAL\DBALException
+	 * @throws \Doctrine\ORM\NonUniqueResultException
+	 * @throws \Doctrine\ORM\ORMException
+	 * @throws \Doctrine\ORM\OptimisticLockException
+	 */
 	protected function indexEntity(InputInterface $input, OutputInterface $output, $entity) {
 		$output->writeln(sprintf('<comment>Indexing entities of type "%s"</comment>', $entity));
 		/**
 		 *
 		 * @var EntityManager $entityManager
 		 */
-		$entityManager = $this->getContainer()->get('doctrine.orm.entity_manager');
+		$entityManager = $this->searchService->getObjectManager();
 		$repository = null;
 		try {
 			// Get repository for the given entity type
@@ -132,7 +156,7 @@ class SyncCommand extends ContainerAwareCommand {
 		$useBatch = !($entityManager->getConnection()->getDatabasePlatform() instanceof SQLServerPlatform);
 
 		$iterableResult = $useBatch ? $queryBuilder->getQuery()->iterate() : $queryBuilder->getQuery()->getResult();
-		if($entityCount == 0) {
+		if($entityCount === 0) {
 			$output->writeln('<comment>No entities found for indexing</comment>');
 			return;
 		}
@@ -142,16 +166,16 @@ class SyncCommand extends ContainerAwareCommand {
 		// Index each entity separate
 		foreach($iterableResult as $row) {
 			$entity = $useBatch ? $row[0] : $row;
-			if($this->getEntityToDocumentMapper()->isIndexable($entity)) {
-				$document = $this->getEntityToDocumentMapper()->createDocument($entityManager, $entity);
+			if($this->entityToDocumentMapper->isIndexable($entity)) {
+				$document = $this->entityToDocumentMapper->createDocument($entityManager, $entity);
 				if($document === false) continue;
 				try {
-					$this->getSearchService($entityManager)->saveDocument($document);
+					$this->searchService->saveDocument($document);
 					$entitiesIndexed++;
 				} catch(\Exception $e) {
 					$output->writeln('<error>Failed to index entity with ID ' . $document->getEntityId() . '</error>');
 				}
-				if($entitiesIndexed % 50 == 0) {
+				if($entitiesIndexed % 50 === 0) {
 					$entityManager->flush();
 				}
 			}
@@ -162,26 +186,4 @@ class SyncCommand extends ContainerAwareCommand {
 		$output->writeln('<comment>Indexed ' . $entitiesIndexed . ' entities</comment>');
 	}
 
-	/**
-	 *
-	 * @return EntityToDocumentMapperInterface
-	 */
-	protected function getEntityToDocumentMapper() {
-		if(!$this->entityToDocumentMapper) {
-			$this->entityToDocumentMapper = $this->getContainer()->get(EntityToDocumentMapperInterface::SERVICE_ID);
-		}
-		return $this->entityToDocumentMapper;
-	}
-
-	/**
-	 *
-	 * @return SearchService
-	 */
-	protected function getSearchService(ObjectManager $manager) {
-		if(!$this->searchService) {
-			$this->searchService = $this->getContainer()->get(SearchService::SERVICE_ID);
-		}
-		$this->searchService->setObjectManager($manager);
-		return $this->searchService;
-	}
 }

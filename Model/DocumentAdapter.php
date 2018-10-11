@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -9,6 +10,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace StingerSoft\EntitySearchBundle\Model;
 
 class DocumentAdapter implements Document {
@@ -50,7 +52,7 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::addField()
 	 */
-	public function addField($fieldname, $value) {
+	public function addField(string $fieldName, $value): void {
 		$this->fields[$fieldname] = $value;
 	}
 
@@ -60,7 +62,7 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getFields()
 	 */
-	public function getFields() {
+	public function getFields() : array {
 		return $this->fields;
 	}
 
@@ -70,8 +72,8 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getFieldValue()
 	 */
-	public function getFieldValue($field) {
-		return isset($this->fields[$field]) ? $this->fields[$field] : null;
+	public function getFieldValue($fieldName) {
+		return $this->fields[$field] ?? null;
 	}
 
 	/**
@@ -80,10 +82,10 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::addMultiValueField()
 	 */
-	public function addMultiValueField($field, $value) {
+	public function addMultiValueField(string $fieldName, $value)  : void{
 		if(!array_key_exists($field, $this->fields)) {
 			$this->fields[$field] = array(
-				$value 
+				$value
 			);
 		} else if(!in_array($value, $this->fields[$field])) {
 			$this->fields[$field][] = $value;
@@ -94,22 +96,9 @@ class DocumentAdapter implements Document {
 	 *
 	 * {@inheritdoc}
 	 *
-	 * @see \StingerSoft\EntitySearchBundle\Model\Document::setEntityClass()
-	 */
-	public function setEntityClass($clazz) {
-		$this->entityClass = $clazz;
-		if(!$this->entityType) {
-			$this->entityType = $clazz;
-		}
-	}
-
-	/**
-	 *
-	 * {@inheritdoc}
-	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getEntityClass()
 	 */
-	public function getEntityClass() {
+	public function getEntityClass() : string {
 		return $this->entityClass;
 	}
 
@@ -117,10 +106,13 @@ class DocumentAdapter implements Document {
 	 *
 	 * {@inheritdoc}
 	 *
-	 * @see \StingerSoft\EntitySearchBundle\Model\Document::setEntityId()
+	 * @see \StingerSoft\EntitySearchBundle\Model\Document::setEntityClass()
 	 */
-	public function setEntityId($id) {
-		$this->entityId = $id;
+	public function setEntityClass(string $clazz) : void {
+		$this->entityClass = $clazz;
+		if(!$this->entityType) {
+			$this->entityType = $clazz;
+		}
 	}
 
 	/**
@@ -137,10 +129,10 @@ class DocumentAdapter implements Document {
 	 *
 	 * {@inheritdoc}
 	 *
-	 * @see \StingerSoft\EntitySearchBundle\Model\Document::setEntityType()
+	 * @see \StingerSoft\EntitySearchBundle\Model\Document::setEntityId()
 	 */
-	public function setEntityType($type) {
-		$this->entityType = $type;
+	public function setEntityId($id) : void {
+		$this->entityId = $id;
 	}
 
 	/**
@@ -149,8 +141,28 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getEntityType()
 	 */
-	public function getEntityType() {
+	public function getEntityType() : string {
 		return $this->entityType ? $this->entityType : $this->getEntityClass();
+	}
+
+	/**
+	 *
+	 * {@inheritdoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Model\Document::setEntityType()
+	 */
+	public function setEntityType(string $type) : void {
+		$this->entityType = $type;
+	}
+
+	/**
+	 *
+	 * {@inheritdoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getFile()
+	 */
+	public function getFile() : ?string {
+		return $this->file;
 	}
 
 	/**
@@ -159,18 +171,8 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::setFile()
 	 */
-	public function setFile($path) {
+	public function setFile(string $path) : void {
 		$this->file = $path;
-	}
-	
-	/**
-	 *
-	 * {@inheritdoc}
-	 *
-	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getFile()
-	 */
-	public function getFile() {
-		return $this->file;
 	}
 
 	/**
@@ -179,7 +181,7 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::__get()
 	 */
-	public function __get($name) {
+	public function __get(string $name) {
 		return $this->getFieldValue($name);
 	}
 
@@ -189,7 +191,7 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::__isset()
 	 */
-	public function __isset($name) {
+	public function __isset(string $name) : bool {
 		return $this->getFieldValue($name) !== null;
 	}
 }

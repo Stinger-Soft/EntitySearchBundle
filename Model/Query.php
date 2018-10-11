@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -9,6 +10,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace StingerSoft\EntitySearchBundle\Model;
 
 class Query {
@@ -21,23 +23,23 @@ class Query {
 
 	/**
 	 *
-	 * @var string[string]
+	 * @var array
 	 */
-	private $facets = array();
+	private $facets;
 
 	/**
 	 *
-	 * @var string[]
+	 * @var array
 	 */
 	private $usedFacets = null;
 
 	/**
 	 *
-	 * @param string $term        	
-	 * @param string[string] $facets        	
-	 * @param string[] $usedFacets        	
+	 * @param string $term
+	 * @param array $facets
+	 * @param array $usedFacets
 	 */
-	public function __construct($term = null, array $facets = array(), $usedFacets = null) {
+	public function __construct(string $term = null, array $facets = array(), array $usedFacets = null) {
 		$this->term = $term;
 		$this->facets = $facets;
 		$this->usedFacets = $usedFacets;
@@ -48,7 +50,7 @@ class Query {
 	 *
 	 * @return string Returns the search term
 	 */
-	public function getSearchTerm() {
+	public function getSearchTerm(): string {
 		return $this->term;
 	}
 
@@ -56,43 +58,43 @@ class Query {
 	 *
 	 * @return string[string]
 	 */
-	public function getFacets() {
+	public function getFacets(): array {
 		return $this->facets;
+	}
+
+	public function setFacets(array $facets): Query {
+		$this->facets = $facets;
+		return $this;
 	}
 
 	/**
 	 *
 	 * @return string[]
 	 */
-	public function getUsedFacets() {
+	public function getUsedFacets(): array {
 		return $this->usedFacets;
 	}
 
-	public function setSearchTerm($term) {
-		$this->term = $term;
-		return $this;
-	}
-
-	public function setFacets($facets) {
-		$this->facets = $facets;
-		return $this;
-	}
-
-	public function setUsedFacets($usedFacets) {
+	public function setUsedFacets(array $usedFacets): Query {
 		$this->usedFacets = $usedFacets;
+		return $this;
+	}
+
+	public function setSearchTerm(string $term): Query {
+		$this->term = $term;
 		return $this;
 	}
 
 	/**
 	 *
 	 * @param string $name
-	 *        	Name of the property to fetch
-	 * @return \Pec\Bundle\MtuDvpBundle\Entity\TestRiskValue
+	 *            Name of the property to fetch
+	 * @return array
 	 */
 	public function __get($name) {
 		if(strrpos($name, 'facet_', -strlen($name)) !== false) {
 			$facetname = substr($name, 6);
-			
+
 			if(isset($this->facets[$facetname])) {
 				return $this->facets[$facetname];
 			}
@@ -103,17 +105,13 @@ class Query {
 	/**
 	 *
 	 * @param string $name
-	 *        	Name of the property to set
+	 *            Name of the property to set
 	 * @param mixed $value
-	 *        	The value of the property
+	 *            The value of the property
 	 */
-	public function __set($name, $value) {
+	public function __set($name, $value): void {
 		if(strrpos($name, 'facet_', -strlen($name)) !== false) {
 			$facetname = substr($name, 6);
-			
-			if(!isset($this->facets[$facetname])) {
-				$this->facets[$facetname] = array();
-			}
 			$this->facets[$facetname] = $value;
 		}
 	}
@@ -121,14 +119,14 @@ class Query {
 	/**
 	 * Checks whether the given property is set or not
 	 *
-	 * @param string $name        	
+	 * @param string $name
 	 * @return boolean
 	 */
-	public function __isset($name) {
+	public function __isset($name): bool {
 		if(strrpos($name, 'facet_', -strlen($name)) !== false) {
 			return true;
 		}
-		
+
 		return false;
 	}
 }

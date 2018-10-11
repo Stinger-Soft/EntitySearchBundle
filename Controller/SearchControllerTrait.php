@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -27,16 +28,13 @@ trait SearchControllerTrait {
 	use AbstractControllerTrait;
 
 	/**
-	 *
 	 * @var SearchService
 	 */
-	private $searchService;
-
+	protected $searchService;
 	private $availableFacets;
-
 	private $facetFormatter;
 
-	public function searchAction(Request $request) {
+	public function searchAction(Request $request, DocumentToEntityMapperInterface $mapper) {
 		if($request->query->get('term', false) !== false) {
 			$this->setSearchTerm($request->getSession(), $request->query->get('term'));
 			return $this->redirectToRoute('stinger_soft_entity_search_search');
@@ -62,7 +60,7 @@ trait SearchControllerTrait {
 		}
 
 		try {
-			$result = $this->getSearchService()->search($query);
+			$result = $this->searchService->search($query);
 
 			$facetForm = $this->createForm(QueryType::class, $query, array(
 				'result'          => $result,
@@ -82,16 +80,47 @@ trait SearchControllerTrait {
 				'results'   => $results,
 				'resultSet' => $result,
 				'term'      => $query->getSearchTerm(),
-				'mapper'    => $this->get(DocumentToEntityMapperInterface::SERVICE_ID),
+				'mapper'    => $mapper,
 				'facetForm' => $facetForm->createView()
 			));
 		} catch(\Exception $exception) {
-
 			return $this->render($this->getErrorTemplate(), array(
 				'error' => $exception->getMessage(),
 				'term'  => $query->getSearchTerm()
 			));
 		}
+	}
+
+	/**
+	 * Returns a JSON array of autocompletions for the given term.
+	 * The term can be provided as a GET or POST paramater with the name <em>term</em>
+	 *
+	 * @param Request $request
+	 * @return \Symfony\Component\HttpFoundation\JsonResponse
+	 */
+	public function autocompleteAction(Request $request) {
+		$term = $request->get('term');
+		return new JsonResponse($this->searchService->autocomplete($term, $this->getSuggestionCount()));
+	}
+
+	/**
+	 * Provides an online help for the configured search service.
+	 * If the search service has no online help defined a warning message will be displayed to the user.
+	 *
+	 * @param Request $request
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 */
+	public function onlineHelpAction(Request $request) {
+		$template = $this->searchService->getOnlineHelp($request->getLocale(), $this->getDefaultLocale());
+		return $this->render($template ?: 'StingerSoftEntitySearchBundle:Help:no_help.html.twig');
+	}
+
+	/**
+	 * @param SearchService $searchService
+	 * @required
+	 */
+	public function setSearchService(SearchService $searchService): void {
+		$this->searchService = $searchService;
 	}
 
 	protected function getConfiguredUsedFacets(array $queryUsedFacets) {
@@ -170,8 +199,7 @@ trait SearchControllerTrait {
 
 			$facetServices = $this->getParameter('stinger_soft.entity_search.available_facets');
 			foreach($facetServices as $facetServiceId) {
-				/** @var FacetServiceInterface $facetService */
-				$facetService = $this->get($facetServiceId);
+				$facetService = $this->searchService->getFacet($facetServiceId);
 				$this->availableFacets[$facetService->getField()] = $facetService->getFormOptions();
 				if($facetService->getFacetFormatter()) {
 					$this->facetFormatter[$facetService->getField()] = $facetService->getFacetFormatter();
@@ -188,7 +216,7 @@ trait SearchControllerTrait {
 	 */
 	protected function getSearchFacets(SessionInterface $session) {
 		$facets = $session->get($this->getSessionPrefix() . '_facets', false);
-		return $facets ? json_decode($facets, true) : $this->getDefaultFacets();
+		return $facets ? \json_decode($facets, true) : $this->getDefaultFacets();
 	}
 
 	/**
@@ -198,7 +226,7 @@ trait SearchControllerTrait {
 	 * @param string[string][] $facets
 	 */
 	protected function setSearchFacets(SessionInterface $session, $facets) {
-		$session->set($this->getSessionPrefix() . '_facets', json_encode($facets));
+		$session->set($this->getSessionPrefix() . '_facets', \json_encode($facets));
 	}
 
 	/**
@@ -221,38 +249,4 @@ trait SearchControllerTrait {
 		$session->set($this->getSessionPrefix() . '_term', $term);
 	}
 
-	/**
-	 * Returns a JSON array of autocompletions for the given term.
-	 * The term can be provided as a GET or POST paramater with the name <em>term</em>
-	 *
-	 * @param Request $request
-	 * @return \Symfony\Component\HttpFoundation\JsonResponse
-	 */
-	public function autocompleteAction(Request $request) {
-		$term = $request->get('term');
-		return new JsonResponse($this->getSearchService()->autocomplete($term, $this->getSuggestionCount()));
-	}
-
-	/**
-	 * Provides an online help for the configured search service.
-	 * If the search service has no online help defined a warning message will be displayed to the user.
-	 *
-	 * @param Request $request
-	 * @return \Symfony\Component\HttpFoundation\Response
-	 */
-	public function onlineHelpAction(Request $request) {
-		$template = $this->getSearchService()->getOnlineHelp($request->getLocale(), $this->getDefaultLocale());
-		return $this->render($template ?: 'StingerSoftEntitySearchBundle:Help:no_help.html.twig');
-	}
-
-	/**
-	 * Inits and returns the configured search service
-	 *
-	 * @return SearchService
-	 */
-	protected function getSearchService() {
-		$this->service = $this->get(SearchService::SERVICE_ID);
-		$this->service->setObjectManager($this->getDoctrine()->getManager());
-		return $this->service;
-	}
 }

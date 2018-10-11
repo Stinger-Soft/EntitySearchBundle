@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -9,8 +10,12 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace StingerSoft\EntitySearchBundle;
 
+use StingerSoft\EntitySearchBundle\DependencyInjection\Compiler\FacetCompilerPass;
+use StingerSoft\EntitySearchBundle\Services\Facet\FacetServiceInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
@@ -22,5 +27,10 @@ class StingerSoftEntitySearchBundle extends Bundle {
 		$bundles['StingerSoftEntitySearchBundle'] = '\StingerSoft\EntitySearchBundle\StingerSoftEntitySearchBundle';
 		$bundles['KnpPaginatorBundle'] = 'Knp\Bundle\PaginatorBundle\KnpPaginatorBundle';
 		return $bundles;
+	}
+
+	public function build(ContainerBuilder $container) {
+		$container->registerForAutoconfiguration(FacetServiceInterface::class)->addTag(FacetServiceInterface::TAG_NAME);
+		$container->addCompilerPass(new FacetCompilerPass());
 	}
 }

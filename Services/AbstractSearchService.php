@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -9,12 +10,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace StingerSoft\EntitySearchBundle\Services;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Util\ClassUtils;
+use Psr\Container\ContainerInterface;
 use StingerSoft\EntitySearchBundle\Model\Document;
 use StingerSoft\EntitySearchBundle\Model\DocumentAdapter;
+use StingerSoft\EntitySearchBundle\Model\SearchableEntity;
+use StingerSoft\EntitySearchBundle\Services\Facet\FacetServiceInterface;
 
 abstract class AbstractSearchService implements SearchService {
 
@@ -25,12 +30,29 @@ abstract class AbstractSearchService implements SearchService {
 	protected $objectManager;
 
 	/**
+	 * @var ContainerInterface
+	 */
+	protected $facetContainer;
+
+	/**
+	 *
+	 * {@inheritdoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Services\SearchService::getObjectManager()
+	 */
+	public function getObjectManager(): ObjectManager {
+		return $this->objectManager;
+	}
+
+	/**
 	 *
 	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Services\SearchService::setObjectManager()
+	 *
+	 * @required
 	 */
-	public function setObjectManager(ObjectManager $om) {
+	public function setObjectManager(ObjectManager $om): void {
 		if($this->objectManager)
 			return;
 		$this->objectManager = $om;
@@ -40,10 +62,20 @@ abstract class AbstractSearchService implements SearchService {
 	 *
 	 * {@inheritdoc}
 	 *
-	 * @see \StingerSoft\EntitySearchBundle\Services\SearchService::getObjectManager()
+	 * @see \StingerSoft\EntitySearchBundle\Services\SearchService::setFacetContainer()
 	 */
-	public function getObjectManager() {
-		return $this->objectManager;
+	public function setFacetContainer(ContainerInterface $facetContainer): void {
+		$this->facetContainer = $facetContainer;
+	}
+
+	/**
+	 *
+	 * {@inheritdoc}
+	 *
+	 * @see \StingerSoft\EntitySearchBundle\Services\SearchService::getFacet()
+	 */
+	public function getFacet(string $facetId): FacetServiceInterface {
+		return $this->facetContainer->get($facetId);
 	}
 
 	/**
@@ -52,20 +84,15 @@ abstract class AbstractSearchService implements SearchService {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Services\SearchService::createEmptyDocumentFromEntity()
 	 */
-	public function createEmptyDocumentFromEntity($entity) {
+	public function createEmptyDocumentFromEntity(object $entity): Document {
 		$document = $this->newDocumentInstance();
 		$clazz = $this->getClass($entity);
 		$cmd = $this->getObjectManager()->getClassMetadata($clazz);
 		$id = $cmd->getIdentifierValues($entity);
-		
+
 		$document->setEntityClass($clazz);
 		$document->setEntityId(count($id) == 1 ? current($id) : $id);
 		return $document;
-	}
-	
-	protected function getClass($entity) {
-		$clazz = ClassUtils::getClass($entity);
-		return $clazz;
 	}
 
 	/**
@@ -74,8 +101,12 @@ abstract class AbstractSearchService implements SearchService {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Services\SearchService::getOnlineHelp()
 	 */
-	public function getOnlineHelp($locale, $defaultLocale = 'en') {
+	public function getOnlineHelp(string $locale, string $defaultLocale = 'en'): ?string {
 		return null;
+	}
+
+	protected function getClass($entity): string {
+		return ClassUtils::getClass($entity);
 	}
 
 	/**
@@ -83,7 +114,7 @@ abstract class AbstractSearchService implements SearchService {
 	 *
 	 * @return Document
 	 */
-	protected function newDocumentInstance() {
+	protected function newDocumentInstance(): Document {
 		return new DocumentAdapter();
 	}
 }

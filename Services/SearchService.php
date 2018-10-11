@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -9,20 +10,21 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace StingerSoft\EntitySearchBundle\Services;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use StingerSoft\EntitySearchBundle\Model\Document;
 use StingerSoft\EntitySearchBundle\Model\Query;
-use StingerSoft\EntitySearchBundle\Model\SearchableEntity;
-use Doctrine\Common\Persistence\ObjectManager;
 use StingerSoft\EntitySearchBundle\Model\ResultSet;
+use StingerSoft\EntitySearchBundle\Model\SearchableEntity;
+use StingerSoft\EntitySearchBundle\Services\Facet\FacetServiceInterface;
+use Psr\Container\ContainerInterface;
 
 /**
  * Defines a service to execute basic operations on the underlying search index
  */
 interface SearchService {
-
-	const SERVICE_ID = 'stinger_soft.entity_search.search_service';
 
 	/**
 	 * Completely wipes the search index
@@ -32,74 +34,87 @@ interface SearchService {
 	/**
 	 * Creates an empty document from the given entity
 	 *
-	 * @param SearchableEntity $entity        	
+	 * @param SearchableEntity $entity
 	 * @return Document
 	 */
-	public function createEmptyDocumentFromEntity($entity);
+	public function createEmptyDocumentFromEntity(object $entity): Document;
 
 	/**
 	 * Saves a document to the index
 	 *
 	 * @param Document $document
-	 *        	The document to index
+	 *            The document to index
 	 */
-	public function saveDocument(Document $document);
+	public function saveDocument(Document $document): void;
 
 	/**
 	 * Removes a document to the index
 	 *
 	 * @param Document $document
-	 *        	The document to index
+	 *            The document to index
 	 */
-	public function removeDocument(Document $document);
+	public function removeDocument(Document $document): void;
 
 	/**
 	 * Tries to autocomplete the given search string and provides possible completions
 	 *
 	 * @param string $search
-	 *        	The search string
+	 *            The search string
 	 * @param integer $maxResults
-	 *        	The maximum number of autocompletions to be returned
+	 *            The maximum number of autocompletions to be returned
 	 * @return string[] Possible autocompletions
 	 */
-	public function autocomplete($search, $maxResults = 10);
+	public function autocomplete(string $search, int $maxResults = 10): array;
 
 	/**
 	 * Executes the given query
 	 *
-	 * @param Query $query        	
+	 * @param Query $query
 	 * @return ResultSet
 	 */
-	public function search(Query $query);
+	public function search(Query $query): ?ResultSet;
 
 	/**
 	 * Adds the object manager to this service
 	 *
 	 * @internal
 	 *
-	 * @param ObjectManager $om        	
+	 * @param ObjectManager $om
 	 */
-	public function setObjectManager(ObjectManager $om);
+	public function setObjectManager(ObjectManager $om) : void;
 
 	/**
 	 * Get the doctrine object manager
 	 *
 	 * @return ObjectManager
 	 */
-	public function getObjectManager();
+	public function getObjectManager(): ObjectManager;
+
+	/**
+	 * Sets the facet container. This method is automatically called by the EntitySearchBundle
+	 *
+	 * @param ContainerInterface $facetContainer
+	 * @return void
+	 */
+	public function setFacetContainer(ContainerInterface $facetContainer): void;
+
+	/**
+	 * Get a facet service by id
+	 * @return FacetServiceInterface
+	 */
+	public function getFacet(string $facetId): FacetServiceInterface;
 
 	/**
 	 * Returns the size (ie stored documents) of the given index
 	 *
 	 * @return int
 	 */
-	public function getIndexSize();
-	
-	
+	public function getIndexSize(): int;
+
 	/**
 	 * Returns the path to a template including the online help for this search service
-	 * 
+	 *
 	 * @return string template path
 	 */
-	public function getOnlineHelp($locale, $defaultLocale = 'en');
+	public function getOnlineHelp(string $locale, string $defaultLocale = 'en'): ?string;
 }
