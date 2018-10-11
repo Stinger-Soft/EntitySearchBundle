@@ -17,6 +17,7 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Event\PostFlushEventArgs;
+use StingerSoft\EntitySearchBundle\Model\SearchableAlias;
 use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface;
 
 class DoctrineListener implements EventSubscriber {
@@ -155,6 +156,9 @@ class DoctrineListener implements EventSubscriber {
 	 * @param object $entity
 	 */
 	protected function updateEntity(object $entity, ObjectManager $manager): void {
+		if($entity instanceof SearchableAlias) {
+			$entity = $entity->getEntityToIndex();
+		}
 		$document = $this->getEntityToDocumentMapper()->createDocument($manager, $entity);
 		if($document !== null) {
 			$this->getSearchService()->saveDocument($document);
@@ -167,6 +171,9 @@ class DoctrineListener implements EventSubscriber {
 	 * @param object $entity
 	 */
 	protected function removeEntity(object $entity, ObjectManager $manager): void {
+		if($entity instanceof SearchableAlias) {
+			$entity = $entity->getEntityToIndex();
+		}
 		$document = $this->getEntityToDocumentMapper()->createDocument($manager, $entity);
 		if($document !== null) {
 			$this->getSearchService()->removeDocument($document);

@@ -16,6 +16,14 @@ services:
     autowire: true
     public: false
 
+  StingerSoft\EntitySearchBundle\Command\:
+    resource: '../../Command/*'
+    autowire: true
+    autoconfigure: true
+    public: false
+    lazy: true
+
+
   stinger_soft.entity_search.dummy_search_service:
     class: '%stinger_soft.entity_search.search_service.class%'
     

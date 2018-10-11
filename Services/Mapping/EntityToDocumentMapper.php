@@ -31,7 +31,7 @@ class EntityToDocumentMapper implements EntityToDocumentMapperInterface {
 
 	/**
 	 *
-	 * @var string[string]
+	 * @var array
 	 */
 	protected $mapping = array();
 
@@ -151,8 +151,8 @@ class EntityToDocumentMapper implements EntityToDocumentMapperInterface {
 		$mapping = array();
 		
 		foreach($this->mapping as $className => $config) {
-			if($clazz == $className || $ref->isSubclassOf($className)) {
-				$mapping = array_merge($mapping, $config);
+			if($clazz === $className || $ref->isSubclassOf($className)) {
+				$mapping = \array_merge($mapping, $config);
 			}
 		}
 		
