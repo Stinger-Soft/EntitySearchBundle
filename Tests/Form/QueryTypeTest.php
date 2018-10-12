@@ -55,9 +55,9 @@ class QueryTypeTest extends TypeTestCase {
 		));
 		
 		$expectedQuery = new Query('Hemelinger', array(
-			Document::FIELD_TYPE => array(
-				'\StingerSoft\TestBundle\Entity\Test' 
-			) 
+//			Document::FIELD_TYPE => array(
+//				'\StingerSoft\TestBundle\Entity\Test'
+//			)
 		), array(
 			Document::FIELD_TYPE 
 		));
@@ -135,8 +135,8 @@ class QueryTypeTest extends TypeTestCase {
 		}
 		
 		$typeForm = $view->offsetGet('facet_type');
-		$this->assertEquals(2, $typeForm->count());
 		$this->assertContains('\StingerSoft\TestBundle\Entity\Test', $typeForm->vars['value']);
+		$this->assertEquals(2, $typeForm->count());
 // 		$this->assertCount(2, $typeForm->vars['choices']);
 	}
 	
