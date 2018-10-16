@@ -62,7 +62,7 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getFields()
 	 */
-	public function getFields() : array {
+	public function getFields(): array {
 		return $this->fields;
 	}
 
@@ -82,10 +82,14 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::addMultiValueField()
 	 */
-	public function addMultiValueField(string $fieldName, $value)  : void{
+	public function addMultiValueField(string $fieldName, $value): void {
 		if(!array_key_exists($fieldName, $this->fields)) {
 			$this->fields[$fieldName] = array(
 				$value
+			);
+		} else if(!\is_array($this->fields[$fieldName])) {
+			$this->fields[$fieldName] = array(
+				$value, $this->fields[$fieldName]
 			);
 		} else if(!\in_array($value, $this->fields[$fieldName])) {
 			$this->fields[$fieldName][] = $value;
@@ -98,7 +102,7 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getEntityClass()
 	 */
-	public function getEntityClass() : string {
+	public function getEntityClass(): string {
 		return $this->entityClass;
 	}
 
@@ -108,7 +112,7 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::setEntityClass()
 	 */
-	public function setEntityClass(string $clazz) : void {
+	public function setEntityClass(string $clazz): void {
 		$this->entityClass = $clazz;
 		if(!$this->entityType) {
 			$this->entityType = $clazz;
@@ -131,7 +135,7 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::setEntityId()
 	 */
-	public function setEntityId($id) : void {
+	public function setEntityId($id): void {
 		$this->entityId = $id;
 	}
 
@@ -141,7 +145,7 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getEntityType()
 	 */
-	public function getEntityType() : string {
+	public function getEntityType(): string {
 		return $this->entityType ? $this->entityType : $this->getEntityClass();
 	}
 
@@ -151,7 +155,7 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::setEntityType()
 	 */
-	public function setEntityType(string $type) : void {
+	public function setEntityType(string $type): void {
 		$this->entityType = $type;
 	}
 
@@ -161,7 +165,7 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getFile()
 	 */
-	public function getFile() : ?string {
+	public function getFile(): ?string {
 		return $this->file;
 	}
 
@@ -171,7 +175,7 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::setFile()
 	 */
-	public function setFile(string $path) : void {
+	public function setFile(string $path): void {
 		$this->file = $path;
 	}
 
@@ -191,7 +195,7 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::__isset()
 	 */
-	public function __isset(string $name) : bool {
+	public function __isset(string $name): bool {
 		return $this->getFieldValue($name) !== null;
 	}
 }

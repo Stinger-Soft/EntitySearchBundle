@@ -16,7 +16,6 @@ namespace StingerSoft\EntitySearchBundle\Controller;
 use StingerSoft\EntitySearchBundle\Form\QueryType;
 use StingerSoft\EntitySearchBundle\Model\PaginatableResultSet;
 use StingerSoft\EntitySearchBundle\Model\Query;
-use StingerSoft\EntitySearchBundle\Services\Facet\FacetServiceInterface;
 use StingerSoft\EntitySearchBundle\Services\Mapping\DocumentToEntityMapperInterface;
 use StingerSoft\EntitySearchBundle\Services\SearchService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -72,7 +71,7 @@ trait SearchControllerTrait {
 			$results = null;
 			if($result instanceof PaginatableResultSet) {
 				$results = $result->paginate($page, $this->getResultsPerPage());
-			} else {
+			} elseif($results !== null) {
 				$results = $result->getResults(($page - 1) * $this->getResultsPerPage(), $this->getResultsPerPage());
 			}
 

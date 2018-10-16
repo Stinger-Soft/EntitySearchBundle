@@ -99,7 +99,7 @@ class QueryType extends AbstractType {
 		 * @var ResultSet $result
 		 */
 		$result = $options['result'];
-		$view->vars['facetTypes'] = array_keys($result->getFacets()->getFacets());
+		$view->vars['facetTypes'] = $result === null ? [] : array_keys($result->getFacets()->getFacets());
 	}
 
 	/**
