@@ -67,7 +67,7 @@ trait SearchControllerTrait {
 				'facet_formatter' => $this->getFacetFormatter()
 			));
 
-			$page = $request->query->get('page', 1);
+			$page = (int)$request->query->get('page', 1);
 			$results = null;
 			if($result instanceof PaginatableResultSet) {
 				$results = $result->paginate($page, $this->getResultsPerPage());
