@@ -50,6 +50,6 @@ trait AbstractControllerTrait {
 	 *
 	 * @return Response A Response instance
 	 */
-	protected abstract function render($view, array $parameters = array(), ?Response $response = null): Response;
+	protected abstract function render(string $view, array $parameters = array(), ?Response $response = null): Response;
 
 }
