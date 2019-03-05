@@ -16,6 +16,16 @@ namespace StingerSoft\EntitySearchBundle\Model;
 class DocumentAdapter implements Document {
 
 	/**
+	 * Fieldnames which are forced to be single valued
+	 * @var array
+	 */
+	public static $forceSingleValueFields = [
+		Document::FIELD_AUTHOR,
+		Document::FIELD_LAST_MODIFIED,
+		Document::FIELD_TYPE
+	];
+
+	/**
 	 * Stores are fields with their values which should be stored in the index
 	 *
 	 * @var array
@@ -73,7 +83,11 @@ class DocumentAdapter implements Document {
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getFieldValue()
 	 */
 	public function getFieldValue($fieldName) {
-		return $this->fields[$fieldName] ?? null;
+		$value = $this->fields[$fieldName] ?? null;
+		if(\in_array($fieldName, self::$forceSingleValueFields) && \is_array($value)) {
+			return current($value);
+		}
+		return $value;
 	}
 
 	/**
