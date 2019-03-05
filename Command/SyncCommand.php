@@ -167,7 +167,7 @@ class SyncCommand extends Command {
 			$entity = $useBatch ? $row[0] : $row;
 			if($this->entityToDocumentMapper->isIndexable($entity)) {
 				$document = $this->entityToDocumentMapper->createDocument($entityManager, $entity);
-				if($document === false) continue;
+				if($document === null) continue;
 				try {
 					$this->searchService->saveDocument($document);
 					$entitiesIndexed++;
