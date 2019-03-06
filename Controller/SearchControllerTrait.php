@@ -83,10 +83,11 @@ trait SearchControllerTrait {
 				'facetForm' => $facetForm->createView()
 			));
 		} catch(\Exception $exception) {
-			return $this->render($this->getErrorTemplate(), array(
+			$response = $this->render($this->getErrorTemplate(), array(
 				'error' => $exception->getMessage(),
 				'term'  => $query->getSearchTerm()
 			));
+			return $response->setStatusCode(500);
 		}
 	}
 

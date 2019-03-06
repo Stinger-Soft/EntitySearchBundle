@@ -28,7 +28,7 @@ trait AbstractControllerTrait {
 	 *
 	 * @return RedirectResponse
 	 */
-	protected abstract function redirectToRoute(string $route, array $parameters = array(), int $status = 302): RedirectResponse;
+	abstract protected function redirectToRoute(string $route, array $parameters = array(), int $status = 302): RedirectResponse;
 
 	/**
 	 * Creates and returns a Form instance from the type of the form.
@@ -39,7 +39,7 @@ trait AbstractControllerTrait {
 	 *
 	 * @return FormInterface
 	 */
-	protected abstract function createForm(string $type, $data = null, array $options = array()): FormInterface;
+	abstract protected function createForm(string $type, $data = null, array $options = array()): FormInterface;
 
 	/**
 	 * Renders a view.
@@ -50,6 +50,6 @@ trait AbstractControllerTrait {
 	 *
 	 * @return Response A Response instance
 	 */
-	protected abstract function render(string $view, array $parameters = array(), ?Response $response = null): Response;
+	abstract protected function render(string $view, array $parameters = array(), ?Response $response = null): Response;
 
 }

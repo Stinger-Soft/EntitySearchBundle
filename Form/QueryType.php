@@ -33,9 +33,9 @@ class QueryType extends AbstractType {
 	 *
 	 * @var array
 	 */
-	protected $defaultOptions = array();
+	protected $defaultOptions = [];
 
-	public function __construct(array $defaultOptions = array()) {
+	public function __construct(array $defaultOptions = []) {
 		$this->defaultOptions = $defaultOptions;
 	}
 
@@ -53,21 +53,21 @@ class QueryType extends AbstractType {
 		$usedFacets = $options['used_facets'];
 		$result = $options['result'];
 		$preferredFilterChoices = $options['preferred_filter_choices'];
-		$maxChoiceGroupCount = $options['max_choice_group_count'];
-		$data = array();
+		$maxChoiceGroupCount = (int)$options['max_choice_group_count'];
 
 		if($usedFacets && !$result) {
-			$data = array();
+			$data = [];
 			foreach($usedFacets as $facetType => $facetTypeOptions) {
-				$facetTypeOptions = is_array($facetTypeOptions) ? $facetTypeOptions : array();
-				$preferredChoices = isset($preferredFilterChoices[$facetType]) ? $preferredFilterChoices[$facetType] : array();
+				$facetTypeOptions = is_array($facetTypeOptions) ? $facetTypeOptions : [];
+				$preferredChoices = $preferredFilterChoices[$facetType] ?? [];
 				$i = 0;
 				$builder->add('facet_' . $facetType, FacetType::class, array_merge(array(
 					'label'             => 'stinger_soft_entity_search.forms.query.' . $facetType . '.label',
 					'multiple'          => true,
 					'expanded'          => true,
 					'preferred_choices' => function($val) use ($preferredChoices, $data, $facetType, $maxChoiceGroupCount, &$i) {
-						return $i++ < $maxChoiceGroupCount || $maxChoiceGroupCount == 0 || in_array($val, $preferredChoices) || (isset($data['facet_' . $facetType]) && in_array($val, $data['facet_' . $facetType]));
+						$facetKey = 'facet_' . $facetType;
+						return $i++ < $maxChoiceGroupCount || $maxChoiceGroupCount === 0 || \in_array($val, $preferredChoices) || (isset($data[$facetKey]) && \in_array($val, $data[$facetKey]));
 					}
 				), $facetTypeOptions));
 				unset($i);
@@ -115,10 +115,10 @@ class QueryType extends AbstractType {
 		$resolver->setDefault('result', null);
 
 		$resolver->setRequired('preferred_filter_choices');
-		$resolver->setDefault('preferred_filter_choices', isset($this->defaultOptions['preferred_filter_choices']) ? $this->defaultOptions['preferred_filter_choices'] : array());
+		$resolver->setDefault('preferred_filter_choices', $this->defaultOptions['preferred_filter_choices'] ?? []);
 
 		$resolver->setRequired('max_choice_group_count');
-		$resolver->setDefault('max_choice_group_count', isset($this->defaultOptions['max_choice_group_count']) ? $this->defaultOptions['max_choice_group_count'] : 10);
+		$resolver->setDefault('max_choice_group_count', $this->defaultOptions['max_choice_group_count'] ?? 10);
 
 		$resolver->setDefault('facet_formatter', null);
 		$resolver->setDefault('allow_extra_fields', true);
@@ -126,28 +126,30 @@ class QueryType extends AbstractType {
 
 	/**
 	 *
-	 * @param FormBuilderInterface|Form $builder
+	 * @param FormBuilderInterface|FormInterface $builder
 	 * @param FacetSet $facets
+	 * @param array $options
+	 * @param Query $data
 	 */
-	protected function createFacets($builder, FacetSet $facets, array $options, Query $data) {
+	protected function createFacets($builder, FacetSet $facets, array $options, Query $data):void {
 		$preferredFilterChoices = $options['preferred_filter_choices'];
-		$maxChoiceGroupCount = $options['max_choice_group_count'];
+		$maxChoiceGroupCount = (int)$options['max_choice_group_count'];
 		$selectedFacets = $data->getFacets();
 		$usedFacets = $options['used_facets'];
 
 		foreach($facets->getFacets() as $facetType => $facetValues) {
-			$preferredChoices = $preferredFilterChoices[$facetType] ?? array();
+			$preferredChoices = $preferredFilterChoices[$facetType] ?? [];
 
 			$i = 0;
-			$facetTypeOptions = $usedFacets[$facetType] ?? array();
+			$facetTypeOptions = $usedFacets[$facetType] ?? [];
 			$formatter = $options['facet_formatter'][$facetType] ?? null;
 			$builder->add('facet_' . $facetType, FacetType::class, array_merge(array(
 				'label'             => 'stinger_soft_entity_search.forms.query.' . $facetType . '.label',
 				'multiple'          => true,
 				'expanded'          => true,
-				'choices'           => $this->generateFacetChoices($facetType, $facetValues, $selectedFacets[$facetType] ?? array(), $formatter),
+				'choices'           => $this->generateFacetChoices($facetType, $facetValues, $selectedFacets[$facetType] ?? [], $formatter),
 				'preferred_choices' => function($val) use ($preferredChoices, $selectedFacets, $facetType, $maxChoiceGroupCount, &$i) {
-					return $i++ < $maxChoiceGroupCount || $maxChoiceGroupCount == 0 || in_array($val, $preferredChoices) || (isset($selectedFacets[$facetType]) && in_array($val, $selectedFacets[$facetType]));
+					return $i++ < $maxChoiceGroupCount || $maxChoiceGroupCount === 0 || \in_array($val, $preferredChoices) || (isset($selectedFacets[$facetType]) && \in_array($val, $selectedFacets[$facetType]));
 				}
 			), $facetTypeOptions));
 			unset($i);
@@ -158,13 +160,16 @@ class QueryType extends AbstractType {
 	 *
 	 * @param string $facetType
 	 * @param array $facets
+	 * @param array $selectedFacets
+	 * @param callable|null $formatter
+	 * @return array
 	 */
-	protected function generateFacetChoices($facetType, array $facets, array $selectedFacets = array(), callable $formatter = null) {
-		$choices = array();
+	protected function generateFacetChoices($facetType, array $facets, array $selectedFacets = [], callable $formatter = null): array {
+		$choices = [];
 		foreach($facets as $facet => $data) {
 			$value = $data['value'];
 			$count = $data['count'];
-			if($count === 0 && !in_array($facet, $selectedFacets)) {
+			if($count === 0 && !\in_array($facet, $selectedFacets)) {
 				continue;
 			}
 			$choices[$this->formatFacet($formatter, $facetType, $facet, $value, $count)] = $facet;
@@ -180,12 +185,20 @@ class QueryType extends AbstractType {
 		return $choices;
 	}
 
-	protected function formatFacet($formatter, $facetType, $facet, $value, $count) {
+	/**
+	 * @param $formatter
+	 * @param $facetType
+	 * @param $facet
+	 * @param $value
+	 * @param $count
+	 * @return string
+	 */
+	protected function formatFacet($formatter, $facetType, $facet, $value, $count):string {
 		$default = $facet . ' (' . $count . ')';
 		if(!$formatter) {
 			return $default;
 		}
-		return \call_user_func($formatter, $facetType, $value, $count, $default);
+		return $formatter($facetType, $value, $count, $default);
 
 	}
 }
