@@ -56,7 +56,8 @@ class QueryType extends AbstractType {
 		if($usedFacets && !$result) {
 			$data = array();
 			foreach($usedFacets as $facetType => $facetTypeOptions) {
-				$preferredChoices = isset($preferredFilterChoices[$facetType]) ? $preferredFilterChoices[$facetType] : array();
+				$facetTypeOptions = is_array($facetTypeOptions) ? $facetTypeOptions : [];
+				$preferredChoices = $preferredFilterChoices[$facetType] ?? [];
 				$i = 0;
 				$builder->add('facet_' . $facetType, FacetType::class, array_merge(array(
 					'label' => 'stinger_soft_entity_search.forms.query.' . $facetType . '.label',
@@ -114,7 +115,7 @@ class QueryType extends AbstractType {
 			$preferredChoices = isset($preferredFilterChoices[$facetType]) ? $preferredFilterChoices[$facetType] : array();
 			
 			$i = 0;
-			$facetTypeOptions = $usedFacets[$facetType];
+			$facetTypeOptions = isset($usedFacets[$facetType]) ? $usedFacets[$facetType] : [];
 			$formatter = isset($options['facet_formatter'][$facetType]) ? $options['facet_formatter'][$facetType] : null;
 			$builder->add('facet_' . $facetType, FacetType::class, array_merge(array(
 				'label' => 'stinger_soft_entity_search.forms.query.' . $facetType . '.label',

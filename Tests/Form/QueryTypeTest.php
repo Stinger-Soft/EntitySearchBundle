@@ -27,10 +27,12 @@ use Symfony\Component\Form\FormBuilder;
 class QueryTypeTest extends TypeTestCase {
 
 	public function testInitialCall() {
-		$form = $this->factory->create(QueryType::class);
-		
 		$query = new Query('Hemelinger');
 		
+		$form = $this->factory->create(QueryType::class, $query, array(
+			'used_facets' => array()
+		));
+
 		$formData = array(
 			'searchTerm' => 'Hemelinger' 
 		);
@@ -53,9 +55,9 @@ class QueryTypeTest extends TypeTestCase {
 		));
 		
 		$expectedQuery = new Query('Hemelinger', array(
-			Document::FIELD_TYPE => array(
-				'\StingerSoft\TestBundle\Entity\Test' 
-			) 
+//			Document::FIELD_TYPE => array(
+//				'\StingerSoft\TestBundle\Entity\Test'
+//			)
 		), array(
 			Document::FIELD_TYPE 
 		));
