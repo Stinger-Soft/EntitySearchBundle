@@ -21,9 +21,11 @@ use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterf
 use StingerSoft\EntitySearchBundle\Services\SearchService;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelInterface;
 
 class SyncCommand extends Command {
@@ -59,7 +61,11 @@ class SyncCommand extends Command {
 		$this->entityToDocumentMapper = $mapper;
 		// Detect upload path
 		if(!self::$defaultUploadPath) {
-			$root = $kernel->getRootDir();
+			if(Kernel::VERSION_ID < 40200) {
+				$root = $kernel->getRootDir();
+			} else {
+				$root = $kernel->getProjectDir();
+			}
 			self::$defaultUploadPath = $root . '/../web/uploads';
 		}
 	}
@@ -116,6 +122,7 @@ class SyncCommand extends Command {
 					continue;
 				}
 				$this->indexEntity($input, $output, $m->getReflectionClass()->getName());
+				$output->writeln('');
 			}
 		} else {
 			$this->indexEntity($input, $output, $entity);
@@ -159,15 +166,20 @@ class SyncCommand extends Command {
 			$output->writeln('<comment>No entities found for indexing</comment>');
 			return;
 		}
+		$progressBar = new ProgressBar($output, $entityCount);
+		$progressBar->display();
 
 		$entitiesIndexed = 0;
 
 		// Index each entity separate
 		foreach($iterableResult as $row) {
 			$entity = $useBatch ? $row[0] : $row;
+			$progressBar->advance();
 			if($this->entityToDocumentMapper->isIndexable($entity)) {
 				$document = $this->entityToDocumentMapper->createDocument($entityManager, $entity);
-				if($document === null) continue;
+				if($document === null) {
+					continue;
+				}
 				try {
 					$this->searchService->saveDocument($document);
 					$entitiesIndexed++;
@@ -182,6 +194,8 @@ class SyncCommand extends Command {
 		}
 		$entityManager->flush();
 		$entityManager->clear();
+		$progressBar->finish();
+		$output->writeln('');
 		$output->writeln('<comment>Indexed ' . $entitiesIndexed . ' entities</comment>');
 	}
 

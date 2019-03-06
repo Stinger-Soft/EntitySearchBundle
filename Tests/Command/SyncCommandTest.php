@@ -29,6 +29,10 @@ class SyncCommandTest extends AbstractORMTestCase {
 	public function getRootDir() {
 		return '';
 	}
+	
+	public function getProjectDir() {
+		return '';
+	}
 
 	public function setUp() {
 		parent::setUp();
