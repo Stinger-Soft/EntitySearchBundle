@@ -85,7 +85,7 @@ interface Document {
 	 *
 	 * @var string
 	 */
-	const FIELD_CONTENT_TYPE = 'content_type';
+	const FIELD_CONTENT_TYPE = 'Content-Type';
 
 	/**
 	 * Adds a field and its value to the index
