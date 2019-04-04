@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -13,6 +14,8 @@ namespace StingerSoft\EntitySearchBundle\DependencyInjection;
 
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\HttpKernel\Kernel;
+
 
 /**
  * This is the class that validates and merges configuration from your app/config files
@@ -27,8 +30,12 @@ class Configuration implements ConfigurationInterface {
 	 *
 	 */
 	public function getConfigTreeBuilder() {
-		$treeBuilder = new TreeBuilder();
-		$root = $treeBuilder->root('stinger_soft_entity_search');
+		$treeBuilder = new TreeBuilder('stinger_soft_entity_search');
+		if(Kernel::VERSION_ID < 40200) {
+			$root = $treeBuilder->root('stinger_soft_entity_search');
+		} else {
+			$root = $treeBuilder->getRootNode();
+		}
 		// @formatter:off
 		$root->children()
 			->booleanNode('enable_indexing')->defaultFalse()->end()

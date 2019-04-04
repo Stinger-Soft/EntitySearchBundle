@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -9,6 +10,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace StingerSoft\EntitySearchBundle\Model\Result;
 
 /**
@@ -36,17 +38,17 @@ class Correction {
 	 *
 	 * @return string
 	 */
-	public function getQuery() {
+	public function getQuery(): string {
 		return $this->query;
 	}
 
 	/**
 	 * Sets the corrected query
 	 *
-	 * @param string $query        	
-	 * @return \Model\Result\Correction
+	 * @param string $query
+	 * @return Correction
 	 */
-	public function setQuery($query) {
+	public function setQuery(string $query): Correction {
 		$this->query = $query;
 		return $this;
 	}
@@ -55,9 +57,9 @@ class Correction {
 	 * Gets the amount of hit for the corrected query.
 	 * <code>NULL</code> if the search service cannot predict it
 	 *
-	 * @return number
+	 * @return int
 	 */
-	public function getHits() {
+	public function getHits(): ?int {
 		return $this->hits;
 	}
 
@@ -65,10 +67,10 @@ class Correction {
 	 * Sets the amount of hit for the corrected query.
 	 * <code>NULL</code> if the search service cannot predict it
 	 *
-	 * @param integer $hits        	
-	 * @return \Model\Result\Correction
+	 * @param integer $hits
+	 * @return Correction
 	 */
-	public function setHits($hits) {
+	public function setHits(?int $hits): Correction {
 		$this->hits = $hits;
 		return $this;
 	}

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -11,7 +12,9 @@
  */
 namespace StingerSoft\EntitySearchBundle\DependencyInjection;
 
+use StingerSoft\EntitySearchBundle\Services\DoctrineListener;
 use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface;
+use StingerSoft\EntitySearchBundle\Services\SearchService;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
@@ -37,12 +40,11 @@ class StingerSoftEntitySearchExtension extends Extension {
 		$loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
 		$loader->load('services.yml');
 		
-		$entityToDocumentMapperDefinition = $container->getDefinition(EntityToDocumentMapperInterface::SERVICE_ID);
-		$entityToDocumentMapperDefinition->addArgument($config['types']);
+		$entityToDocumentMapperDefinition = $container->getDefinition(EntityToDocumentMapperInterface::class);
+		$entityToDocumentMapperDefinition->setArgument('$mapping', $config['types']);
 		
-		$container->getDefinition('stinger_soft.entity_search.doctrine.listener')->addArgument($config['enable_indexing']);
-		
-		$container->setAlias('stinger_soft.entity_search.search_service', $config['search_service']);
+		$container->getDefinition(DoctrineListener::class)->setArgument('$enableIndexing', $config['enable_indexing']);
+		$container->setAlias(SearchService::class, $config['search_service']);
 
 		$facetFormDefinition = $container->getDefinition('stinger_soft.entity_search.forms.query_type');
 		$facetFormDefinition->addArgument($config['results']);

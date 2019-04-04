@@ -63,6 +63,7 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 			'autocomplete',
 			'search' 
 		))->disableOriginalConstructor()->getMockForAbstractClass();
+		$searchMock->setObjectManager($this->getMockSqliteEntityManager());
 		
 		$searchMock->expects($this->exactly($save))->method('saveDocument')->will($this->returnValue(null));
 		$searchMock->expects($this->exactly($delete))->method('removeDocument')->will($this->returnValue(null));
@@ -185,7 +186,7 @@ class DoctrineListenerTest extends AbstractORMTestCase {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Tests\AbstractTestCase::getUsedEntityFixtures()
 	 */
-	protected function getUsedEntityFixtures() {
+	protected function getUsedEntityFixtures(): array {
 		return array(
 			Beer::class,
 			Potato::class 

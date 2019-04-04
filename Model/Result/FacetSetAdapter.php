@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -9,6 +10,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace StingerSoft\EntitySearchBundle\Model\Result;
 
 class FacetSetAdapter implements FacetSet {
@@ -16,27 +18,31 @@ class FacetSetAdapter implements FacetSet {
 	/**
 	 * Facet array.
 	 *
-	 * @var string[string][int]
+	 * @var array
 	 */
 	protected $facets;
 
 	/**
 	 * Constructor.
 	 *
-	 * @param int[string] $facets        	
+	 * @param int[string] $facets
 	 */
 	public function __construct(array $facets = array()) {
 		$this->facets = $facets;
 	}
 
-	public function addFacetValue($key, $value, $increaseCounterBy = 1) {
-		if(!isset($this->facets[$key])){
+	public function addFacetValue(string $key, string $label, $value = null, int $increaseCounterBy = 1) : void {
+		$value = $value ?? $label;
+		if(!isset($this->facets[$key])) {
 			$this->facets[$key] = array();
 		}
-		if(!isset($this->facets[$key][$value])){
-			$this->facets[$key][$value] = 0;
+		if(!isset($this->facets[$key][$label])) {
+			$this->facets[$key][$label] = array(
+				'value' => $value,
+				'count' => 0,
+			);
 		}
-		$this->facets[$key][$value] = $this->facets[$key][$value] + $increaseCounterBy;
+		$this->facets[$key][$label]['count'] += $increaseCounterBy;
 	}
 
 	/**
@@ -45,12 +51,11 @@ class FacetSetAdapter implements FacetSet {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Result\FacetSet::getFacet()
 	 */
-	public function getFacet($key) {
+	public function getFacet(string $key): ?array {
 		if(isset($this->facets[$key])) {
 			return $this->facets[$key];
-		} else {
-			return;
 		}
+		return null;
 	}
 
 	/**
@@ -59,7 +64,7 @@ class FacetSetAdapter implements FacetSet {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Result\FacetSet::getFacets()
 	 */
-	public function getFacets() {
+	public function getFacets(): array {
 		return $this->facets;
 	}
 
@@ -69,7 +74,7 @@ class FacetSetAdapter implements FacetSet {
 	 *
 	 * @see IteratorAggregate::getIterator()
 	 */
-	public function getIterator() {
+	public function getIterator(): \Iterator {
 		return new \ArrayIterator($this->facets);
 	}
 
@@ -79,7 +84,7 @@ class FacetSetAdapter implements FacetSet {
 	 *
 	 * @see Countable::count()
 	 */
-	public function count() {
+	public function count(): int {
 		return count($this->facets);
 	}
 }

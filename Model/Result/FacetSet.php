@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -9,6 +10,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace StingerSoft\EntitySearchBundle\Model\Result;
 
 interface FacetSet extends \IteratorAggregate, \Countable {
@@ -25,16 +27,18 @@ interface FacetSet extends \IteratorAggregate, \Countable {
 	 * Get a facet by key.
 	 *
 	 * @param string $key
-	 *        	The key of the facet
-	 *        	
+	 *            The key of the facet
+	 *
 	 * @return string[string][int] The amount of results with facet
 	 */
-	public function getFacet($key);
+	public function getFacet(string $key): ?array;
 
 	/**
 	 * Get all facets.
 	 *
 	 * @return string[string][int]
 	 */
-	public function getFacets();
+	public function getFacets(): array;
+
+	public function addFacetValue(string $key, string $label, $value = null, int $increaseCounterBy = 1) : void;
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -62,8 +63,5 @@ class FacetType extends AbstractType {
 	public function configureOptions(OptionsResolver $resolver) {
 		$resolver->setDefault('translation_domain', 'StingerSoftEntitySearchBundle');
 		$resolver->setDefault('by_reference', true);
-		if(Kernel::VERSION_ID < 30000) {
-			$resolver->setDefault('choices_as_values', true);
-		}
 	}
 }

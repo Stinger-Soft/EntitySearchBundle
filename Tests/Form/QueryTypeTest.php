@@ -32,7 +32,7 @@ class QueryTypeTest extends TypeTestCase {
 		$form = $this->factory->create(QueryType::class, $query, array(
 			'used_facets' => array()
 		));
-
+		
 		$formData = array(
 			'searchTerm' => 'Hemelinger' 
 		);
@@ -135,8 +135,8 @@ class QueryTypeTest extends TypeTestCase {
 		}
 		
 		$typeForm = $view->offsetGet('facet_type');
-		$this->assertEquals(2, $typeForm->count());
 		$this->assertContains('\StingerSoft\TestBundle\Entity\Test', $typeForm->vars['value']);
+		$this->assertEquals(2, $typeForm->count());
 // 		$this->assertCount(2, $typeForm->vars['choices']);
 	}
 	
@@ -157,6 +157,7 @@ class QueryTypeTest extends TypeTestCase {
 		
 		$this->dispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')->getMock();
 		$this->builder = new FormBuilder(null, null, $this->dispatcher, $this->factory);
+		parent::setUp();
 	}
 
 	/**

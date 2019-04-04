@@ -15,7 +15,7 @@ use StingerSoft\EntitySearchBundle\Model\DocumentAdapter;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Beer;
 use StingerSoft\EntitySearchBundle\Model\Document;
 
-class DocumentAdapterTest extends \PHPUnit_Framework_TestCase {
+class DocumentAdapterTest extends \PHPUnit\Framework\TestCase {
 
 	public function testAddFields() {
 		$doc = new DocumentAdapter();

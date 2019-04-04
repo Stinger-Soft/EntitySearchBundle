@@ -11,23 +11,33 @@ parameters:
   stinger_soft_entity_search.facets.filetype.class: 'StingerSoft\EntitySearchBundle\Services\Facet\FileTypeFacet'
 
 services:
+  _defaults:
+    autoconfigure: true
+    autowire: true
+    public: false
+
+  StingerSoft\EntitySearchBundle\Command\:
+    resource: '../../Command/*'
+    autowire: true
+    autoconfigure: true
+    public: false
+    lazy: true
+
+
   stinger_soft.entity_search.dummy_search_service:
     class: '%stinger_soft.entity_search.search_service.class%'
     
-  stinger_soft.entity_search.doctrine.listener:
-    arguments: ["@stinger_soft.entity_search.entity_to_document_mapper", "@stinger_soft.entity_search.search_service"]
+  StingerSoft\EntitySearchBundle\Services\DoctrineListener:
     class: '%stinger_soft.entity_search.doctrine.listener.class%'
     tags:
         - { name: doctrine.event_subscriber }
-        
-  stinger_soft.entity_search.entity_to_document_mapper:
-    arguments: ["@stinger_soft.entity_search.search_service"]
+
+  StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface:
     class: '%stinger_soft.entity_search.entity_to_document_mapper.class%'
-  
-  stinger_soft.entity_search.document_to_entity_mapper:
+
+  StingerSoft\EntitySearchBundle\Services\Mapping\DocumentToEntityMapperInterface:
     class: '%stinger_soft.entity_search.document_to_entity_mapper.class%'
-    arguments: ["@doctrine"]
-    
+
   stinger_soft.entity_search.forms.query_type:
     class: "%stinger_soft.entity_search.forms.query_type.class%"
     tags:

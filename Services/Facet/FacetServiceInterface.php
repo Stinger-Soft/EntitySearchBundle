@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -14,9 +15,11 @@ namespace StingerSoft\EntitySearchBundle\Services\Facet;
 
 interface FacetServiceInterface {
 
-	public function getField();
+	public const TAG_NAME = 'stinger_soft_entity_search.facets';
 
-	public function getFormOptions();
+	public function getField(): string;
 
-	public function getFacetFormatter();
+	public function getFormOptions(): array;
+
+	public function getFacetFormatter(): ?callable;
 }

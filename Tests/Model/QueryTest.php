@@ -14,7 +14,7 @@ namespace StingerSoft\EntitySearchBundle\Tests\Model;
 use StingerSoft\EntitySearchBundle\Model\Query;
 use StingerSoft\EntitySearchBundle\Model\Document;
 
-class QueryTest extends \PHPUnit_Framework_TestCase {
+class QueryTest extends \PHPUnit\Framework\TestCase {
 
 	public function testSetGetFacets() {
 		$query = new Query();

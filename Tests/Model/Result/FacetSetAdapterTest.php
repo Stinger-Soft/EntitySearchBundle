@@ -14,7 +14,7 @@ namespace StingerSoft\EntitySearchBundle\Tests\Model\Result;
 use StingerSoft\EntitySearchBundle\Model\Result\FacetSetAdapter;
 use StingerSoft\EntitySearchBundle\Model\Document;
 
-class FacetSetAdapterTest extends \PHPUnit_Framework_TestCase {
+class FacetSetAdapterTest extends \PHPUnit\Framework\TestCase {
 
 	public function testAddFacetValue(){
 		$facets = new FacetSetAdapter(array());

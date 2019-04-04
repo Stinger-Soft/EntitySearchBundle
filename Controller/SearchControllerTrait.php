@@ -1,18 +1,21 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: FlorianMeyer
- * Date: 18.01.2018
- * Time: 13:04
+declare(strict_types=1);
+
+/*
+ * This file is part of the Stinger Entity Search package.
+ *
+ * (c) Oliver Kotte <oliver.kotte@stinger-soft.net>
+ * (c) Florian Meyer <florian.meyer@stinger-soft.net>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
  */
 
 namespace StingerSoft\EntitySearchBundle\Controller;
 
 use StingerSoft\EntitySearchBundle\Form\QueryType;
-use StingerSoft\EntitySearchBundle\Model\Document;
 use StingerSoft\EntitySearchBundle\Model\PaginatableResultSet;
 use StingerSoft\EntitySearchBundle\Model\Query;
-use StingerSoft\EntitySearchBundle\Services\Facet\FacetServiceInterface;
 use StingerSoft\EntitySearchBundle\Services\Mapping\DocumentToEntityMapperInterface;
 use StingerSoft\EntitySearchBundle\Services\SearchService;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,22 +24,14 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 trait SearchControllerTrait {
 
-	use AbstractControllerTrait;
-
 	/**
-	 *
 	 * @var SearchService
 	 */
-	private $searchService;
-
-
+	protected $searchService;
 	private $availableFacets;
-
 	private $facetFormatter;
 
-
-
-	public function searchAction(Request $request) {
+	public function searchAction(Request $request, DocumentToEntityMapperInterface $mapper) {
 		if($request->query->get('term', false) !== false) {
 			$this->setSearchTerm($request->getSession(), $request->query->get('term'));
 			return $this->redirectToRoute('stinger_soft_entity_search_search');
@@ -49,7 +44,7 @@ trait SearchControllerTrait {
 		$query = new Query($term, $facets, array_keys($availableFacets));
 
 		$facetForm = $this->createForm(QueryType::class, $query, array(
-			'used_facets' =>  $this->getConfiguredUsedFacets($query->getUsedFacets())
+			'used_facets' => $this->getConfiguredUsedFacets($query->getUsedFacets())
 		));
 
 		$facetForm->handleRequest($request);
@@ -60,29 +55,70 @@ trait SearchControllerTrait {
 			$this->setSearchTerm($request->getSession(), $query->getSearchTerm());
 			$this->setSearchFacets($request->getSession(), $query->getFacets());
 		}
-		$result = $this->getSearchService()->search($query);
 
-		$facetForm = $this->createForm(QueryType::class, $query, array(
-			'result'          => $result,
-			'used_facets'     => $this->getConfiguredUsedFacets($query->getUsedFacets()),
-			'facet_formatter' => $this->getFacetFormatter()
-		));
+		try {
+			$result = $this->searchService->search($query);
 
-		$page = $request->query->get('page', 1);
-		$results = array();
-		if($result instanceof PaginatableResultSet) {
-			$results = $result->paginate($page, $this->getResultsPerPage());
-		} else {
-			$results = $result->getResults(($page - 1) * $this->getResultsPerPage(), $this->getResultsPerPage());
+			$facetForm = $this->createForm(QueryType::class, $query, array(
+				'result'          => $result,
+				'used_facets'     => $this->getConfiguredUsedFacets($query->getUsedFacets()),
+				'facet_formatter' => $this->getFacetFormatter()
+			));
+
+			$page = (int)$request->query->get('page', 1);
+			$results = null;
+			if($result instanceof PaginatableResultSet) {
+				$results = $result->paginate($page, $this->getResultsPerPage());
+			} elseif($results !== null) {
+				$results = $result->getResults(($page - 1) * $this->getResultsPerPage(), $this->getResultsPerPage());
+			}
+
+			return $this->render($this->getTemplate(), array(
+				'results'   => $results,
+				'resultSet' => $result,
+				'term'      => $query->getSearchTerm(),
+				'mapper'    => $mapper,
+				'facetForm' => $facetForm->createView()
+			));
+		} catch(\Exception $exception) {
+			$response = $this->render($this->getErrorTemplate(), array(
+				'error' => $exception->getMessage(),
+				'term'  => $query->getSearchTerm()
+			));
+			return $response->setStatusCode(500);
 		}
+	}
 
-		return $this->render($this->getTemplate(), array(
-			'results'   => $results,
-			'resultSet' => $result,
-			'term'      => $query->getSearchTerm(),
-			'mapper'    => $this->get(DocumentToEntityMapperInterface::SERVICE_ID),
-			'facetForm' => $facetForm->createView()
-		));
+	/**
+	 * Returns a JSON array of autocompletions for the given term.
+	 * The term can be provided as a GET or POST paramater with the name <em>term</em>
+	 *
+	 * @param Request $request
+	 * @return \Symfony\Component\HttpFoundation\JsonResponse
+	 */
+	public function autocompleteAction(Request $request) {
+		$term = $request->get('term');
+		return new JsonResponse($this->searchService->autocomplete($term, $this->getSuggestionCount()));
+	}
+
+	/**
+	 * Provides an online help for the configured search service.
+	 * If the search service has no online help defined a warning message will be displayed to the user.
+	 *
+	 * @param Request $request
+	 * @return \Symfony\Component\HttpFoundation\Response
+	 */
+	public function onlineHelpAction(Request $request) {
+		$template = $this->searchService->getOnlineHelp($request->getLocale(), $this->getDefaultLocale());
+		return $this->render($template ?: 'StingerSoftEntitySearchBundle:Help:no_help.html.twig');
+	}
+
+	/**
+	 * @param SearchService $searchService
+	 * @required
+	 */
+	public function setSearchService(SearchService $searchService): void {
+		$this->searchService = $searchService;
 	}
 
 	protected function getConfiguredUsedFacets(array $queryUsedFacets) {
@@ -125,6 +161,10 @@ trait SearchControllerTrait {
 		return 'StingerSoftEntitySearchBundle:Search:results.html.twig';
 	}
 
+	protected function getErrorTemplate() {
+		return 'StingerSoftEntitySearchBundle:Search:error.html.twig';
+	}
+
 	protected function getFacetFormatter() {
 		$this->initFacets();
 		return $this->facetFormatter;
@@ -150,7 +190,6 @@ trait SearchControllerTrait {
 		return $this->availableFacets;
 	}
 
-
 	protected function initFacets() {
 		if(!$this->availableFacets) {
 			$this->availableFacets = array();
@@ -158,8 +197,7 @@ trait SearchControllerTrait {
 
 			$facetServices = $this->getParameter('stinger_soft.entity_search.available_facets');
 			foreach($facetServices as $facetServiceId) {
-				/** @var FacetServiceInterface $facetService */
-				$facetService = $this->get($facetServiceId);
+				$facetService = $this->searchService->getFacet($facetServiceId);
 				$this->availableFacets[$facetService->getField()] = $facetService->getFormOptions();
 				if($facetService->getFacetFormatter()) {
 					$this->facetFormatter[$facetService->getField()] = $facetService->getFacetFormatter();
@@ -176,7 +214,7 @@ trait SearchControllerTrait {
 	 */
 	protected function getSearchFacets(SessionInterface $session) {
 		$facets = $session->get($this->getSessionPrefix() . '_facets', false);
-		return $facets ? json_decode($facets, true) : $this->getDefaultFacets();
+		return $facets ? \json_decode($facets, true) : $this->getDefaultFacets();
 	}
 
 	/**
@@ -186,7 +224,7 @@ trait SearchControllerTrait {
 	 * @param string[string][] $facets
 	 */
 	protected function setSearchFacets(SessionInterface $session, $facets) {
-		$session->set($this->getSessionPrefix() . '_facets', json_encode($facets));
+		$session->set($this->getSessionPrefix() . '_facets', \json_encode($facets));
 	}
 
 	/**
@@ -209,38 +247,4 @@ trait SearchControllerTrait {
 		$session->set($this->getSessionPrefix() . '_term', $term);
 	}
 
-	/**
-	 * Returns a JSON array of autocompletions for the given term.
-	 * The term can be provided as a GET or POST paramater with the name <em>term</em>
-	 *
-	 * @param Request $request
-	 * @return \Symfony\Component\HttpFoundation\JsonResponse
-	 */
-	public function autocompleteAction(Request $request) {
-		$term = $request->get('term');
-		return new JsonResponse($this->getSearchService()->autocomplete($term, $this->getSuggestionCount()));
-	}
-
-	/**
-	 * Provides an online help for the configured search service.
-	 * If the search service has no online help defined a warning message will be displayed to the user.
-	 *
-	 * @param Request $request
-	 * @return \Symfony\Component\HttpFoundation\Response
-	 */
-	public function onlineHelpAction(Request $request) {
-		$template = $this->getSearchService()->getOnlineHelp($request->getLocale(), $this->getDefaultLocale());
-		return $this->render($template ?: 'StingerSoftEntitySearchBundle:Help:no_help.html.twig');
-	}
-
-	/**
-	 * Inits and returns the configured search service
-	 *
-	 * @return SearchService
-	 */
-	protected function getSearchService() {
-		$this->service = $this->get(SearchService::SERVICE_ID);
-		$this->service->setObjectManager($this->getDoctrine()->getManager());
-		return $this->service;
-	}
 }

@@ -19,6 +19,7 @@ use Doctrine\ORM\Mapping\DefaultQuoteStrategy;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Repository\DefaultRepositoryFactory;
 use Doctrine\ORM\Tools\SchemaTool;
+use StingerSoft\EntitySearchBundle\Services\DummySearchService;
 
 abstract class AbstractORMTestCase extends AbstractTestCase {
 
@@ -40,7 +41,7 @@ abstract class AbstractORMTestCase extends AbstractTestCase {
 	protected function getMockSqliteEntityManager(EventManager $evm = null, Configuration $config = null) {
 		$conn = array(
 			'driver' => 'pdo_sqlite',
-			'memory' => true 
+			'memory' => true
 		);
 		$config = null === $config ? $this->getMockAnnotatedConfig() : $config;
 		$em = EntityManager::create($conn, $config, $evm ?: $this->getEventManager());
@@ -100,5 +101,11 @@ abstract class AbstractORMTestCase extends AbstractTestCase {
 
 	protected function getPaths() {
 		return array();
+	}
+
+	protected function getDummySearchService(EntityManager $em = null) {
+		$service = new DummySearchService();
+		$service->setObjectManager($em ?? $this->getMockSqliteEntityManager());
+		return $service;
 	}
 }

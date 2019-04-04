@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -9,14 +10,30 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace StingerSoft\EntitySearchBundle\Command;
 
 use StingerSoft\EntitySearchBundle\Services\SearchService;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ClearIndexCommand extends ContainerAwareCommand {
+class ClearIndexCommand extends Command {
+
+	/**
+	 * @var string|null The default command name
+	 */
+	protected static $defaultName = 'stinger:search:clear';
+
+	/**
+	 * @var SearchService
+	 */
+	protected $searchService;
+
+	public function __construct(SearchService $searchService) {
+		parent::__construct();
+		$this->searchService = $searchService;
+	}
 
 	/**
 	 *
@@ -25,7 +42,7 @@ class ClearIndexCommand extends ContainerAwareCommand {
 	 * @see \Symfony\Component\Console\Command\Command::configure()
 	 */
 	protected function configure() {
-		$this->setName('stinger:search:clear')->setDescription('Clears the configured search index');
+		$this->setDescription('Clears the configured search index');
 	}
 
 	/**
@@ -35,13 +52,7 @@ class ClearIndexCommand extends ContainerAwareCommand {
 	 * @see \Symfony\Component\Console\Command\Command::execute()
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output) {
-		/**
-		 *
-		 * @var SearchService $searchService
-		 */
-		$searchService = $this->getContainer()->get(SearchService::SERVICE_ID);
-		$searchService->setObjectManager($this->getContainer()->get('doctrine.orm.entity_manager'));
-		$searchService->clearIndex();
+		$this->searchService->clearIndex();
 	}
 }
 

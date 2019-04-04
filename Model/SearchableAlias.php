@@ -10,14 +10,12 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace StingerSoft\EntitySearchBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+namespace StingerSoft\EntitySearchBundle\Model;
 
-/**
- * Basic implementation of a search controller to offer a frontend access to the search service
- */
-class SearchController extends AbstractController {
-
-	use SearchControllerTrait;
+interface SearchableAlias {
+	/**
+	 * Returns the entity which should be indexed if this object is persisted or updated
+	 */
+	public function getEntityToIndex(): object;
 }

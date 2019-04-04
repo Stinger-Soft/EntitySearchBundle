@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -12,16 +13,16 @@
 namespace StingerSoft\EntitySearchBundle\Services\Mapping;
 
 use StingerSoft\EntitySearchBundle\Model\Document;
-use Doctrine\Common\Persistence\AbstractManagerRegistry;
+use Doctrine\Common\Persistence\ManagerRegistry;
 
 class DocumentToEntityMapper implements DocumentToEntityMapperInterface {
 
 	/**
-	 * @var AbstractManagerRegistry
+	 * @var ManagerRegistry
 	 */
 	protected $managerRegistry;
 
-	public function __construct(AbstractManagerRegistry $managerRegistry) {
+	public function __construct(ManagerRegistry $managerRegistry) {
 		$this->managerRegistry = $managerRegistry;
 	}
 
@@ -31,15 +32,19 @@ class DocumentToEntityMapper implements DocumentToEntityMapperInterface {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Services\Mapping\DocumentToEntityMapperInterface::getEntity()
 	 */
-	public function getEntity(Document $document) {
+	public function getEntity(Document $document) : ?object {
 		$clazz = $document->getEntityClass();
 		
-		if($clazz == null) {
+		if($clazz === null) {
 			return null;
 		}
 		if(!$document->getEntityId()) {
 			return null;
 		}
-		return $this->managerRegistry->getManagerForClass($clazz)->getRepository($clazz)->find($document->getEntityId());
+		$manager = $this->managerRegistry->getManagerForClass($clazz);
+		if($manager === null) {
+			return null;
+		}
+		return $manager->getRepository($clazz)->find($document->getEntityId());
 	}
 }

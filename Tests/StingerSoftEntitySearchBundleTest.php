@@ -13,7 +13,7 @@ namespace StingerSoft\EntitySearchBundle\Tests;
 
 use StingerSoft\EntitySearchBundle\StingerSoftEntitySearchBundle;
 
-class StingerSoftEntitySearchBundleTest extends \PHPUnit_Framework_TestCase {
+class StingerSoftEntitySearchBundleTest extends \PHPUnit\Framework\TestCase {
 
 	public function testRequiredBundles() {
 		$bundles = StingerSoftEntitySearchBundle::getRequiredBundles('dev');

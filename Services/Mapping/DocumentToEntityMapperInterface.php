@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -18,14 +19,12 @@ use StingerSoft\EntitySearchBundle\Model\Document;
  */
 interface DocumentToEntityMapperInterface {
 	
-	const SERVICE_ID = 'stinger_soft.entity_search.document_to_entity_mapper';
-
 	/**
 	 * Tries to create a document from the given object
 	 *
 	 * @param object $object        	
-	 * @return boolean|Document Returns false if no document could be created
+	 * @return object Returns false if no document could be created
 	 */
-	public function getEntity(Document $document);
+	public function getEntity(Document $document) : ?object;
 	
 }

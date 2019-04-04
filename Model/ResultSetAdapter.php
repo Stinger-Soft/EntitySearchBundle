@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -9,6 +10,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace StingerSoft\EntitySearchBundle\Model;
 
 use StingerSoft\EntitySearchBundle\Model\Result\FacetSet;
@@ -27,18 +29,18 @@ class ResultSetAdapter implements ResultSet {
 	 */
 	protected $results = array();
 
-	public function setFacets(FacetSet $facets) {
-		$this->facets = $facets;
-	}
-
 	/**
 	 *
 	 * {@inheritdoc}
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\ResultSet::getFacets()
 	 */
-	public function getFacets() {
+	public function getFacets(): FacetSet {
 		return $this->facets;
+	}
+
+	public function setFacets(FacetSet $facets): void {
+		$this->facets = $facets;
 	}
 
 	/**
@@ -47,15 +49,15 @@ class ResultSetAdapter implements ResultSet {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\ResultSet::getResults()
 	 */
-	public function getResults($offset = 0, $limit = null) {
+	public function getResults(int $offset = 0, ?int $limit = null): array {
 		return array_slice($this->results, $offset, $limit);
 	}
 
 	/**
 	 *
-	 * @param Document[] $results        	
+	 * @param Document[] $results
 	 */
-	public function setResults(array $results) {
+	public function setResults(array $results) : void {
 		$this->results = $results;
 	}
 
@@ -65,7 +67,7 @@ class ResultSetAdapter implements ResultSet {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\ResultSet::getExcerpt()
 	 */
-	public function getExcerpt(Document $document) {
+	public function getExcerpt(Document $document) : ?string {
 		return null;
 	}
 
@@ -75,7 +77,7 @@ class ResultSetAdapter implements ResultSet {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\ResultSet::getCorrections()
 	 */
-	public function getCorrections() {
+	public function getCorrections() : ?array {
 		return null;
 	}
 }

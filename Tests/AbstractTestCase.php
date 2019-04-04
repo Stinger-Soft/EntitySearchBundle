@@ -9,14 +9,15 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace StingerSoft\EntitySearchBundle\Tests;
 
-abstract class AbstractTestCase extends \PHPUnit_Framework_TestCase {
+abstract class AbstractTestCase extends \PHPUnit\Framework\TestCase {
 
 	/**
 	 * Get a list of used fixture classes
 	 *
 	 * @return array
 	 */
-	abstract protected function getUsedEntityFixtures();
+	abstract protected function getUsedEntityFixtures(): array;
 }

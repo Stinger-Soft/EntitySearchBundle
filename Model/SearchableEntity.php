@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /*
  * This file is part of the Stinger Entity Search package.
@@ -9,6 +10,7 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace StingerSoft\EntitySearchBundle\Model;
 
 /**
@@ -21,8 +23,8 @@ interface SearchableEntity {
 	 * information should be saved to the search index
 	 *
 	 * @param Document $document
-	 *        	The document object to be filled with information
+	 *            The document object to be filled with information
 	 * @return bool If this entity returns <code>false</code> no information will be indexed
 	 */
-	public function indexEntity(Document &$document);
+	public function indexEntity(Document $document): bool;
 }

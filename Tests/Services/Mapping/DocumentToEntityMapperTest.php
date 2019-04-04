@@ -38,7 +38,7 @@ class DocumentToEntityMapperTest extends AbstractORMTestCase {
 		$managerMock = $this->getMockBuilder(AbstractManagerRegistry::class)->setMethods(array(
 			'getManagerForClass' 
 		))->disableOriginalConstructor()->getMockForAbstractClass();
-		$managerMock->expects($this->once())->method('getManagerForClass')->will($this->returnValue($this->em));
+		$managerMock->expects($this->once())->method('getManagerForClass')->willReturn($this->em);
 		$eh = new DocumentToEntityMapper($managerMock);
 		return $eh;
 	}
@@ -68,7 +68,7 @@ class DocumentToEntityMapperTest extends AbstractORMTestCase {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Tests\AbstractTestCase::getUsedEntityFixtures()
 	 */
-	protected function getUsedEntityFixtures() {
+	protected function getUsedEntityFixtures(): array {
 		return array(
 			Beer::class 
 		);
