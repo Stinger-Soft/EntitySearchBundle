@@ -30,7 +30,7 @@ class QueryTypeTest extends TypeTestCase {
 		$query = new Query('Hemelinger');
 		
 		$form = $this->factory->create(QueryType::class, $query, array(
-			'used_facets' => array() 
+			'used_facets' => array()
 		));
 		
 		$formData = array(

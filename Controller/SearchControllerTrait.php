@@ -24,8 +24,6 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 trait SearchControllerTrait {
 
-	use AbstractControllerTrait;
-
 	/**
 	 * @var SearchService
 	 */
