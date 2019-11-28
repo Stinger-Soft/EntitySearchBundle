@@ -1,0 +1,10 @@
+stinger_soft_entity_search.forms.query.filter.label: 絞り込み
+stinger_soft_entity_search.forms.query.clear.label: リセットする
+stinger_soft_entity_search.forms.query.type.label: エンティティ
+stinger_soft_entity_search.forms.query.author.label: 作成者
+stinger_soft_entity_search.forms.query.editors.label: 作成者
+stinger_soft_entity_search.forms.query.filetype.label: ファイルタイプ
+stinger_soft_entity_search.results.title: Stingerソフト検索
+stinger_soft_entity_search.results.result_list.title: 結果
+stinger_soft_entity_search.results.result_filter.title: フィルター
+stinger_soft_entity_search.error.title: エラーが発生しました
