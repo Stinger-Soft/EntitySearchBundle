@@ -127,6 +127,7 @@ class SyncCommand extends Command {
 		} else {
 			$this->indexEntity($input, $output, $entity);
 		}
+		return 0;
 	}
 
 	/**

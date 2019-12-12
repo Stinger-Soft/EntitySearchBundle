@@ -53,6 +53,7 @@ class ClearIndexCommand extends Command {
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output) {
 		$this->searchService->clearIndex();
+		return 0;
 	}
 }
 
