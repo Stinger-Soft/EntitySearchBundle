@@ -31,13 +31,8 @@ class Configuration implements ConfigurationInterface {
 	 */
 	public function getConfigTreeBuilder() {
 		$treeBuilder = new TreeBuilder('stinger_soft_entity_search');
-		if(Kernel::VERSION_ID < 40200) {
-			$root = $treeBuilder->root('stinger_soft_entity_search');
-		} else {
-			$root = $treeBuilder->getRootNode();
-		}
 		// @formatter:off
-		$root->children()
+		$treeBuilder->getRootNode()->children()
 			->booleanNode('enable_indexing')->defaultFalse()->end()
 			->booleanNode('enable_search')->defaultFalse()->end()
 			->scalarNode('search_service')->defaultValue('stinger_soft.entity_search.dummy_search_service')->end()

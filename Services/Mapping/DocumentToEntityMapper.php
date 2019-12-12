@@ -10,10 +10,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace StingerSoft\EntitySearchBundle\Services\Mapping;
 
-use StingerSoft\EntitySearchBundle\Model\Document;
 use Doctrine\Common\Persistence\ManagerRegistry;
+use StingerSoft\EntitySearchBundle\Model\Document;
 
 class DocumentToEntityMapper implements DocumentToEntityMapperInterface {
 
@@ -32,9 +33,9 @@ class DocumentToEntityMapper implements DocumentToEntityMapperInterface {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Services\Mapping\DocumentToEntityMapperInterface::getEntity()
 	 */
-	public function getEntity(Document $document) : ?object {
+	public function getEntity(Document $document): ?object {
 		$clazz = $document->getEntityClass();
-		
+
 		if($clazz === null) {
 			return null;
 		}
