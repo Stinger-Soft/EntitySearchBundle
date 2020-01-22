@@ -22,11 +22,15 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
  */
 class StingerSoftEntitySearchBundle extends Bundle {
 
-	public static function getRequiredBundles($env) {
-		$bundles = array();
-		$bundles['StingerSoftEntitySearchBundle'] = '\StingerSoft\EntitySearchBundle\StingerSoftEntitySearchBundle';
-		$bundles['KnpPaginatorBundle'] = 'Knp\Bundle\PaginatorBundle\KnpPaginatorBundle';
-		return $bundles;
+	public static function getRequiredBundles(string $env, array &$requiredBundles = []): array {
+
+		if(isset($requiredBundles['StingerSoftEntitySearchBundle'])) {
+			return $requiredBundles;
+		}
+
+		$requiredBundles['StingerSoftEntitySearchBundle'] = '\StingerSoft\EntitySearchBundle\StingerSoftEntitySearchBundle';
+		$requiredBundles['KnpPaginatorBundle'] = 'Knp\Bundle\PaginatorBundle\KnpPaginatorBundle';
+		return $requiredBundles;
 	}
 
 	public function build(ContainerBuilder $container) {
