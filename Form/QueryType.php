@@ -175,7 +175,7 @@ class QueryType extends AbstractType {
 			$choices[$this->formatFacet($formatter, $facetType, $facet, $value, $count)] = $facet;
 		}
 		foreach($selectedFacets as $facet) {
-			if(isset($facets[$facet])) {
+			if(!isset($facets[$facet])) {
 				continue;
 			}
 			$value = $facets[$facet]['value'];
