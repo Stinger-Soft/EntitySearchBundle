@@ -236,6 +236,7 @@ trait SearchControllerTrait {
 	 */
 	protected function setSearchFacets(SessionInterface $session, $facets) {
 		$session->set($this->getSessionPrefix() . '_facets', \json_encode($facets));
+		$session->set($this->getSessionPrefix() . '_filter_options', false);
 	}
 
 	/**
@@ -246,7 +247,6 @@ trait SearchControllerTrait {
 	 */
 	protected function getSearchTerm(SessionInterface $session) {
 		return $session->get($this->getSessionPrefix() . '_term', false);
-		$session->set($this->getSessionPrefix() . '_filter_options', false);
 	}
 
 	/**
