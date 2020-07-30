@@ -54,6 +54,8 @@ trait SearchControllerTrait {
 			}
 			$this->setSearchTerm($request->getSession(), $query->getSearchTerm());
 			$this->setSearchFacets($request->getSession(), $query->getFacets());
+		} else {
+			$query->setFacets($this->getDefaultFacets());
 		}
 
 		try {
