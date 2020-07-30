@@ -17,8 +17,10 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Event\PostFlushEventArgs;
+use StingerSoft\EntitySearchBundle\Events\DocumentPreSaveEvent;
 use StingerSoft\EntitySearchBundle\Model\SearchableAlias;
 use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class DoctrineListener implements EventSubscriber {
 
@@ -45,6 +47,11 @@ class DoctrineListener implements EventSubscriber {
 	protected $enableIndexing;
 
 	/**
+	 * @var EventDispatcherInterface|null
+	 */
+	protected $eventDispatcher;
+
+	/**
 	 * DoctrineListener constructor.
 	 * @param EntityToDocumentMapperInterface $entityToDocumentMapper
 	 * @param SearchService $searchService
@@ -67,6 +74,22 @@ class DoctrineListener implements EventSubscriber {
 			'postFlush'
 		);
 	}
+
+	/**
+	 * @return EventDispatcherInterface|null
+	 */
+	public function getEventDispatcher(): ?EventDispatcherInterface {
+		return $this->eventDispatcher;
+	}
+
+	/**
+	 * @param EventDispatcherInterface|null $eventDispatcher
+	 * @required
+	 */
+	public function setEventDispatcher(EventDispatcherInterface $eventDispatcher = null): void {
+		$this->eventDispatcher = $eventDispatcher;
+	}
+
 
 	/**
 	 *
@@ -161,6 +184,10 @@ class DoctrineListener implements EventSubscriber {
 		}
 		$document = $this->getEntityToDocumentMapper()->createDocument($manager, $entity);
 		if($document !== null) {
+			if($this->getEventDispatcher()) {
+				$event = new DocumentPreSaveEvent($document);
+				$this->getEventDispatcher()->dispatch($event, DocumentPreSaveEvent::NAME);
+			}
 			$this->getSearchService()->saveDocument($document);
 			$this->needsFlush = true;
 		}
