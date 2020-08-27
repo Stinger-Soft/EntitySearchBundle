@@ -23,7 +23,7 @@ interface DocumentToEntityMapperInterface {
 	/**
 	 * Tries to create a document from the given object
 	 *
-	 * @param object $object
+	 * @param Document $document
 	 * @return object Returns false if no document could be created
 	 */
 	public function getEntity(Document $document): ?object;
