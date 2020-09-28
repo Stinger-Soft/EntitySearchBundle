@@ -25,7 +25,7 @@ class DocumentToEntityMapperTest extends AbstractORMTestCase {
 	 *
 	 * @see PHPUnit_Framework_TestCase::setUp()
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->getMockSqliteEntityManager();
 	}

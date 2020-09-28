@@ -28,7 +28,7 @@ class DummySearchServiceTest extends AbstractORMTestCase {
 	 *
 	 * @see PHPUnit_Framework_TestCase::setUp()
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->getMockSqliteEntityManager();
 		$this->indexCount = 0;

@@ -148,7 +148,7 @@ class QueryTypeTest extends TypeTestCase {
 		return $validator;
 	}
 	
-	protected function setUp()
+	protected function setUp(): void
 	{
 		$this->factory = Forms::createFormFactoryBuilder()
 		->addExtensions($this->getExtensions())
