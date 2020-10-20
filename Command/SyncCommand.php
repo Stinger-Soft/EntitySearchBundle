@@ -13,20 +13,26 @@ declare(strict_types=1);
 
 namespace StingerSoft\EntitySearchBundle\Command;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
+use Doctrine\ORM\OptimisticLockException;
+use Doctrine\ORM\ORMException;
+use Doctrine\Persistence\Mapping\MappingException;
+use Exception;
+use StingerSoft\EntitySearchBundle\Events\DocumentPreSaveEvent;
 use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface;
 use StingerSoft\EntitySearchBundle\Services\SearchService;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class SyncCommand extends Command {
 
@@ -48,6 +54,11 @@ class SyncCommand extends Command {
 	protected $searchService;
 
 	/**
+	 * @var EventDispatcherInterface|null
+	 */
+	protected $eventDispatcher;
+
+	/**
 	 *
 	 * Cache for the default upload path of this platform
 	 *
@@ -61,11 +72,7 @@ class SyncCommand extends Command {
 		$this->entityToDocumentMapper = $mapper;
 		// Detect upload path
 		if(!self::$defaultUploadPath) {
-			if(Kernel::VERSION_ID < 40200) {
-				$root = $kernel->getRootDir();
-			} else {
-				$root = $kernel->getProjectDir();
-			}
+			$root = $kernel->getProjectDir();
 			self::$defaultUploadPath = $root . '/../web/uploads';
 		}
 	}
@@ -89,12 +96,16 @@ class SyncCommand extends Command {
 	 *
 	 * {@inheritdoc}
 	 *
+	 * @param InputInterface $input
+	 * @param OutputInterface $output
+	 * @return int
+	 * @throws DBALException
+	 * @throws MappingException
+	 * @throws NoResultException
+	 * @throws NonUniqueResultException
+	 * @throws ORMException
+	 * @throws OptimisticLockException
 	 * @see \Symfony\Component\Console\Command\Command::execute()
-	 * @throws \Doctrine\Common\Persistence\Mapping\MappingException
-	 * @throws \Doctrine\DBAL\DBALException
-	 * @throws \Doctrine\ORM\NonUniqueResultException
-	 * @throws \Doctrine\ORM\ORMException
-	 * @throws \Doctrine\ORM\OptimisticLockException
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output) {
 
@@ -134,11 +145,12 @@ class SyncCommand extends Command {
 	 * @param InputInterface $input
 	 * @param OutputInterface $output
 	 * @param $entity
-	 * @throws \Doctrine\Common\Persistence\Mapping\MappingException
-	 * @throws \Doctrine\DBAL\DBALException
-	 * @throws \Doctrine\ORM\NonUniqueResultException
-	 * @throws \Doctrine\ORM\ORMException
-	 * @throws \Doctrine\ORM\OptimisticLockException
+	 * @throws DBALException
+	 * @throws NoResultException
+	 * @throws NonUniqueResultException
+	 * @throws ORMException
+	 * @throws OptimisticLockException
+	 * @throws MappingException
 	 */
 	protected function indexEntity(InputInterface $input, OutputInterface $output, $entity) {
 		$output->writeln(sprintf('<comment>Indexing entities of type "%s"</comment>', $entity));
@@ -151,7 +163,7 @@ class SyncCommand extends Command {
 		try {
 			// Get repository for the given entity type
 			$repository = $entityManager->getRepository($entity);
-		} catch(\Exception $e) {
+		} catch(Exception $e) {
 			$output->writeln(sprintf('<error>No repository found for "%s", check your input</error>', $entity));
 			return;
 		}
@@ -182,9 +194,13 @@ class SyncCommand extends Command {
 					continue;
 				}
 				try {
+					if($this->getEventDispatcher()) {
+						$event = new DocumentPreSaveEvent($document);
+						$this->getEventDispatcher()->dispatch($event, DocumentPreSaveEvent::NAME);
+					}
 					$this->searchService->saveDocument($document);
 					$entitiesIndexed++;
-				} catch(\Exception $e) {
+				} catch(Exception $e) {
 					$output->writeln('<error>Failed to index entity with ID ' . $document->getEntityId() . '</error>');
 				}
 				if($entitiesIndexed % 50 === 0) {
@@ -198,6 +214,21 @@ class SyncCommand extends Command {
 		$progressBar->finish();
 		$output->writeln('');
 		$output->writeln('<comment>Indexed ' . $entitiesIndexed . ' entities</comment>');
+	}
+
+	/**
+	 * @return EventDispatcherInterface|null
+	 */
+	public function getEventDispatcher(): ?EventDispatcherInterface {
+		return $this->eventDispatcher;
+	}
+
+	/**
+	 * @param EventDispatcherInterface|null $eventDispatcher
+	 * @required
+	 */
+	public function setEventDispatcher(EventDispatcherInterface $eventDispatcher = null): void {
+		$this->eventDispatcher = $eventDispatcher;
 	}
 
 }
