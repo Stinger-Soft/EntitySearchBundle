@@ -32,7 +32,7 @@ class SyncCommandTest extends AbstractORMTestCase {
 		return '';
 	}
 
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->getMockSqliteEntityManager();
 	}

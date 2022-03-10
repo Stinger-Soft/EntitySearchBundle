@@ -166,16 +166,18 @@ class QueryType extends AbstractType {
 	 */
 	protected function generateFacetChoices($facetType, array $facets, array $selectedFacets = [], callable $formatter = null): array {
 		$choices = [];
+		$handledFacets = [];
 		foreach($facets as $facet => $data) {
 			$value = $data['value'];
 			$count = $data['count'];
 			if($count === 0 && !\in_array($facet, $selectedFacets)) {
 				continue;
 			}
+			$handledFacets[$facet] = true;
 			$choices[$this->formatFacet($formatter, $facetType, $facet, $value, $count)] = $facet;
 		}
 		foreach($selectedFacets as $facet) {
-			if(isset($facets[$facet])) {
+			if(!isset($facets[$facet]) || isset($handledFacets[$facet])) {
 				continue;
 			}
 			$value = $facets[$facet]['value'];

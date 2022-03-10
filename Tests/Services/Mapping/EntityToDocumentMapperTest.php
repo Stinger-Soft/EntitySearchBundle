@@ -29,25 +29,21 @@ class EntityToDocumentMapperTest extends AbstractORMTestCase {
 	 *
 	 * @see PHPUnit_Framework_TestCase::setUp()
 	 */
-	public function setUp() {
+	public function setUp(): void {
 		parent::setUp();
 		$this->getMockSqliteEntityManager();
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 */
 	public function testFuckedUpConfiguration() {
+		$this->expectException(\InvalidArgumentException::class);
 		$searchService = $this->getMockBuilder(AbstractSearchService::class)->getMockForAbstractClass();
 		new EntityToDocumentMapper($searchService, array(
 			'beer' => array()
 		));
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 */
 	public function testFuckedUpConfigurationWithoutMapping() {
+		$this->expectException(\InvalidArgumentException::class);
 		$searchService = $this->getDummySearchService();
 		new EntityToDocumentMapper($searchService, array(
 			'beer' => array(
@@ -75,10 +71,8 @@ class EntityToDocumentMapperTest extends AbstractORMTestCase {
 		));
 	}
 
-	/**
-	 * @expectedException \InvalidArgumentException
-	 */
 	public function testFuckedUpConfigurationWithoutPersistance() {
+		$this->expectException(\InvalidArgumentException::class);
 		$searchService = $this->getDummySearchService();
 		new EntityToDocumentMapper($searchService, array(
 			'beer' => array(

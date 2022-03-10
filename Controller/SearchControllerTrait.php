@@ -34,6 +34,7 @@ trait SearchControllerTrait {
 	public function searchAction(Request $request, DocumentToEntityMapperInterface $mapper) {
 		if($request->query->get('term', false) !== false) {
 			$this->setSearchTerm($request->getSession(), $request->query->get('term'));
+			$this->removeFilterOptions($request->getSession());
 			return $this->redirectToRoute('stinger_soft_entity_search_search');
 		}
 
@@ -54,6 +55,8 @@ trait SearchControllerTrait {
 			}
 			$this->setSearchTerm($request->getSession(), $query->getSearchTerm());
 			$this->setSearchFacets($request->getSession(), $query->getFacets());
+		} elseif($this->getUnsetFilterOptions($request->getSession())) {
+			$query->setFacets($this->getDefaultFacets());
 		}
 
 		try {
@@ -69,7 +72,7 @@ trait SearchControllerTrait {
 			$results = null;
 			if($result instanceof PaginatableResultSet) {
 				$results = $result->paginate($page, $this->getResultsPerPage());
-			} elseif($results !== null) {
+			} elseif($result !== null) {
 				$results = $result->getResults(($page - 1) * $this->getResultsPerPage(), $this->getResultsPerPage());
 			}
 
@@ -217,6 +220,14 @@ trait SearchControllerTrait {
 		return $facets ? \json_decode($facets, true) : $this->getDefaultFacets();
 	}
 
+	protected function removeFilterOptions(SessionInterface $session) {
+		$session->remove($this->getSessionPrefix() . '_filter_options');
+	}
+
+	protected function getUnsetFilterOptions(SessionInterface $session) {
+		return $session->get($this->getSessionPrefix() . '_filter_options', true);
+	}
+
 	/**
 	 * Sets the given search facets in the user's session
 	 *
@@ -225,6 +236,7 @@ trait SearchControllerTrait {
 	 */
 	protected function setSearchFacets(SessionInterface $session, $facets) {
 		$session->set($this->getSessionPrefix() . '_facets', \json_encode($facets));
+		$session->set($this->getSessionPrefix() . '_filter_options', false);
 	}
 
 	/**

@@ -11,21 +11,24 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace StingerSoft\EntitySearchBundle\Services\Mapping;
+namespace StingerSoft\EntitySearchBundle\Events;
+
 
 use StingerSoft\EntitySearchBundle\Model\Document;
+use Symfony\Contracts\EventDispatcher\Event;
 
-/**
- * Service to fetch an entity from a document object
- */
-interface DocumentToEntityMapperInterface {
+abstract class DocumentEvent extends Event {
 
 	/**
-	 * Tries to create a document from the given object
-	 *
-	 * @param Document $document
-	 * @return object Returns false if no document could be created
+	 * @var Document
 	 */
-	public function getEntity(Document $document): ?object;
+	protected $document;
 
+	public function __construct(Document $document) {
+		$this->document = $document;
+	}
+
+	public function getDocument(): Document {
+		return $this->document;
+	}
 }
