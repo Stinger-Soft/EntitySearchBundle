@@ -13,7 +13,7 @@ declare(strict_types=1);
 namespace StingerSoft\EntitySearchBundle\Services\Mapping;
 
 use StingerSoft\EntitySearchBundle\Model\SearchableEntity;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use StingerSoft\EntitySearchBundle\Model\Document;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use StingerSoft\EntitySearchBundle\Services\SearchService;
@@ -27,19 +27,19 @@ class EntityToDocumentMapper implements EntityToDocumentMapperInterface {
 	 *
 	 * @var SearchService
 	 */
-	protected $searchService;
+	protected SearchService $searchService;
 
 	/**
 	 *
 	 * @var array
 	 */
-	protected $mapping = array();
+	protected array $mapping = array();
 
 	/**
 	 *
 	 * @var string[string]
 	 */
-	protected $cachedMapping = array();
+	protected array $cachedMapping = array();
 
 	/**
 	 * Constructor

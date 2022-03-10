@@ -20,56 +20,56 @@ interface Document {
 	 *
 	 * @var string
 	 */
-	const FIELD_TITLE = 'title';
+	public const FIELD_TITLE = 'title';
 
 	/**
 	 * Key of the index field <em>content</em>
 	 *
 	 * @var string
 	 */
-	const FIELD_CONTENT = 'content';
+	public const FIELD_CONTENT = 'content';
 
 	/**
 	 * Key of the index field <em>last_modified</em>
 	 *
 	 * @var string
 	 */
-	const FIELD_LAST_MODIFIED = 'last_modified';
+	public const FIELD_LAST_MODIFIED = 'last_modified';
 
 	/**
 	 * Key of the index field <em>author</em>
 	 *
 	 * @var string
 	 */
-	const FIELD_AUTHOR = 'author';
+	public const FIELD_AUTHOR = 'author';
 
 	/**
 	 * Key of the index field <em>keywords</em>
 	 *
 	 * @var string
 	 */
-	const FIELD_KEYWORDS = 'keywords';
+	public const FIELD_KEYWORDS = 'keywords';
 
 	/**
 	 * Key of the index field <em>roles</em>
 	 *
 	 * @var string
 	 */
-	const FIELD_ROLES = 'roles';
+	public const FIELD_ROLES = 'roles';
 
 	/**
 	 * Key of the index field <em>editors</em>
 	 *
 	 * @var string
 	 */
-	const FIELD_EDITORS = 'editors';
+	public const FIELD_EDITORS = 'editors';
 
 	/**
 	 * Key of the index field <em>deleted_at</em> If set the entity will only appear in the search results until this date
 	 *
 	 * @var string
 	 */
-	const FIELD_DELETED_AT = 'deleted_at';
+	public const FIELD_DELETED_AT = 'deleted_at';
 
 	/**
 	 * Key of the index field <em>type</em>
@@ -78,14 +78,14 @@ interface Document {
 	 *
 	 * @var string
 	 */
-	const FIELD_TYPE = 'type';
+	public const FIELD_TYPE = 'type';
 
 	/**
 	 * Key of the index field <em>file type</em> containing the mimetype of the file if available
 	 *
 	 * @var string
 	 */
-	const FIELD_CONTENT_TYPE = 'Content-Type';
+	public const FIELD_CONTENT_TYPE = 'Content-Type';
 
 	/**
 	 * Adds a field and its value to the index
@@ -100,7 +100,7 @@ interface Document {
 	/**
 	 * Returns all field saved in this document
 	 *
-	 * @return mixed[]
+	 * @return array
 	 * @internal
 	 *
 	 */

@@ -17,27 +17,27 @@ class Query {
 
 	/**
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	private $term;
+	private ?string $term;
 
 	/**
 	 *
-	 * @var array
+	 * @var array|null
 	 */
-	private $facets;
+	private ?array $facets;
 
 	/**
 	 *
-	 * @var array
+	 * @var array|null
 	 */
-	private $usedFacets = null;
+	private ?array $usedFacets;
 
 	/**
 	 *
-	 * @param string $term
-	 * @param array $facets
-	 * @param array $usedFacets
+	 * @param string|null $term
+	 * @param array|null  $facets
+	 * @param array|null  $usedFacets
 	 */
 	public function __construct(string $term = null, array $facets = array(), array $usedFacets = null) {
 		$this->term = $term;
@@ -98,15 +98,16 @@ class Query {
 			if(isset($this->facets[$facetname])) {
 				return $this->facets[$facetname];
 			}
-			return array();
+			return [];
 		}
+		return null;
 	}
 
 	/**
 	 *
 	 * @param string $name
 	 *            Name of the property to set
-	 * @param mixed $value
+	 * @param mixed  $value
 	 *            The value of the property
 	 */
 	public function __set($name, $value): void {
@@ -123,10 +124,6 @@ class Query {
 	 * @return boolean
 	 */
 	public function __isset($name): bool {
-		if(strrpos($name, 'facet_', -strlen($name)) !== false) {
-			return true;
-		}
-
-		return false;
+		return strrpos($name, 'facet_', -strlen($name)) !== false;
 	}
 }

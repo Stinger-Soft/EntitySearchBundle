@@ -17,7 +17,7 @@ use StingerSoft\EntitySearchBundle\Model\Document;
 
 class FileTypeFacet implements FacetServiceInterface {
 
-	const SERVICE_ID = 'stinger_soft_entity_search.facets.filetype';
+	public const SERVICE_ID = 'stinger_soft_entity_search.facets.filetype';
 
 	public function getField(): string {
 		return Document::FIELD_CONTENT_TYPE;

@@ -28,7 +28,7 @@ class ClearIndexCommand extends Command {
 	/**
 	 * @var SearchService
 	 */
-	protected $searchService;
+	protected SearchService $searchService;
 
 	public function __construct(SearchService $searchService) {
 		parent::__construct();
@@ -41,7 +41,7 @@ class ClearIndexCommand extends Command {
 	 *
 	 * @see \Symfony\Component\Console\Command\Command::configure()
 	 */
-	protected function configure() {
+	protected function configure(): void {
 		$this->setDescription('Clears the configured search index');
 	}
 
@@ -51,7 +51,7 @@ class ClearIndexCommand extends Command {
 	 *
 	 * @see \Symfony\Component\Console\Command\Command::execute()
 	 */
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$this->searchService->clearIndex();
 		return 0;
 	}

@@ -37,6 +37,6 @@ class DocumentAdapterTest extends \PHPUnit\Framework\TestCase {
 		$this->assertNotNull($doc->getFieldValue(Document::FIELD_EDITORS));
 		$this->assertContains('florian_meyer', $fields[Document::FIELD_EDITORS]);
 		$this->assertNull($doc->getFieldValue(Document::FIELD_ROLES));
-		$this->assertAttributeEquals('~/test.txt', 'file', $doc);
+		$this->assertEquals('~/test.txt', $doc->getFile());
 	}
 }

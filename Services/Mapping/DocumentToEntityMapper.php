@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace StingerSoft\EntitySearchBundle\Services\Mapping;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ManagerRegistry;
 use StingerSoft\EntitySearchBundle\Model\Document;
 
 class DocumentToEntityMapper implements DocumentToEntityMapperInterface {
@@ -21,7 +21,7 @@ class DocumentToEntityMapper implements DocumentToEntityMapperInterface {
 	/**
 	 * @var ManagerRegistry
 	 */
-	protected $managerRegistry;
+	protected ManagerRegistry $managerRegistry;
 
 	public function __construct(ManagerRegistry $managerRegistry) {
 		$this->managerRegistry = $managerRegistry;

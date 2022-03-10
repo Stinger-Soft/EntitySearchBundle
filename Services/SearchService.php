@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace StingerSoft\EntitySearchBundle\Services;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
 use StingerSoft\EntitySearchBundle\Model\Document;
 use StingerSoft\EntitySearchBundle\Model\Query;
@@ -87,9 +87,9 @@ interface SearchService {
 	/**
 	 * Get the doctrine object manager
 	 *
-	 * @return EntityManagerInterface
+	 * @return EntityManagerInterface|null
 	 */
-	public function getObjectManager(): EntityManagerInterface;
+	public function getObjectManager(): ?EntityManagerInterface;
 
 	/**
 	 * Sets the facet container. This method is automatically called by the EntitySearchBundle

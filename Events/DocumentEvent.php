@@ -22,7 +22,7 @@ abstract class DocumentEvent extends Event {
 	/**
 	 * @var Document
 	 */
-	protected $document;
+	protected Document $document;
 
 	public function __construct(Document $document) {
 		$this->document = $document;

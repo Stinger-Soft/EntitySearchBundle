@@ -30,13 +30,13 @@ class DocumentAdapter implements Document {
 	 *
 	 * @var array
 	 */
-	protected $fields = array();
+	protected array $fields = [];
 
 	/**
 	 *
 	 * @var string
 	 */
-	protected $entityClass = null;
+	protected ?string $entityClass = null;
 
 	/**
 	 *
@@ -48,13 +48,13 @@ class DocumentAdapter implements Document {
 	 *
 	 * @var string
 	 */
-	protected $entityType = null;
+	protected ?string $entityType = null;
 
 	/**
 	 *
 	 * @var string
 	 */
-	protected $file = null;
+	protected ?string $file = null;
 
 	/**
 	 *

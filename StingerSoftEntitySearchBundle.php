@@ -33,7 +33,7 @@ class StingerSoftEntitySearchBundle extends Bundle {
 		return $requiredBundles;
 	}
 
-	public function build(ContainerBuilder $container) {
+	public function build(ContainerBuilder $container): void {
 		$container->registerForAutoconfiguration(FacetServiceInterface::class)->addTag(FacetServiceInterface::TAG_NAME);
 		$container->addCompilerPass(new FacetCompilerPass());
 	}

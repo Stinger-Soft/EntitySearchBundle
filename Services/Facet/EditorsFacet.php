@@ -17,7 +17,7 @@ use StingerSoft\EntitySearchBundle\Model\Document;
 
 class EditorsFacet implements FacetServiceInterface {
 
-	const SERVICE_ID = 'stinger_soft_entity_search.facets.editors';
+	public const SERVICE_ID = 'stinger_soft_entity_search.facets.editors';
 
 	public function getField(): string {
 		return Document::FIELD_EDITORS;

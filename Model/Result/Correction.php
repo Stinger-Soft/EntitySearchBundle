@@ -21,24 +21,24 @@ class Correction {
 	/**
 	 * The corrected query
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	protected $query;
+	protected ?string $query = null;
 
 	/**
 	 * The amount of hit for the corrected query.
 	 * <code>NULL</code> if the search service cannot predict it
 	 *
-	 * @var integer
+	 * @var integer|null
 	 */
-	protected $hits;
+	protected ?int $hits = null;
 
 	/**
 	 * Gets the corrected query
 	 *
-	 * @return string
+	 * @return string|null
 	 */
-	public function getQuery(): string {
+	public function getQuery(): ?string {
 		return $this->query;
 	}
 

@@ -20,7 +20,7 @@ class FacetSetAdapter implements FacetSet {
 	 *
 	 * @var array
 	 */
-	protected $facets;
+	protected array $facets;
 
 	/**
 	 * Constructor.

@@ -14,8 +14,8 @@ declare(strict_types=1);
 namespace StingerSoft\EntitySearchBundle\Services;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Persistence\ObjectManager;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use StingerSoft\EntitySearchBundle\Events\DocumentPreSaveEvent;
 use StingerSoft\EntitySearchBundle\Model\SearchableAlias;
@@ -28,28 +28,28 @@ class DoctrineListener implements EventSubscriber {
 	 *
 	 * @var EntityToDocumentMapperInterface
 	 */
-	protected $entityToDocumentMapper;
+	protected EntityToDocumentMapperInterface $entityToDocumentMapper;
 
 	/**
 	 *
 	 * @var SearchService
 	 */
-	protected $searchService;
+	protected SearchService $searchService;
 
 	/**
 	 * @var bool
 	 */
-	protected $needsFlush = false;
+	protected bool $needsFlush = false;
 
 	/**
 	 * @var bool
 	 */
-	protected $enableIndexing;
+	protected bool $enableIndexing;
 
 	/**
 	 * @var EventDispatcherInterface|null
 	 */
-	protected $eventDispatcher;
+	protected ?EventDispatcherInterface $eventDispatcher = null;
 
 	/**
 	 * DoctrineListener constructor.

@@ -14,7 +14,7 @@ namespace StingerSoft\EntitySearchBundle\Tests\Services;
 use StingerSoft\EntitySearchBundle\Tests\AbstractORMTestCase;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Beer;
 use StingerSoft\EntitySearchBundle\Services\AbstractSearchService;
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use StingerSoft\EntitySearchBundle\Model\Document;
 use StingerSoft\EntitySearchBundle\Tests\Fixtures\ORM\Car;
 
@@ -86,7 +86,7 @@ class AbstractSearchServiceTest extends AbstractORMTestCase {
 		$doc = $service->createEmptyDocumentFromEntity($car);
 		$this->assertNotNull($doc);
 		$this->assertInstanceOf(Document::class, $doc);
-		$this->assertInternalType('array', $doc->getEntityId());
+		$this->assertIsArray($doc->getEntityId());
 		$this->assertCount(2, $doc->getEntityId());
 		$this->assertEquals(Car::class, $doc->getEntityClass());
 	}

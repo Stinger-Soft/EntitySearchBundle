@@ -55,9 +55,9 @@ class EntityToDocumentMapperTest extends AbstractORMTestCase {
 	}
 
 	/**
-	 * @expectedException \InvalidArgumentException
 	 */
 	public function testFuckedUpConfigurationWithoutModel() {
+		$this->expectException(\InvalidArgumentException::class);
 		$searchService = $this->getDummySearchService();
 		new EntityToDocumentMapper($searchService, array(
 			'beer' => array(

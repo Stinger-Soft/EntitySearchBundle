@@ -17,7 +17,7 @@ use StingerSoft\EntitySearchBundle\Model\Document;
 
 class AuthorFacet implements FacetServiceInterface {
 
-	const SERVICE_ID = 'stinger_soft_entity_search.facets.author';
+	public const SERVICE_ID = 'stinger_soft_entity_search.facets.author';
 
 	public function getField(): string {
 		return Document::FIELD_AUTHOR;

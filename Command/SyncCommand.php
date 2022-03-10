@@ -45,18 +45,18 @@ class SyncCommand extends Command {
 	 *
 	 * @var EntityToDocumentMapperInterface
 	 */
-	protected $entityToDocumentMapper;
+	protected EntityToDocumentMapperInterface $entityToDocumentMapper;
 
 	/**
 	 *
 	 * @var SearchService
 	 */
-	protected $searchService;
+	protected SearchService $searchService;
 
 	/**
 	 * @var EventDispatcherInterface|null
 	 */
-	protected $eventDispatcher;
+	protected ?EventDispatcherInterface $eventDispatcher = null;
 
 	/**
 	 *
@@ -83,7 +83,7 @@ class SyncCommand extends Command {
 	 *
 	 * @see \Symfony\Component\Console\Command\Command::configure()
 	 */
-	protected function configure() {
+	protected function configure(): void {
 		/* @formatter:off */
 		$this
 			->addArgument('entity', InputArgument::REQUIRED, 'The entity you want to index')
@@ -96,7 +96,7 @@ class SyncCommand extends Command {
 	 *
 	 * {@inheritdoc}
 	 *
-	 * @param InputInterface $input
+	 * @param InputInterface  $input
 	 * @param OutputInterface $output
 	 * @return int
 	 * @throws DBALException
@@ -105,9 +105,10 @@ class SyncCommand extends Command {
 	 * @throws NonUniqueResultException
 	 * @throws ORMException
 	 * @throws OptimisticLockException
+	 * @throws \Doctrine\DBAL\Exception
 	 * @see \Symfony\Component\Console\Command\Command::execute()
 	 */
-	protected function execute(InputInterface $input, OutputInterface $output) {
+	protected function execute(InputInterface $input, OutputInterface $output): int {
 
 
 		// Get the entity argument
@@ -142,17 +143,17 @@ class SyncCommand extends Command {
 	}
 
 	/**
-	 * @param InputInterface $input
+	 * @param InputInterface  $input
 	 * @param OutputInterface $output
-	 * @param $entity
-	 * @throws DBALException
+	 * @param                 $entity
+	 * @throws MappingException
 	 * @throws NoResultException
 	 * @throws NonUniqueResultException
 	 * @throws ORMException
 	 * @throws OptimisticLockException
-	 * @throws MappingException
+	 * @throws \Doctrine\DBAL\Exception
 	 */
-	protected function indexEntity(InputInterface $input, OutputInterface $output, $entity) {
+	protected function indexEntity(InputInterface $input, OutputInterface $output, $entity): void {
 		$output->writeln(sprintf('<comment>Indexing entities of type "%s"</comment>', $entity));
 		/**
 		 *

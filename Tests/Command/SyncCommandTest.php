@@ -49,8 +49,8 @@ class SyncCommandTest extends AbstractORMTestCase {
 		));
 
 		$output = $commandTester->getDisplay();
-		$this->assertContains(Beer::class, $output);
-		$this->assertContains('No entities found for indexing', $output);
+		$this->assertStringContainsString(Beer::class, $output);
+		$this->assertStringContainsString('No entities found for indexing', $output);
 	}
 
 	/**
@@ -71,8 +71,8 @@ class SyncCommandTest extends AbstractORMTestCase {
 		));
 
 		$output = $commandTester->getDisplay();
-		$this->assertContains(Beer::class, $output);
-		$this->assertContains('Indexed 1 entities', $output);
+		$this->assertStringContainsString(Beer::class, $output);
+		$this->assertStringContainsString('Indexed 1 entities', $output);
 	}
 
 	/**

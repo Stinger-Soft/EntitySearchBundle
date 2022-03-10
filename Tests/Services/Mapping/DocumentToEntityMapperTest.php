@@ -11,7 +11,7 @@
  */
 namespace StingerSoft\EntitySearchBundle\Tests\Services;
 
-use Doctrine\Common\Persistence\AbstractManagerRegistry;
+use Doctrine\Persistence\AbstractManagerRegistry;
 use StingerSoft\EntitySearchBundle\Model\Document;
 use StingerSoft\EntitySearchBundle\Services\Mapping\DocumentToEntityMapper;
 use StingerSoft\EntitySearchBundle\Tests\AbstractORMTestCase;
