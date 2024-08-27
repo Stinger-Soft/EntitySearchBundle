@@ -152,10 +152,10 @@ class EntityToDocumentMapper implements EntityToDocumentMapperInterface {
 		
 		foreach($this->mapping as $className => $config) {
 			if($clazz === $className || $ref->isSubclassOf($className)) {
-				$mapping = \array_merge($mapping, $config);
+				$mapping[] = $config;
 			}
 		}
-		
+		$mapping = \array_merge(...$mapping);
 		$this->cachedMapping[$clazz] = $mapping;
 		
 		return $mapping;

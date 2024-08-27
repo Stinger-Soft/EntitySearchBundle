@@ -13,8 +13,6 @@ declare(strict_types=1);
 
 namespace StingerSoft\EntitySearchBundle\Services;
 
-use Doctrine\Persistence\ObjectManager;
-use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
 use StingerSoft\EntitySearchBundle\Model\Document;

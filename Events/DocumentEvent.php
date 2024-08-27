@@ -19,13 +19,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 abstract class DocumentEvent extends Event {
 
-	/**
-	 * @var Document
-	 */
-	protected Document $document;
-
-	public function __construct(Document $document) {
-		$this->document = $document;
+	public function __construct(protected Document $document) {
 	}
 
 	public function getDocument(): Document {

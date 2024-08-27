@@ -15,6 +15,5 @@ namespace StingerSoft\EntitySearchBundle\Events;
 
 
 class DocumentPreSaveEvent extends DocumentEvent {
-
 	public const NAME = 'DOCUMENT.PRE_SAVE';
 }

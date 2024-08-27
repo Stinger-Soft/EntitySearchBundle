@@ -131,7 +131,7 @@ class QueryType extends AbstractType {
 	 * @param array                              $options
 	 * @param Query                              $data
 	 */
-	protected function createFacets($builder, FacetSet $facets, array $options, Query $data): void {
+	protected function createFacets(FormBuilderInterface|FormInterface $builder, FacetSet $facets, array $options, Query $data): void {
 		$preferredFilterChoices = $options['preferred_filter_choices'];
 		$maxChoiceGroupCount = (int)$options['max_choice_group_count'];
 		$selectedFacets = $data->getFacets();

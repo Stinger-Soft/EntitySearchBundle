@@ -13,19 +13,18 @@ declare(strict_types=1);
 
 namespace StingerSoft\EntitySearchBundle\Command;
 
-use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\OptimisticLockException;
-use Doctrine\ORM\ORMException;
 use Doctrine\Persistence\Mapping\MappingException;
 use Exception;
 use StingerSoft\EntitySearchBundle\Events\DocumentPreSaveEvent;
 use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface;
 use StingerSoft\EntitySearchBundle\Services\SearchService;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputArgument;
@@ -34,24 +33,10 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+#[AsCommand(name: 'stinger:search:sync')]
 class SyncCommand extends Command {
 
-	/**
-	 * @var string|null The default command name
-	 */
-	protected static $defaultName = 'stinger:search:sync';
 
-	/**
-	 *
-	 * @var EntityToDocumentMapperInterface
-	 */
-	protected EntityToDocumentMapperInterface $entityToDocumentMapper;
-
-	/**
-	 *
-	 * @var SearchService
-	 */
-	protected SearchService $searchService;
 
 	/**
 	 * @var EventDispatcherInterface|null
@@ -62,14 +47,12 @@ class SyncCommand extends Command {
 	 *
 	 * Cache for the default upload path of this platform
 	 *
-	 * @var string
+	 * @var string|null
 	 */
-	protected static $defaultUploadPath = null;
+	protected static ?string $defaultUploadPath = null;
 
-	public function __construct(SearchService $searchService, EntityToDocumentMapperInterface $mapper, KernelInterface $kernel) {
+	public function __construct(protected SearchService $searchService, protected EntityToDocumentMapperInterface $entityToDocumentMapper, KernelInterface $kernel) {
 		parent::__construct();
-		$this->searchService = $searchService;
-		$this->entityToDocumentMapper = $mapper;
 		// Detect upload path
 		if(!self::$defaultUploadPath) {
 			$root = $kernel->getProjectDir();
@@ -99,11 +82,9 @@ class SyncCommand extends Command {
 	 * @param InputInterface  $input
 	 * @param OutputInterface $output
 	 * @return int
-	 * @throws DBALException
 	 * @throws MappingException
 	 * @throws NoResultException
 	 * @throws NonUniqueResultException
-	 * @throws ORMException
 	 * @throws OptimisticLockException
 	 * @throws \Doctrine\DBAL\Exception
 	 * @see \Symfony\Component\Console\Command\Command::execute()
@@ -149,9 +130,8 @@ class SyncCommand extends Command {
 	 * @throws MappingException
 	 * @throws NoResultException
 	 * @throws NonUniqueResultException
-	 * @throws ORMException
 	 * @throws OptimisticLockException
-	 * @throws \Doctrine\DBAL\Exception
+	 * @throws \Doctrine\DBAL\Exception|\Doctrine\ORM\Exception\ORMException
 	 */
 	protected function indexEntity(InputInterface $input, OutputInterface $output, $entity): void {
 		$output->writeln(sprintf('<comment>Indexing entities of type "%s"</comment>', $entity));

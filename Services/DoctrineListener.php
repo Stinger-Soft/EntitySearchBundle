@@ -14,7 +14,10 @@ declare(strict_types=1);
 namespace StingerSoft\EntitySearchBundle\Services;
 
 use Doctrine\Common\EventSubscriber;
-use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PostPersistEventArgs;
+use Doctrine\ORM\Event\PostUpdateEventArgs;
+use Doctrine\ORM\Event\PreRemoveEventArgs;
+use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\ORM\Event\PostFlushEventArgs;
 use StingerSoft\EntitySearchBundle\Events\DocumentPreSaveEvent;
@@ -25,26 +28,9 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class DoctrineListener implements EventSubscriber {
 
 	/**
-	 *
-	 * @var EntityToDocumentMapperInterface
-	 */
-	protected EntityToDocumentMapperInterface $entityToDocumentMapper;
-
-	/**
-	 *
-	 * @var SearchService
-	 */
-	protected SearchService $searchService;
-
-	/**
 	 * @var bool
 	 */
 	protected bool $needsFlush = false;
-
-	/**
-	 * @var bool
-	 */
-	protected bool $enableIndexing;
 
 	/**
 	 * @var EventDispatcherInterface|null
@@ -57,10 +43,7 @@ class DoctrineListener implements EventSubscriber {
 	 * @param SearchService $searchService
 	 * @param bool $enableIndexing
 	 */
-	public function __construct(EntityToDocumentMapperInterface $entityToDocumentMapper, SearchService $searchService, $enableIndexing = false) {
-		$this->entityToDocumentMapper = $entityToDocumentMapper;
-		$this->searchService = $searchService;
-		$this->enableIndexing = $enableIndexing;
+	public function __construct(protected EntityToDocumentMapperInterface $entityToDocumentMapper, protected SearchService $searchService, protected $enableIndexing = false) {
 	}
 
 	/**
@@ -115,9 +98,9 @@ class DoctrineListener implements EventSubscriber {
 	/**
 	 * Index the entity after it is persisted for the first time
 	 *
-	 * @param LifecycleEventArgs $args
+	 * @param PostPersistEventArgs $args
 	 */
-	public function postPersist(LifecycleEventArgs $args): void {
+	public function postPersist(PostPersistEventArgs $args): void {
 		if(!$this->enableIndexing) {
 			return;
 		}
@@ -126,22 +109,21 @@ class DoctrineListener implements EventSubscriber {
 
 	/**
 	 * @param PostFlushEventArgs $eventArgs
-	 * @throws \Doctrine\ORM\ORMException
-	 * @throws \Doctrine\ORM\OptimisticLockException
+	 * @throws OptimisticLockException
 	 */
 	public function postFlush(PostFlushEventArgs $eventArgs): void {
 		if($this->needsFlush) {
 			$this->needsFlush = false;
-			$eventArgs->getEntityManager()->flush();
+			$eventArgs->getObjectManager()->flush();
 		}
 	}
 
 	/**
 	 * Removes the entity from the index when it marked for deletion
 	 *
-	 * @param LifecycleEventArgs $args
+	 * @param PreRemoveEventArgs $args
 	 */
-	public function preRemove(LifecycleEventArgs $args): void {
+	public function preRemove(PreRemoveEventArgs $args): void {
 		if(!$this->enableIndexing) {
 			return;
 		}
@@ -151,9 +133,9 @@ class DoctrineListener implements EventSubscriber {
 	/**
 	 * Updates the entity in the index after it is updated
 	 *
-	 * @param LifecycleEventArgs $args
+	 * @param PostUpdateEventArgs $args
 	 */
-	public function postUpdate(LifecycleEventArgs $args): void {
+	public function postUpdate(PostUpdateEventArgs $args): void {
 		if(!$this->enableIndexing) return;
 		$this->updateEntity($args->getObject(), $args->getObjectManager());
 	}

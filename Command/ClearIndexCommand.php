@@ -14,23 +14,15 @@ declare(strict_types=1);
 namespace StingerSoft\EntitySearchBundle\Command;
 
 use StingerSoft\EntitySearchBundle\Services\SearchService;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
+#[AsCommand(name: 'stinger:search:clear')]
 class ClearIndexCommand extends Command {
 
-	/**
-	 * @var string|null The default command name
-	 */
-	protected static $defaultName = 'stinger:search:clear';
-
-	/**
-	 * @var SearchService
-	 */
-	protected SearchService $searchService;
-
-	public function __construct(SearchService $searchService) {
+	public function __construct(protected SearchService $searchService) {
 		parent::__construct();
 		$this->searchService = $searchService;
 	}
@@ -53,7 +45,7 @@ class ClearIndexCommand extends Command {
 	 */
 	protected function execute(InputInterface $input, OutputInterface $output): int {
 		$this->searchService->clearIndex();
-		return 0;
+		return Command::SUCCESS;
 	}
 }
 
