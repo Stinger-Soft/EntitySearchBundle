@@ -12,11 +12,11 @@ declare(strict_types=1);
  */
 namespace StingerSoft\EntitySearchBundle\Services\Mapping;
 
-use StingerSoft\EntitySearchBundle\Model\SearchableEntity;
 use Doctrine\Persistence\ObjectManager;
 use StingerSoft\EntitySearchBundle\Model\Document;
-use Symfony\Component\PropertyAccess\PropertyAccess;
+use StingerSoft\EntitySearchBundle\Model\SearchableEntity;
 use StingerSoft\EntitySearchBundle\Services\SearchService;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 
 /**
  * Handles the creation of documents out of entities
@@ -87,8 +87,8 @@ class EntityToDocumentMapper implements EntityToDocumentMapperInterface {
 	 *
 	 * {@inheritDoc}
 	 *
-	 * @see \StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface::isClassIndexable()
 	 * @throws \ReflectionException
+	 * @see \StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface::isClassIndexable()
 	 */
 	public function isClassIndexable(string $clazz) : bool {
 		$reflectionClass = new \ReflectionClass($clazz);

@@ -14,11 +14,13 @@
 	],
 	"autoload" : {
 		"psr-4" : {
-			"StingerSoft\\EntitySearchBundle\\" : ""
-		},
-		"exclude-from-classmap" : [
-			"/Tests/"
-		]
+			"StingerSoft\\EntitySearchBundle\\" : "src/"
+		}
+	},
+	"autoload-dev" : {
+		"psr-4" : {
+			"StingerSoft\\EntitySearchBundle\\" : "tests/"
+		}
 	},
 	"license" : "Apache-2.0",
 	"require" : {

@@ -155,7 +155,7 @@ class SyncCommand extends Command {
 		$entityCount = (int)$countQueryBuilder->getQuery()->getSingleScalarResult();
 
 		$useBatch = !($entityManager->getConnection()->getDatabasePlatform() instanceof SQLServerPlatform);
-		$iterableResult = $useBatch ? $queryBuilder->getQuery()->iterate() : $queryBuilder->getQuery()->getResult();
+		$iterableResult = $useBatch ? $queryBuilder->getQuery()->toIterable() : $queryBuilder->getQuery()->getResult();
 		if($entityCount === 0) {
 			$output->writeln('<comment>No entities found for indexing</comment>');
 			return;
@@ -166,8 +166,8 @@ class SyncCommand extends Command {
 		$entitiesIndexed = 0;
 
 		// Index each entity separate
-		foreach($iterableResult as $row) {
-			$entity = $useBatch ? $row[0] : $row;
+		foreach($iterableResult as $entity) {
+//			$entity = $useBatch ? $row[0] : $row;
 			$progressBar->advance();
 			if($this->entityToDocumentMapper->isIndexable($entity)) {
 				$document = $this->entityToDocumentMapper->createDocument($entityManager, $entity);

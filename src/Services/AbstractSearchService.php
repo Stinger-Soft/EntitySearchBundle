@@ -15,6 +15,7 @@ namespace StingerSoft\EntitySearchBundle\Services;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
+use StingerSoft\EntitySearchBundle\Services\ClassUtils;
 use StingerSoft\EntitySearchBundle\Model\Document;
 use StingerSoft\EntitySearchBundle\Model\DocumentAdapter;
 use StingerSoft\EntitySearchBundle\Services\Facet\FacetServiceInterface;
@@ -105,7 +106,7 @@ abstract class AbstractSearchService implements SearchService {
 	}
 
 	protected function getClass($entity): string {
-		return ClassUtils::getClass($entity);
+		return $this->objectManager->getClassMetadata(get_class($entity))->getName();
 	}
 
 	/**

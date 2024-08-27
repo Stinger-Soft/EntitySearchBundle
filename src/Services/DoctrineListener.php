@@ -14,12 +14,12 @@ declare(strict_types=1);
 namespace StingerSoft\EntitySearchBundle\Services;
 
 use Doctrine\Common\EventSubscriber;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Doctrine\ORM\Event\PostPersistEventArgs;
 use Doctrine\ORM\Event\PostUpdateEventArgs;
 use Doctrine\ORM\Event\PreRemoveEventArgs;
 use Doctrine\ORM\OptimisticLockException;
 use Doctrine\Persistence\ObjectManager;
-use Doctrine\ORM\Event\PostFlushEventArgs;
 use StingerSoft\EntitySearchBundle\Events\DocumentPreSaveEvent;
 use StingerSoft\EntitySearchBundle\Model\SearchableAlias;
 use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface;

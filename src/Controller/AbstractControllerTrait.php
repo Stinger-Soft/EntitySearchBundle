@@ -13,9 +13,9 @@ declare(strict_types=1);
 
 namespace StingerSoft\EntitySearchBundle\Controller;
 
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Form\FormInterface;
 
 trait AbstractControllerTrait {
 

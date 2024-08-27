@@ -13,14 +13,13 @@ declare(strict_types=1);
 
 namespace StingerSoft\EntitySearchBundle\Services;
 
-use Doctrine\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Container\ContainerInterface;
 use StingerSoft\EntitySearchBundle\Model\Document;
 use StingerSoft\EntitySearchBundle\Model\Query;
 use StingerSoft\EntitySearchBundle\Model\ResultSet;
 use StingerSoft\EntitySearchBundle\Model\SearchableEntity;
 use StingerSoft\EntitySearchBundle\Services\Facet\FacetServiceInterface;
-use Psr\Container\ContainerInterface;
 
 /**
  * Defines a service to execute basic operations on the underlying search index
