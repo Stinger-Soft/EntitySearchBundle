@@ -19,10 +19,10 @@ use Symfony\Component\Form\ChoiceList\Loader\ChoiceLoaderInterface;
 
 class FacetChoiceLoader implements ChoiceLoaderInterface {
 
-	/** @var ChoiceListInterface */
-	private $choiceList;
+	/** @var ChoiceListInterface|null */
+	private ?ChoiceListInterface $choiceList = null;
 
-	private $facets;
+	private array $facets;
 
 	public function __construct(array $facets) {
 		$this->facets = $facets;
@@ -73,7 +73,6 @@ class FacetChoiceLoader implements ChoiceLoaderInterface {
 
 		// if no values preset yet return empty list
 		$this->choiceList = new ArrayChoiceList($this->facets, $value);
-// 		dump($this->facets);
 		return $this->choiceList;
 	}
 
@@ -96,7 +95,6 @@ class FacetChoiceLoader implements ChoiceLoaderInterface {
 			}
 		}
 
-// 		dump($values);
 		// this has to be done by yourself: array( label => value )
 		// $labeledValues = MyLabelService::getLabels($values);
 

@@ -30,13 +30,13 @@ class DocumentAdapter implements Document {
 	 *
 	 * @var array
 	 */
-	protected $fields = array();
+	protected array $fields = [];
 
 	/**
 	 *
 	 * @var string
 	 */
-	protected $entityClass = null;
+	protected ?string $entityClass = null;
 
 	/**
 	 *
@@ -48,13 +48,13 @@ class DocumentAdapter implements Document {
 	 *
 	 * @var string
 	 */
-	protected $entityType = null;
+	protected ?string $entityType = null;
 
 	/**
 	 *
 	 * @var string
 	 */
-	protected $file = null;
+	protected ?string $file = null;
 
 	/**
 	 *
@@ -82,7 +82,7 @@ class DocumentAdapter implements Document {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Model\Document::getFieldValue()
 	 */
-	public function getFieldValue($fieldName) {
+	public function getFieldValue(string $fieldName) {
 		$value = $this->fields[$fieldName] ?? null;
 		if(\in_array($fieldName, self::$forceSingleValueFields) && \is_array($value)) {
 			return current($value);

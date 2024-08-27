@@ -21,13 +21,13 @@ class ResultSetAdapter implements ResultSet {
 	 *
 	 * @var FacetSet
 	 */
-	protected $facets = null;
+	protected ?FacetSet $facets = null;
 
 	/**
 	 *
 	 * @var Document[]
 	 */
-	protected $results = array();
+	protected array $results = array();
 
 	/**
 	 *

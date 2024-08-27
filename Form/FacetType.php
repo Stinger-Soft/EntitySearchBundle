@@ -28,7 +28,7 @@ class FacetType extends AbstractType {
 	 *
 	 * @see \Symfony\Component\Form\AbstractType::buildForm()
 	 */
-	public function buildForm(FormBuilderInterface $builder, array $options) {
+	public function buildForm(FormBuilderInterface $builder, array $options): void {
 		$builder->resetModelTransformers();
 		$builder->resetViewTransformers();
 		
@@ -50,7 +50,7 @@ class FacetType extends AbstractType {
 	 *
 	 * @see \Symfony\Component\Form\AbstractType::getParent()
 	 */
-	public function getParent() {
+	public function getParent(): ?string {
 		return ChoiceType::class;
 	}
 
@@ -60,7 +60,7 @@ class FacetType extends AbstractType {
 	 *
 	 * @see \Symfony\Component\Form\AbstractType::configureOptions()
 	 */
-	public function configureOptions(OptionsResolver $resolver) {
+	public function configureOptions(OptionsResolver $resolver): void {
 		$resolver->setDefault('translation_domain', 'StingerSoftEntitySearchBundle');
 		$resolver->setDefault('by_reference', true);
 	}

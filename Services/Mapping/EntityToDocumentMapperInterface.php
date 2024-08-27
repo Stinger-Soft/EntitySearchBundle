@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace StingerSoft\EntitySearchBundle\Services\Mapping;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use StingerSoft\EntitySearchBundle\Model\Document;
 
 /**

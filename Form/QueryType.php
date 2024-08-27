@@ -33,7 +33,7 @@ class QueryType extends AbstractType {
 	 *
 	 * @var array
 	 */
-	protected $defaultOptions = [];
+	protected array $defaultOptions = [];
 
 	public function __construct(array $defaultOptions = []) {
 		$this->defaultOptions = $defaultOptions;
@@ -45,7 +45,7 @@ class QueryType extends AbstractType {
 	 *
 	 * @see \Symfony\Component\Form\AbstractType::buildForm()
 	 */
-	public function buildForm(FormBuilderInterface $builder, array $options) {
+	public function buildForm(FormBuilderInterface $builder, array $options): void {
 		$builder->add('searchTerm', SearchType::class, array(
 			'label' => 'stinger_soft_entity_search.forms.query.term.label'
 		));
@@ -93,7 +93,7 @@ class QueryType extends AbstractType {
 	 *
 	 * @see \Symfony\Component\Form\AbstractType::buildView()
 	 */
-	public function buildView(FormView $view, FormInterface $form, array $options) {
+	public function buildView(FormView $view, FormInterface $form, array $options): void {
 		/**
 		 *
 		 * @var ResultSet $result
@@ -108,7 +108,7 @@ class QueryType extends AbstractType {
 	 *
 	 * @see \Symfony\Component\Form\AbstractType::configureOptions()
 	 */
-	public function configureOptions(OptionsResolver $resolver) {
+	public function configureOptions(OptionsResolver $resolver): void {
 		$resolver->setDefault('data_class', Query::class);
 		$resolver->setDefault('translation_domain', 'StingerSoftEntitySearchBundle');
 		$resolver->setRequired('used_facets');
@@ -127,11 +127,11 @@ class QueryType extends AbstractType {
 	/**
 	 *
 	 * @param FormBuilderInterface|FormInterface $builder
-	 * @param FacetSet $facets
-	 * @param array $options
-	 * @param Query $data
+	 * @param FacetSet                           $facets
+	 * @param array                              $options
+	 * @param Query                              $data
 	 */
-	protected function createFacets($builder, FacetSet $facets, array $options, Query $data):void {
+	protected function createFacets($builder, FacetSet $facets, array $options, Query $data): void {
 		$preferredFilterChoices = $options['preferred_filter_choices'];
 		$maxChoiceGroupCount = (int)$options['max_choice_group_count'];
 		$selectedFacets = $data->getFacets();
@@ -158,13 +158,13 @@ class QueryType extends AbstractType {
 
 	/**
 	 *
-	 * @param string $facetType
-	 * @param array $facets
-	 * @param array $selectedFacets
+	 * @param string        $facetType
+	 * @param array         $facets
+	 * @param array         $selectedFacets
 	 * @param callable|null $formatter
 	 * @return array
 	 */
-	protected function generateFacetChoices($facetType, array $facets, array $selectedFacets = [], callable $formatter = null): array {
+	protected function generateFacetChoices(string $facetType, array $facets, array $selectedFacets = [], callable $formatter = null): array {
 		$choices = [];
 		$handledFacets = [];
 		foreach($facets as $facet => $data) {
@@ -195,7 +195,7 @@ class QueryType extends AbstractType {
 	 * @param $count
 	 * @return string
 	 */
-	protected function formatFacet($formatter, $facetType, $facet, $value, $count):string {
+	protected function formatFacet(?callable $formatter, string $facetType, string $facet, $value, int $count): string {
 		$default = $facet . ' (' . $count . ')';
 		if(!$formatter) {
 			return $default;

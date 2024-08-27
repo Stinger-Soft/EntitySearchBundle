@@ -65,7 +65,7 @@ class DummySearchServiceTest extends AbstractORMTestCase {
 		$service = $this->getSearchService();
 		$this->indexBeer($service);
 		$service->clearIndex();
-		$this->assertAttributeCount(0, 'index', $service);
+		$this->assertEquals(0, $service->getIndexSize());
 	}
 
 	public function testSaveDocumentComposite() {
@@ -89,7 +89,7 @@ class DummySearchServiceTest extends AbstractORMTestCase {
 		$result = $this->indexBeer($service);
 		
 		$service->removeDocument($result[1]);
-		$this->assertAttributeCount(0, 'index', $service);
+		$this->assertEquals(0, $service->getIndexSize());
 	}
 
 	public function testAutocompletion() {

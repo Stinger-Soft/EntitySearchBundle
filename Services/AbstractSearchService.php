@@ -13,7 +13,7 @@ declare(strict_types=1);
 
 namespace StingerSoft\EntitySearchBundle\Services;
 
-use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectManager;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerInterface;
@@ -27,12 +27,12 @@ abstract class AbstractSearchService implements SearchService {
 	 *
 	 * @var EntityManagerInterface
 	 */
-	protected $objectManager;
+	protected ?EntityManagerInterface $objectManager = null;
 
 	/**
 	 * @var ContainerInterface
 	 */
-	protected $facetContainer;
+	protected ?ContainerInterface $facetContainer = null;
 
 	/**
 	 *
@@ -40,7 +40,7 @@ abstract class AbstractSearchService implements SearchService {
 	 *
 	 * @see \StingerSoft\EntitySearchBundle\Services\SearchService::getObjectManager()
 	 */
-	public function getObjectManager(): EntityManagerInterface {
+	public function getObjectManager(): ?EntityManagerInterface {
 		return $this->objectManager;
 	}
 
@@ -53,8 +53,9 @@ abstract class AbstractSearchService implements SearchService {
 	 * @required
 	 */
 	public function setObjectManager(EntityManagerInterface $om): void {
-		if($this->objectManager)
+		if($this->objectManager) {
 			return;
+		}
 		$this->objectManager = $om;
 	}
 

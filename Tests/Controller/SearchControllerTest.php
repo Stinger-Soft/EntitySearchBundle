@@ -8,7 +8,7 @@
 
 namespace StingerSoft\EntitySearchBundle\Tests\Controller;
 
-use Doctrine\Common\Persistence\AbstractManagerRegistry;
+use Doctrine\Persistence\AbstractManagerRegistry;
 use Psr\Container\ContainerInterface;
 use StingerSoft\EntitySearchBundle\Controller\SearchController;
 use StingerSoft\EntitySearchBundle\Form\FacetType;

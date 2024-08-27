@@ -15,7 +15,7 @@ class FacetCompilerPass implements CompilerPassInterface {
 	/**
 	 * @param ContainerBuilder $container
 	 */
-	public function process(ContainerBuilder $container) {
+	public function process(ContainerBuilder $container): void {
 		if(!$container->hasAlias(SearchService::class)) {
 			return;
 		}

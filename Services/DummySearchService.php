@@ -26,7 +26,7 @@ class DummySearchService extends AbstractSearchService {
 	 *
 	 * @var Document[]
 	 */
-	protected $index = array();
+	protected array $index = array();
 
 	/**
 	 *

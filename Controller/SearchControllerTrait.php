@@ -20,18 +20,19 @@ use StingerSoft\EntitySearchBundle\Services\Mapping\DocumentToEntityMapperInterf
 use StingerSoft\EntitySearchBundle\Services\SearchService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 trait SearchControllerTrait {
 
 	/**
-	 * @var SearchService
+	 * @var SearchService|null
 	 */
-	protected $searchService;
-	private $availableFacets;
-	private $facetFormatter;
+	protected ?SearchService $searchService = null;
+	private ?array $availableFacets = null;
+	private ?array $facetFormatter = null;
 
-	public function searchAction(Request $request, DocumentToEntityMapperInterface $mapper) {
+	public function searchAction(Request $request, DocumentToEntityMapperInterface $mapper): Response {
 		if($request->query->get('term', false) !== false) {
 			$this->setSearchTerm($request->getSession(), $request->query->get('term'));
 			$this->removeFilterOptions($request->getSession());
@@ -97,9 +98,9 @@ trait SearchControllerTrait {
 	 * The term can be provided as a GET or POST paramater with the name <em>term</em>
 	 *
 	 * @param Request $request
-	 * @return \Symfony\Component\HttpFoundation\JsonResponse
+	 * @return JsonResponse
 	 */
-	public function autocompleteAction(Request $request) {
+	public function autocompleteAction(Request $request): JsonResponse {
 		$term = $request->get('term');
 		return new JsonResponse($this->searchService->autocomplete($term, $this->getSuggestionCount()));
 	}
@@ -111,7 +112,7 @@ trait SearchControllerTrait {
 	 * @param Request $request
 	 * @return \Symfony\Component\HttpFoundation\Response
 	 */
-	public function onlineHelpAction(Request $request) {
+	public function onlineHelpAction(Request $request): Response {
 		$template = $this->searchService->getOnlineHelp($request->getLocale(), $this->getDefaultLocale());
 		return $this->render($template ?: 'StingerSoftEntitySearchBundle:Help:no_help.html.twig');
 	}
@@ -124,7 +125,7 @@ trait SearchControllerTrait {
 		$this->searchService = $searchService;
 	}
 
-	protected function getConfiguredUsedFacets(array $queryUsedFacets) {
+	protected function getConfiguredUsedFacets(array $queryUsedFacets): array {
 		$availableFacets = $this->getAvailableFacets();
 		$usedFacets = array();
 		foreach($queryUsedFacets as $queryUsedFacet) {
@@ -138,7 +139,7 @@ trait SearchControllerTrait {
 	 *
 	 * @return integer
 	 */
-	protected function getSuggestionCount() {
+	protected function getSuggestionCount(): int {
 		return 10;
 	}
 
@@ -147,7 +148,7 @@ trait SearchControllerTrait {
 	 *
 	 * @return string
 	 */
-	protected function getSessionPrefix() {
+	protected function getSessionPrefix(): string {
 		return 'stinger_soft_entity_search';
 	}
 
@@ -156,19 +157,19 @@ trait SearchControllerTrait {
 	 *
 	 * @return integer
 	 */
-	protected function getResultsPerPage() {
+	protected function getResultsPerPage(): int {
 		return 10;
 	}
 
-	protected function getTemplate() {
+	protected function getTemplate(): string {
 		return 'StingerSoftEntitySearchBundle:Search:results.html.twig';
 	}
 
-	protected function getErrorTemplate() {
+	protected function getErrorTemplate(): string {
 		return 'StingerSoftEntitySearchBundle:Search:error.html.twig';
 	}
 
-	protected function getFacetFormatter() {
+	protected function getFacetFormatter(): array {
 		$this->initFacets();
 		return $this->facetFormatter;
 	}
@@ -178,7 +179,7 @@ trait SearchControllerTrait {
 	 *
 	 * @return string[string][]
 	 */
-	protected function getDefaultFacets() {
+	protected function getDefaultFacets(): array {
 		$availableFacets = $this->getAvailableFacets();
 		return array_combine(array_keys($availableFacets), array_fill(0, count($availableFacets), array()));
 	}
@@ -188,12 +189,12 @@ trait SearchControllerTrait {
 	 *
 	 * @return string[]
 	 */
-	protected function getAvailableFacets() {
+	protected function getAvailableFacets(): array {
 		$this->initFacets();
 		return $this->availableFacets;
 	}
 
-	protected function initFacets() {
+	protected function initFacets(): void {
 		if(!$this->availableFacets) {
 			$this->availableFacets = array();
 			$this->facetFormatter = array();
@@ -215,16 +216,16 @@ trait SearchControllerTrait {
 	 * @param SessionInterface $session
 	 * @return string[string][]
 	 */
-	protected function getSearchFacets(SessionInterface $session) {
+	protected function getSearchFacets(SessionInterface $session): array {
 		$facets = $session->get($this->getSessionPrefix() . '_facets', false);
 		return $facets ? \json_decode($facets, true) : $this->getDefaultFacets();
 	}
 
-	protected function removeFilterOptions(SessionInterface $session) {
+	protected function removeFilterOptions(SessionInterface $session): void {
 		$session->remove($this->getSessionPrefix() . '_filter_options');
 	}
 
-	protected function getUnsetFilterOptions(SessionInterface $session) {
+	protected function getUnsetFilterOptions(SessionInterface $session): bool {
 		return $session->get($this->getSessionPrefix() . '_filter_options', true);
 	}
 
@@ -234,7 +235,7 @@ trait SearchControllerTrait {
 	 * @param SessionInterface $session
 	 * @param string[string][] $facets
 	 */
-	protected function setSearchFacets(SessionInterface $session, $facets) {
+	protected function setSearchFacets(SessionInterface $session, array $facets): void {
 		$session->set($this->getSessionPrefix() . '_facets', \json_encode($facets));
 		$session->set($this->getSessionPrefix() . '_filter_options', false);
 	}
@@ -243,7 +244,7 @@ trait SearchControllerTrait {
 	 * Fetches the search term from the session object
 	 *
 	 * @param SessionInterface $session
-	 * @return mixed
+	 * @return string|boolean
 	 */
 	protected function getSearchTerm(SessionInterface $session) {
 		return $session->get($this->getSessionPrefix() . '_term', false);
@@ -253,9 +254,9 @@ trait SearchControllerTrait {
 	 * Sets the given search term in the user's session
 	 *
 	 * @param SessionInterface $session
-	 * @param string $term
+	 * @param string           $term
 	 */
-	protected function setSearchTerm(SessionInterface $session, $term) {
+	protected function setSearchTerm(SessionInterface $session, string $term): void {
 		$session->set($this->getSessionPrefix() . '_term', $term);
 	}
 
