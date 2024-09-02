@@ -31,7 +31,7 @@
 		"doctrine/event-manager": "^2",
 		"doctrine/persistence": "^3",
 		"doctrine/orm": "^3",
-		"knplabs/knp-components" : "^v5",
+		"knplabs/knp-components" : "^4||^5",
 		"symfony/config": "^6.4",
 		"symfony/console" : "^6.4",
 		"symfony/dependency-injection" : "^6.4",
