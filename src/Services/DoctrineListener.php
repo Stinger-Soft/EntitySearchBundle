@@ -23,6 +23,9 @@ use Doctrine\Persistence\ObjectManager;
 use StingerSoft\EntitySearchBundle\Events\DocumentPreSaveEvent;
 use StingerSoft\EntitySearchBundle\Model\SearchableAlias;
 use StingerSoft\EntitySearchBundle\Services\Mapping\EntityToDocumentMapperInterface;
+use StingerSoft\EntitySearchBundle\Model\Message\SaveDocumentMessage;
+use StingerSoft\EntitySearchBundle\Model\Message\RemoveDocumentMessage;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class DoctrineListener implements EventSubscriber {
@@ -39,11 +42,14 @@ class DoctrineListener implements EventSubscriber {
 
 	/**
 	 * DoctrineListener constructor.
+	 *
 	 * @param EntityToDocumentMapperInterface $entityToDocumentMapper
-	 * @param SearchService $searchService
-	 * @param bool $enableIndexing
+	 * @param SearchService                   $searchService
+	 * @param MessageBusInterface|null        $bus
+	 * @param bool                            $enableIndexing
+	 * @param bool                            $enableAsync
 	 */
-	public function __construct(protected EntityToDocumentMapperInterface $entityToDocumentMapper, protected SearchService $searchService, protected $enableIndexing = false) {
+	public function __construct(protected readonly EntityToDocumentMapperInterface $entityToDocumentMapper, protected readonly SearchService $searchService, protected readonly ?MessageBusInterface $bus, protected bool $enableIndexing = false, protected bool $enableAsync = false) {
 	}
 
 	/**
@@ -101,7 +107,7 @@ class DoctrineListener implements EventSubscriber {
 	 * @param PostPersistEventArgs $args
 	 */
 	public function postPersist(PostPersistEventArgs $args): void {
-		if(!$this->enableIndexing) {
+		if (!$this->enableIndexing) {
 			return;
 		}
 		$this->updateEntity($args->getObject(), $args->getObjectManager());
@@ -112,7 +118,7 @@ class DoctrineListener implements EventSubscriber {
 	 * @throws OptimisticLockException
 	 */
 	public function postFlush(PostFlushEventArgs $eventArgs): void {
-		if($this->needsFlush) {
+		if ($this->needsFlush) {
 			$this->needsFlush = false;
 			$eventArgs->getObjectManager()->flush();
 		}
@@ -124,7 +130,7 @@ class DoctrineListener implements EventSubscriber {
 	 * @param PreRemoveEventArgs $args
 	 */
 	public function preRemove(PreRemoveEventArgs $args): void {
-		if(!$this->enableIndexing) {
+		if (!$this->enableIndexing) {
 			return;
 		}
 		$this->removeEntity($args->getObject(), $args->getObjectManager());
@@ -136,7 +142,7 @@ class DoctrineListener implements EventSubscriber {
 	 * @param PostUpdateEventArgs $args
 	 */
 	public function postUpdate(PostUpdateEventArgs $args): void {
-		if(!$this->enableIndexing) return;
+		if (!$this->enableIndexing) return;
 		$this->updateEntity($args->getObject(), $args->getObjectManager());
 	}
 
@@ -161,14 +167,18 @@ class DoctrineListener implements EventSubscriber {
 	 * @param object $entity
 	 */
 	protected function updateEntity(object $entity, ObjectManager $manager): void {
-		if($entity instanceof SearchableAlias) {
+		if ($entity instanceof SearchableAlias) {
 			$entity = $entity->getEntityToIndex();
 		}
 		$document = $this->getEntityToDocumentMapper()->createDocument($manager, $entity);
-		if($document !== null) {
-			if($this->getEventDispatcher()) {
+		if ($document !== null) {
+			if ($this->getEventDispatcher()) {
 				$event = new DocumentPreSaveEvent($document);
 				$this->getEventDispatcher()->dispatch($event, DocumentPreSaveEvent::NAME);
+			}
+			if ($this->enableAsync) {
+				$this->bus->dispatch(new SaveDocumentMessage($document));
+				return;
 			}
 			$this->getSearchService()->saveDocument($document);
 			$this->needsFlush = true;
@@ -180,11 +190,15 @@ class DoctrineListener implements EventSubscriber {
 	 * @param object $entity
 	 */
 	protected function removeEntity(object $entity, ObjectManager $manager): void {
-		if($entity instanceof SearchableAlias) {
+		if ($entity instanceof SearchableAlias) {
 			$entity = $entity->getEntityToIndex();
 		}
 		$document = $this->getEntityToDocumentMapper()->createDocument($manager, $entity);
-		if($document !== null) {
+		if ($document !== null) {
+			if ($this->enableAsync) {
+				$this->bus->dispatch(new RemoveDocumentMessage($document));
+				return;
+			}
 			$this->getSearchService()->removeDocument($document);
 			$this->needsFlush = true;
 		}
